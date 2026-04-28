@@ -8,7 +8,7 @@ import { IoIosClose } from 'react-icons/io';
 export const Navbar = () => {
     const [open, setOpen] = useState(false);
     return (
-        <nav className='flex items-center justify-between px-9 bg-[#031e3d] text-white py-3 relative'>
+        <nav className='flex items-center justify-between px-10 bg-[#031e3d] text-white py-3 relative z-50'>
 
             <div className="logo  z-10">
                 <img src={logo} alt="" className='w-40' />
@@ -33,7 +33,7 @@ export const Navbar = () => {
                     Contact
                 </li>
 
-                <li className={`${open ? "block sm:hidden":"hidden"}`}>
+                <li className={`${open ? "block sm:hidden" : "hidden"}`}>
                     <button className='py-3 px-5 border rounded-xl text-sm'>Login/Sign Up</button>
                 </li>
 
