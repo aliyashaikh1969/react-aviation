@@ -6,22 +6,47 @@ import { Home } from './components/Home/Home'
 import { Navbar } from './components/Navbar/Navbar'
 import { NewsLetter } from './components/NewsLetter/NewsLetter'
 import { Popular } from './components/popular/Popular'
-import {WhyChooseUs  } from './components/WhyChoose/WhyChooseUs'
-import {TopDeals  } from './components/TopDeals/TopDeals'
+import { WhyChooseUs } from './components/WhyChoose/WhyChooseUs'
 import { OfferBanner } from './components/Offer-Banner/OfferBanner'
+import { Results } from './Pages/Fligths/Results'
+import { Route, Routes } from 'react-router-dom'
+import { FlightsDetails } from './Pages/Fligths/FlightsDetails'
+import { Summary } from './Pages/Fligths/Summary'
+import { Seats } from './Pages/Fligths/Seats'
+import { Payment } from './Pages/Fligths/Payment'
+import { NotFound } from './Pages/NotFound'
+import { MainPage } from './MainPage'
+import { Contact } from './Pages/Contact/Contact'
+import { Deals } from './Pages/Deals/Deals'
+import { MyTrips } from './Pages/MyTrips/MyTrips'
+import Layout from './components/Layout'
+
 
 
 function App() {
 	return (
 		< div className=''>
-			<Navbar />
-			<Home />
-			<Features />
-			<Popular/>
-			<OfferBanner/>
-			<WhyChooseUs/>
-			<NewsLetter/>
-			<Footer/>
+			<Routes>
+				{/* <Route path='/' element={<MainPage/>}/> */}
+
+				<Route path="/" element={<Layout />}>
+					<Route index element={<MainPage />} />
+
+					<Route path="results" element={<Results />} />
+					<Route path="flight/:id" element={<FlightsDetails />} />
+					<Route path="seats" element={<Seats />} />
+					<Route path="summary" element={<Summary />} />
+					<Route path="payment" element={<Payment />} />
+
+					<Route path="myTrips" element={<MyTrips />} />
+					<Route path="deals" element={<Deals />} />
+					<Route path="contact" element={<Contact />} />
+				</Route>
+				<Route path='*' element={<NotFound />} />
+
+			</Routes>
+
+
 		</ div>
 	)
 }
