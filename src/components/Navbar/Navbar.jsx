@@ -27,9 +27,9 @@ export const Navbar = () => {
 						<li key={i} className="relative mx-8 cursor-pointer group">
 							<NavLink to={items.path} onClick={() => setOpen(false)}
 								className={({ isActive }) =>
-									`relative ${isActive ? 'text-white opacity-100 after:w-full after:left-0'
+									`relative ${isActive ? 'text-white opacity-100  after:w-full after:left-0'
 										: 'opacity-55 hover:opacity-100'
-									} after:content-[''] after:absolute after:left-1/2 after:bottom-[-8px] after:w-0 after:h-[2px] after:bg-white after:transition-all after:duration-300 hover:after:w-full hover:after:left-0`}>
+									} after:content-[''] after:absolute   after:bottom-[-8px] after:w-0 after:h-[2px] after:bg-white after:transition-all after:duration-300 hover:after:w-full hover:after:left-0`}>
 								{items.name}</NavLink>
 						</li>
 					))

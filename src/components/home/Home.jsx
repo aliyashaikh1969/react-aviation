@@ -1,15 +1,7 @@
 import React from 'react'
 import HeroImg from '../../assets/heroimg.png'
 import logo from '../../assets/aviation-logo.png'
-import { GiCommercialAirplane } from "react-icons/gi";
-import { PiIslandThin } from "react-icons/pi";
-import { FiMapPin } from "react-icons/fi";
-import { BsAirplane } from "react-icons/bs";
-import { SlCalender } from "react-icons/sl";
-import { IoPersonOutline } from "react-icons/io5";
-import { LiaExchangeAltSolid } from "react-icons/lia";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoIosArrowForward } from "react-icons/io";
+import { SearchFlights } from '../SearchFlights/SearchFlights';
 
 
 export const Home = () => {
@@ -23,7 +15,7 @@ export const Home = () => {
 					<h2 className='md:text-7xl text-5xl text-white font-semibold '> Any Destination</h2>
 					<p className='text-white py-4 md:text-lg text-sm'>Search, compare and book the best flights <br /> at amazing prices.</p>
 				</div>
-				<div className='relative bg-gray-200 md:w-fit rounded-xl'>
+				{/* <div className='relative bg-gray-200 md:w-fit rounded-xl'>
 					<div className=' flex gap-2 md:w-fit w-full justify-between md:justify-start md:p-2 md:pb-5 p-1 pb-3 rounded-t-2xl '>
 						<button className='py-3 px-5 flex items-center text-white bg-[#031e3d] rounded-xl'> <GiCommercialAirplane />One way</button>
 						<button className='py-3 px-5 flex items-center text-gray-700 hover:bg-[#031e3d] hover:text-white rounded-xl transition-all duration-300'> <GiCommercialAirplane />round Trip</button>
@@ -80,7 +72,8 @@ export const Home = () => {
 							<button className='flex items-center bg-[#031e3d] px-5 py-3 rounded-lg text-white'>Search Flights <span className='pl-5'><IoIosArrowForward /></span> </button>
 						</div>
 					</div>
-				</div>
+				</div> */}
+				<SearchFlights/>
 			</div>
 
 
