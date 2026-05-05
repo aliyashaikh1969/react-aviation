@@ -73,7 +73,7 @@ export const Home = () => {
 						</div>
 					</div>
 				</div> */}
-				<SearchFlights/>
+				<SearchFlights />
 			</div>
 
 
