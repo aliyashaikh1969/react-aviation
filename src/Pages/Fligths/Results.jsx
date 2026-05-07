@@ -4,6 +4,8 @@ import { Filters } from "../../components/Filters";
 import { FlightCard } from "../../components/FlightCard.jsx/FlightCard";
 import { data, useLocation } from "react-router-dom";
 import { SearchFlights } from "../../components/SearchFlights/SearchFlights";
+import {Features} from "../../components/Features/Features"
+import ResultImg from '../../assets/resultImg.png'
 
 export const Results = () => {
   const [edit, setEdit] = useState(false);
@@ -25,36 +27,48 @@ export const Results = () => {
     setEdit(false);         // close form
   };
 
+
+  const [filters, setFilters] = useState({
+    price: 10000,
+    stops: [],
+    airlines: [],
+    departure: [],
+  });
   return (
-    <div className=" min-h-screen text-white p-6">
-      <div>
+    <div>
+      <div  className="w-full bg-cover bg-center px-16 md:py-36 py-4"
+      style={{ backgroundImage: `url(${ResultImg})` }}>
 
+        <h2 className='md:text-7xl text-5xl text-white font-semibold '> Search Results</h2>
+				<p className='text-white py-4 md:text-lg text-sm '>Choose from <span>120</span>+ flights from <span>{searchData.from}</span> to <span>{searchData.to}</span></p>
+				
 
-      {edit ? (
-        <SearchFlights
-        initialData={searchData}
-        onSearch={handleModify}
-        />
-      ) : (
-        <SearchSummary
-        from={searchData.from}
-        to={searchData.to}
-        date={searchData.date}
-        travellers={searchData.travellers}
-        onModify={() => setEdit(true)}   
-        />
-      )}
+        {edit ? (
+          <SearchFlights
+            initialData={searchData}
+            onSearch={handleModify}
+          />
+        ) : (
+          <SearchSummary
+            from={searchData.from}
+            to={searchData.to}
+            date={searchData.date}
+            travellers={searchData.travellers}
+            onModify={() => setEdit(true)}
+          />
+        )}
       </div>
-
+      <Features/>
       <div className="flex gap-6 mt-6">
 
-        {/* Filters */}
-        <div className="w-[25%]">
-          <Filters />
+        {/* LEFT SIDE */}
+        <div className="flex-[30%]">
+          <Filters filters={filters} setFilters={setFilters} />
         </div>
 
-        {/* Results */}
-        <div className="w-[75%] flex flex-col gap-4">
+        {/* RIGHT SIDE (your results) */}
+        <div className="flex-[75%] flex flex-col gap-6">
+          {/* Flight cards here */}
           <FlightCard />
           <FlightCard />
           <FlightCard />

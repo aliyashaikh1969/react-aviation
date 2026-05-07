@@ -71,7 +71,7 @@ export const SearchFlights = ({ initialData = {}, onSearch }) => {
                             <p className='text-gray-700'>DEL</p>
                         </div>
                     </div>
-                    <button onClick={() => swapLocation()} className='absolute md:left-[20rem] md:top-14 left-[50%] top-[9.3rem] border p-2 rounded-full bg-white shadow-lg text-[#06448a]'>
+                    <button onClick={() => swapLocation()} className='absolute md:left-[18.5rem] md:top-14 left-[50%] top-[9.3rem] border p-2 rounded-full bg-white shadow-lg text-[#06448a]'>
                         <LiaExchangeAltSolid />
                     </button>
                     <div className='flex-1 border py-2 pl-7 pr-2'>
