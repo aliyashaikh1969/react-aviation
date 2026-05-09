@@ -27,7 +27,7 @@ export const Results = () => {
     setEdit(false);         // close form
   };
 
-
+  const [showFilter ,setShowFilter ] = useState(false)
   const [filters, setFilters] = useState({
     price: 10000,
     stops: [],
@@ -59,15 +59,16 @@ export const Results = () => {
         )}
       </div>
       <Features/>
-      <div className="flex gap-6 mt-6">
+      <div className="flex gap-6 mt-6 bg-gray-100 p-3">
 
         {/* LEFT SIDE */}
-        <div className="flex-[30%]">
-          <Filters filters={filters} setFilters={setFilters} />
+        <div className={`md:flex-[30%] flex-[40%] ` } >
+          <Filters onClick={() => setShowFilter(!showFilter)} filters={filters} setFilters={setFilters} />
+
         </div>
 
         {/* RIGHT SIDE (your results) */}
-        <div className="flex-[75%] flex flex-col gap-6">
+        <div className="md:flex-[70%]  flex-[60%] flex flex-col gap-6">
           {/* Flight cards here */}
           <FlightCard />
           <FlightCard />
