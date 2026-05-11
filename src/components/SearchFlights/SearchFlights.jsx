@@ -41,7 +41,7 @@ export const SearchFlights = ({ initialData = {}, onSearch }) => {
         if (onSearch) {
             onSearch(data); 
         } else {
-            navigate('/results', { state: data }); 
+            navigate('/booking', { state: data }); 
         }
     };
 

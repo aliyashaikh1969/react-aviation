@@ -7,7 +7,33 @@ import { SearchFlights } from "../../components/SearchFlights/SearchFlights";
 import {Features} from "../../components/Features/Features"
 import ResultImg from '../../assets/resultImg.png'
 
-export const Results = () => {
+export const Results = ({nextStep}) => {
+  
+ 
+  
+  const flights = [
+  {
+    id: 1,
+    airline: "IndiGo",
+    from: "DEL",
+    to: "BOM",
+    departure: "10:30 AM",
+    arrival: "12:50 PM",
+    duration: "2h 20m",
+    price: 6499,
+  },
+
+  {
+    id: 2,
+    airline: "Air India",
+    from: "DEL",
+    to: "BOM",
+    departure: "11:00 AM",
+    arrival: "01:40 PM",
+    duration: "2h 40m",
+    price: 7200,
+  },
+];
   const [edit, setEdit] = useState(false);
   const location = useLocation();
   const [searchData, setSearchData] = useState(
@@ -18,6 +44,7 @@ export const Results = () => {
       travellers: 1,
     }
   );
+
 
 
   const handleModify = (newData) => {
@@ -70,15 +97,21 @@ export const Results = () => {
         {/* RIGHT SIDE (your results) */}
         <div className="md:flex-[70%]  flex-[60%] flex flex-col gap-6">
           {/* Flight cards here */}
-          <FlightCard />
-          <FlightCard />
-          <FlightCard />
+         {flights.map((flight) => (
+  <FlightCard
+    key={flight.id}
+    flight={flight}
+    nextStep={nextStep}
+  />
+))}
         </div>
 
       </div>
 
 
 
+
     </div>
   );
 };
+

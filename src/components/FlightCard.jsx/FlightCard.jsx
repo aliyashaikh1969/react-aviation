@@ -4,10 +4,23 @@ import { GiMeal } from "react-icons/gi";
 import { PiSeatBold } from "react-icons/pi";
 import { IoIosAirplane } from "react-icons/io";
 import airIndia from "../../assets/airIndia.png"
+import { useNavigate } from "react-router-dom";
 
 
 
-export const FlightCard = () => {
+export const FlightCard = ({flight, nextStep}) => {
+
+  console.log(flight)
+  const navigate = useNavigate();
+
+  const handleSelectFlight = () => {
+
+  navigate("/booking", {
+    state: {
+      selectedFlight: flight,
+    },
+  });
+};
   return (
     <div className="bg-white text-black p-4 rounded-xl shadow-md flex justify-between md:items-center md:flex-row flex-col">
 
@@ -19,14 +32,14 @@ export const FlightCard = () => {
               <img src={airIndia} className='w-[100%] h-[100%] object-cover' alt="" />
             </div>
             <div>
-              <p className="font-bold text-sm">IndiGo</p>
+              <p className="font-bold text-sm">{flight.airline}</p>
               <span className='text-gray-600 text-xs'>6E 213</span>
             </div>
           </div>
           <div className='flex flex-1 md:flex-auto items-center justify-between'>
             <div>
-              <p className='font-bold text-xl'>10:00</p>
-              <span className='text-sm'>BOM</span>
+              <p className='font-bold text-xl'>{flight.departure}</p>
+              <span className='text-sm'>{flight.from}</span>
             </div>
             <div className='flex items-center gap-3'>
 
@@ -34,7 +47,7 @@ export const FlightCard = () => {
                 < IoIosAirplane />
               </span>
               <div className='flex flex-col'>
-                <span className='text-xs text-gray-500 font-semibold pb-3 px-5 border-b-2 border-gray-400'>2h 30m</span>
+                <span className='text-xs text-gray-500 font-semibold pb-3 px-5 border-b-2 border-gray-400'>{flight.duration}</span>
                 <span className='text-xs text-gray-500 font-semibold pt-3 px-5'>Non-stop</span>
               </div>
               <span className='text-gray-400'>
@@ -42,8 +55,8 @@ export const FlightCard = () => {
               </span>
             </div>
             <div className='text-center'>
-              <p className='font-bold text-xl'>12:30</p>
-              <span className='text-sm'>DEL</span>
+              <p className='font-bold text-xl'>{flight.arrival}</p>
+              <span className='text-sm'>{flight.to}</span>
             </div>
           </div>
         </div>
@@ -60,17 +73,16 @@ export const FlightCard = () => {
             <span className='text-lg'><PiSeatBold /></span>
             <p className='text-xs font-semibold'>Standard Seat</p>
           </div>
-
         </div>
       </div>
 
       <div className="px-10   text-center flex justify-between md:flex-col">
         <div>
-          <h2 className="text-xl font-bold text-black">₹4,999</h2>
+          <h2 className="text-xl font-bold text-black">₹{flight.price}</h2>
           <p className='text-xs font-semibold'>per person</p>
         </div>
         <div>
-          <button className="m-2 bg-blue-500 text-white px-10 py-1 rounded">
+          <button onClick={nextStep} className="m-2 bg-blue-500 text-white px-10 py-1 rounded">
             Select
 
           </button>

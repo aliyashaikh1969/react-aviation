@@ -4,11 +4,26 @@ import { PiArmchairFill, PiArmchairLight } from "react-icons/pi";
 import { IoIosExit } from "react-icons/io";
 import { FaArrowRight } from "react-icons/fa";
 import airplane from '../../assets/airplane.png'
+import { FaArrowLeft } from "react-icons/fa6";
+import { FaAngleRight } from "react-icons/fa";
+import { WhyChooseUs } from '../../components/WhyChoose/WhyChooseUs';
 
 
 
+export const Seats = ({
+  nextStep,
+  bookingData,
+  prevStep,
+  setBookingData,
+}) => {
+   
+  const handleSeatSelect = (seat) => {
 
-export const Seats = () => {
+  setBookingData((prev) => ({
+    ...prev,
+    selectedSeats: [seat],
+  }));
+};
   return (
     <div >
       <div className='px-16 md:py-8 py-4'>
@@ -35,12 +50,12 @@ export const Seats = () => {
             <div className='flex items-center gap-3'><span className='text-red-600 border-2 text-4xl'><IoIosExit /></span>Emergency Exit</div>
           </div>
           <div className='h-[1350px] relative' style={{ background: `url(${airplane}) no-repeat center`, backgroundSize: "cover" }}>
-            <div className='w-[350px] absolute top-[15.3rem] left-[30%]'>
-              <div className='flex items-center justify-between'>
+            <div className='w-[350px] absolute top-[15.3rem] md:left-[30%] left-[24%]'>
+              <div className='flex items-center gap-11 pl-2'>
                 <span>A</span>
                 <span>B</span>
                 <span>C</span>
-                <span>C</span>
+                <span className='invisible'>C</span>
                 <span>D</span>
                 <span>E</span>
                 <span>F</span>
@@ -49,7 +64,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>1</span>
+                <span className='text-gray-900 '>1</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -58,7 +73,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>2</span>
+                <span className='text-gray-900 '>2</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -67,7 +82,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>3</span>
+                <span className='text-gray-900 '>3</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -76,7 +91,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>4</span>
+                <span className='text-gray-900 '>4</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -85,7 +100,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>5</span>
+                <span className='text-gray-900 '>5</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -94,7 +109,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>6</span>
+                <span className='text-gray-900 '>6</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -103,7 +118,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>7</span>
+                <span className='text-gray-900 '>7</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -112,7 +127,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>8</span>
+                <span className='text-gray-900 '>8</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -121,7 +136,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>9</span>
+                <span className='text-gray-900'>9</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -130,7 +145,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>10</span>
+                <span className='text-gray-900 '>10</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -139,7 +154,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>11</span>
+                <span className='text-gray-900 '>11</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -148,7 +163,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>12</span>
+                <span className='text-gray-900 '>12</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -157,7 +172,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl invisible'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl invisible'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl invisible'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>13</span>
+                <span className='text-gray-900 '>13</span>
                 <span className='text-gray-400 border-2 text-4xl invisible'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl invisible'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl invisible'><PiArmchairFill /></span>
@@ -166,7 +181,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>14</span>
+                <span className='text-gray-900 '>14</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -175,7 +190,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl '><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>15</span>
+                <span className='text-gray-900 '>15</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -184,7 +199,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>16</span>
+                <span className='text-gray-900 '>16</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -193,7 +208,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>17</span>
+                <span className='text-gray-900 '>17</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -202,7 +217,7 @@ export const Seats = () => {
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-                <span className='text-gray-900  text-xl'>18</span>
+                <span className='text-gray-900 '>18</span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -210,13 +225,13 @@ export const Seats = () => {
             </div>
             <div></div>
           </div>
-          <div>
-            <p>Selected Seat:7E</p>
-            <button>clear Selection</button>
+          <div className='bg-blue-100 text-[#031e3d] font-semibold rounded-md flex items-center justify-between p-3'>
+            <p>Selected Seat: <span className='text-green-600'>7E</span></p>
+            <button className='text-sm text-red-600'>clear Selection</button>
           </div>
-          <div>
-            <button>back</button>
-            <button>continue to summary</button>
+          <div className='flex items-center justify-between py-5'>
+            <button  onClick={prevStep} className='text-[#031e3d] gap-3 flex items-center border-2 rounded-md p-3'><span><FaArrowLeft /></span>Back</button>
+            <button onClick={nextStep} className='flex items-center gap-5 border-2 bg-[#031e3d] p-3 rounded-md text-white text-lg'>Continue to Summary <span><FaAngleRight /></span></button>
           </div>
         </div>
         <div className=' md:flex-[25%] flex-1 flex-col'>
@@ -279,28 +294,28 @@ export const Seats = () => {
             <p className='text-xl font-semibold'>Seat Legend</p>
             <div className='flex items-center justify-between text-sm font-semibold '>
               <div className='flex items-center gap-3'>
-                <span className='border-2 text-lg '><PiArmchairLight /></span>
+                <span className='border-2 text-2xl '><PiArmchairLight /></span>
                 <p>Availabe Seat</p>
               </div>
               <span className='text-gray-500'>299rs</span>
             </div>
             <div className='flex items-center justify-between text-sm font-semibold '>
               <div className='flex items-center gap-3'>
-                <span className='text-green-600 border-2 text-lg'><PiArmchairFill /></span>
+                <span className='text-green-600 border-2 text-2xl'><PiArmchairFill /></span>
                 <p>Selected Seat</p>
               </div>
               <span className='text-gray-500'>Your Selection</span>
             </div>
             <div className='flex items-center justify-between text-sm font-semibold '>
               <div className='flex items-center gap-3'>
-                <span className='text-gray-400 border-2 text-lg'><PiArmchairFill /></span>
+                <span className='text-gray-400 border-2 text-2xl'><PiArmchairFill /></span>
                 <p>Occupied Seat</p>
               </div>
               <span className='text-gray-500'>Not Available</span>
             </div>
             <div className='flex items-center justify-between text-sm font-semibold '>
               <div className='flex items-center gap-3'>
-                <span className='text-red-600 border-2 text-lg'><IoIosExit /></span>
+                <span className='text-red-600 border-2 text-2xl'><IoIosExit /></span>
                 <p>Emergency Exit</p>
               </div>
               <span className='text-gray-500'>Extra legroom</span>
@@ -316,6 +331,7 @@ export const Seats = () => {
           </div>
         </div>
       </div>
+      <WhyChooseUs />
     </div>
   )
 }

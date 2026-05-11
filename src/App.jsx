@@ -20,10 +20,12 @@ import { Contact } from './Pages/Contact/Contact'
 import { Deals } from './Pages/Deals/Deals'
 import { MyTrips } from './Pages/MyTrips/MyTrips'
 import Layout from './components/Layout'
+import { BookingFlow } from './Pages/BookingFlow'
 
 
 
 function App() {
+	
 	return (
 		< div className=''>
 			<Routes>
@@ -32,12 +34,10 @@ function App() {
 				<Route path="/" element={<Layout />}>
 					<Route index element={<MainPage />} />
 
-					<Route path="results" element={<Results />} />
+					{/* <Route path="results" element={<Results />} /> */}
 					<Route path="flight/:id" element={<FlightsDetails />} />
-					<Route path="seats" element={<Seats />} />
-					<Route path="summary" element={<Summary />} />
-					<Route path="payment" element={<Payment />} />
-
+					
+					<Route path='/booking' element={<BookingFlow/>}/>
 					<Route path="myTrips" element={<MyTrips />} />
 					<Route path="deals" element={<Deals />} />
 					<Route path="contact" element={<Contact />} />

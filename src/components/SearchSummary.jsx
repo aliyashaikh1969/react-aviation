@@ -11,10 +11,10 @@ import { PiPencilSimpleLineLight } from "react-icons/pi";
 
 
 export const SearchSummary = ({ from, to, date, travellers, onModify }) => {
-  //     const location = useLocation();
+      const location = useLocation();
   // const { from, to, date, travellers } = location.state;
 
-
+console.log(location.state)
 
   return (
     <div className="bg-white text-black rounded-xl shadow-md">
