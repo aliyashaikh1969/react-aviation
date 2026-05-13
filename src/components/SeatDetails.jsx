@@ -6,7 +6,7 @@ import {
 
 import { MdAirlineSeatReclineNormal } from "react-icons/md";
 
-export const SeatDetails = () => {
+export const SeatDetails = ({prevStep}) => {
    const [selectedSeats, setSelectedSeats] = useState(["1A", "1B"]);
 
   const seats = [
@@ -52,7 +52,7 @@ export const SeatDetails = () => {
           </div>
         </div>
 
-        <button className="text-blue-700 font-semibold hover:underline text-sm">
+        <button onClick={prevStep} className="text-blue-700 font-semibold hover:underline text-sm">
           Change Seats
         </button>
       </div>

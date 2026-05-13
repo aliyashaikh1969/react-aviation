@@ -22,7 +22,7 @@ export const FlightCard = ({flight, nextStep}) => {
   });
 };
   return (
-    <div className="bg-white text-black p-4 rounded-xl shadow-md flex justify-between md:items-center md:flex-row flex-col">
+    <div className="bg-white text-black p-2 rounded-xl shadow-md flex justify-between md:items-center md:flex-row flex-col">
 
       <div className='px-3 flex-1'>
         <div className='flex px-2 py-5 md:items-center border-b md:flex-row flex-col overflow-hidden'>

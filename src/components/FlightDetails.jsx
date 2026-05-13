@@ -10,7 +10,7 @@ import { BsAirplaneFill } from "react-icons/bs";
 
 export const FlightDetails = () => {
   return (
-     <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-md w-full">
+     <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
 
       {/* Heading */}
       <div className="flex items-center gap-3 mb-6">
@@ -19,19 +19,16 @@ export const FlightDetails = () => {
           <BsAirplaneFill className="text-blue-700 text-lg rotate-45" />
         </div>
 
-        <div>
-          <h2 className="text-2xl font-bold text-[#0A2A6B]">
+        
+          <h2 className="text-xl font-bold text-[#0A2A6B]">
             Flight Details
           </h2>
 
-          <p className="text-sm text-slate-500">
-            Review your selected flight
-          </p>
-        </div>
+       
       </div>
 
       {/* Flight Card */}
-      <div className="border border-slate-200 rounded-3xl overflow-hidden">
+      <div className="border border-slate-200 rounded-2xl overflow-hidden">
 
         {/* Airline Header */}
         <div className="flex items-center justify-between p-5 border-b border-slate-200">
@@ -43,43 +40,43 @@ export const FlightDetails = () => {
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-[#0A2A6B]">
+              <h3 className="text-lg font-bold text-[#0A2A6B]">
                 IndiGo
               </h3>
 
-              <p className="text-sm text-slate-500">
+              <p className="text-xs text-slate-500">
                 6E 2112 | Economy
               </p>
             </div>
           </div>
 
           {/* Status */}
-          <div className="px-4 py-2 rounded-full bg-green-50 text-green-700 text-sm font-semibold border border-green-200">
+          <div className="px-4 py-2 rounded-full bg-green-50 text-green-700 text-xs font-semibold border border-green-200">
             Confirmed
           </div>
         </div>
 
         {/* Flight Timing */}
-        <div className="p-6">
+        <div className="p-3">
 
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
 
             {/* Departure */}
             <div className="text-center lg:text-left">
 
-              <h2 className="text-5xl font-bold text-[#0A2A6B]">
+              <h2 className="text-2xl font-bold text-[#0A2A6B]">
                 10:00
               </h2>
 
-              <p className="text-sm text-slate-500 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 24 May 2024
               </p>
 
-              <h4 className="text-lg font-semibold text-slate-800 mt-4">
+              <h4 className="text-base font-semibold text-slate-800 mt-4">
                 Mumbai (BOM)
               </h4>
 
-              <p className="text-sm text-slate-500 mt-1 leading-6">
+              <p className="text-xs text-slate-500 mt-1 leading-6">
                 Chhatrapati Shivaji <br />
                 Maharaj Intl. Airport
               </p>
@@ -88,7 +85,7 @@ export const FlightDetails = () => {
             {/* Center */}
             <div className="flex flex-col items-center w-full max-w-[300px]">
 
-              <div className="flex items-center gap-2 text-slate-500 text-sm mb-3">
+              <div className="flex items-center gap-2 text-slate-500 text-xs mb-3">
                 <FiClock />
                 <span>2h 30m</span>
               </div>
@@ -106,7 +103,7 @@ export const FlightDetails = () => {
               </div>
 
               {/* Non Stop */}
-              <div className="mt-4 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-sm font-medium">
+              <div className="mt-4 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
                 Non-stop
               </div>
             </div>
@@ -114,19 +111,19 @@ export const FlightDetails = () => {
             {/* Arrival */}
             <div className="text-center lg:text-right">
 
-              <h2 className="text-5xl font-bold text-[#0A2A6B]">
+              <h2 className="text-2xl font-bold text-[#0A2A6B]">
                 12:30
               </h2>
 
-              <p className="text-sm text-slate-500 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 24 May 2024
               </p>
 
-              <h4 className="text-lg font-semibold text-slate-800 mt-4">
+              <h4 className="text-base font-semibold text-slate-800 mt-4">
                 Delhi (DEL)
               </h4>
 
-              <p className="text-sm text-slate-500 mt-1 leading-6">
+              <p className="text-xs text-slate-500 mt-1 leading-6">
                 Indira Gandhi Intl. <br />
                 Airport
               </p>
@@ -134,7 +131,7 @@ export const FlightDetails = () => {
           </div>
 
           {/* Bottom Details */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-10 pt-6 border-t border-slate-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-3 pt-6 border-t border-slate-200">
 
             {/* Aircraft */}
             <div className="flex items-start gap-3">
@@ -144,11 +141,11 @@ export const FlightDetails = () => {
               </div>
 
               <div>
-                <p className="text-sm text-slate-500">
+                <p className="text-xs text-slate-500">
                   Aircraft
                 </p>
 
-                <h4 className="font-semibold text-slate-800 mt-1">
+                <h4 className="text-sm font-semibold text-slate-800 mt-1">
                   Airbus A320
                 </h4>
               </div>
@@ -162,11 +159,11 @@ export const FlightDetails = () => {
               </div>
 
               <div>
-                <p className="text-sm text-slate-500">
+                <p className="text-xs text-slate-500">
                   Baggage
                 </p>
 
-                <h4 className="font-semibold text-slate-800 mt-1">
+                <h4 className="text-sm font-semibold text-slate-800 mt-1">
                   15 kg Check-in
                 </h4>
               </div>
@@ -180,11 +177,11 @@ export const FlightDetails = () => {
               </div>
 
               <div>
-                <p className="text-sm text-slate-500">
+                <p className="text-xs text-slate-500">
                   Cabin Class
                 </p>
 
-                <h4 className="font-semibold text-slate-800 mt-1">
+                <h4 className="text-sm font-semibold text-slate-800 mt-1">
                   Economy
                 </h4>
               </div>

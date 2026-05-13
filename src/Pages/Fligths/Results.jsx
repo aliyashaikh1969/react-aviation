@@ -63,10 +63,11 @@ export const Results = ({nextStep}) => {
   });
   return (
     <div>
-      <div  className="w-full bg-cover bg-center px-16 md:py-36 py-4"
+
+      <div  className="w-full bg-cover bg-center px-16  pt-20 pb-7"
       style={{ backgroundImage: `url(${ResultImg})` }}>
 
-        <h2 className='md:text-7xl text-5xl text-white font-semibold '> Search Results</h2>
+        <h2 className='md:text-3xl text-3xl text-white font-semibold '> Search Results</h2>
 				<p className='text-white py-4 md:text-lg text-sm '>Choose from <span>120</span>+ flights from <span>{searchData.from}</span> to <span>{searchData.to}</span></p>
 				
 

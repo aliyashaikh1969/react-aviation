@@ -50,8 +50,8 @@ console.log(location.state)
         </button>
       </div> */}
 
-      <div className='rounded-2xl relative flex justify-between p-6  w-full md:flex-row flex-col'>
-        <div className='flex-1 border  p-2 pr-8'>
+      <div className='rounded-2xl relative flex justify-between p-2  w-full md:flex-row flex-col'>
+        <div className='flex-1 border-r-2 p-2 pr-8'>
           <p className="text-xs text-gray-600 font-semibold ">FROM</p>
           <div className='flex items-center justify-between pt-2'>
             <div className='flex items-center'>
@@ -61,10 +61,10 @@ console.log(location.state)
             {/* <p className='text-gray-700'>DEL</p> */}
           </div>
         </div>
-        <span className='absolute md:left-[18.5rem] md:top-14 left-[50%] top-[5.2rem] rotate-90 md:rotate-0 border p-2 rounded-full bg-white shadow-lg text-[#06448a]'>
+        <span className='absolute md:left-[17.8rem] md:top-10 left-[50%] top-[5.2rem] rotate-90 md:rotate-0 border p-2 rounded-full bg-white shadow-lg text-[#06448a]'>
           <LiaExchangeAltSolid />
         </span>
-        <div className='flex-1 border py-2 pl-7 pr-2'>
+        <div className='flex-1 border-r-2 py-2 pl-7 pr-2'>
           <p className="text-xs text-gray-600 font-semibold">TO</p>
           <div className='flex items-center justify-between pt-2'>
             <div className='flex items-center '>
@@ -97,7 +97,7 @@ console.log(location.state)
         </div>
         <div className='flex-1 flex items-center justify-center'>
           
-          <button className='flex items-center bg-[#031e3d] px-5 py-3 rounded-lg text-white' onClick={onModify}> <span><PiPencilSimpleLineLight /></span> Modify </button>
+          <button className='flex items-center bg-[#031e3d] px-5 py-2 rounded-lg text-white' onClick={onModify}> <span><PiPencilSimpleLineLight /></span> Modify </button>
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ export const Stepper = ({ step }) => {
 
   return (
 
-    <div className="w-full  py-6 px-4">
+    <div className="w-full absolute py-6 px-4">
 
       <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto gap-4">
 
@@ -30,13 +30,13 @@ export const Stepper = ({ step }) => {
 
               {/* CIRCLE */}
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
 
                 <div
                   className={`
-                    w-8 h-8 md:w-10 md:h-10 rounded-full
+                    w-6 h-6 md:w-10 md:h-10 rounded-full
                     flex items-center justify-center
-                    text-sm font-semibold
+                    text-xs font-semibold
                     transition-all duration-300
 
                     ${
@@ -61,7 +61,7 @@ export const Stepper = ({ step }) => {
 
                 <div
                   className={`
-                    flex-1 h-[2px] mx-4
+                    flex-1 h-[2px] mx-5
 
                     ${
                       step > stepNumber

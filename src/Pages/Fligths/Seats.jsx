@@ -2,10 +2,9 @@ import React from 'react'
 import { SearchSummary } from '../../components/SearchSummary'
 import { PiArmchairFill, PiArmchairLight } from "react-icons/pi";
 import { IoIosExit } from "react-icons/io";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight,FaAngleRight } from "react-icons/fa";
 import airplane from '../../assets/airplane.png'
 import { FaArrowLeft } from "react-icons/fa6";
-import { FaAngleRight } from "react-icons/fa";
 import { WhyChooseUs } from '../../components/WhyChoose/WhyChooseUs';
 
 
@@ -26,12 +25,12 @@ export const Seats = ({
 };
   return (
     <div >
-      <div className='px-16 md:py-8 py-4'>
-        <h2 className='md:text-7xl text-5xl text-[#031e3d] font-semibold'>Choose Your Seats</h2>
-        <p className='text-[#031e3d] py-4 md:text-lg text-sm'>Select Your preferred seats ans enjoy your journey.</p>
+      <div className='px-16 pt-20 '>
+        <h2 className='md:text-xl text-lg text-[#031e3d] font-semibold'>Choose Your Seats</h2>
+        <p className='text-[#031e3d] py-2  text-sm'>Select Your preferred seats ans enjoy your journey.</p>
         <SearchSummary />
       </div>
-      <div className='p-6 flex gap-5 flex-col md:flex-row '>
+      <div className='px-16 flex gap-5 flex-col md:flex-row '>
         <div className='shadow-lg md:flex-[50%] flex flex-col p-5' >
           <div className='flex items-center justify-between'>
             <div>
@@ -51,6 +50,7 @@ export const Seats = ({
           </div>
           <div className='h-[1350px] relative' style={{ background: `url(${airplane}) no-repeat center`, backgroundSize: "cover" }}>
             <div className='w-[350px] absolute top-[15.3rem] md:left-[30%] left-[24%]'>
+              
               <div className='flex items-center gap-11 pl-2'>
                 <span>A</span>
                 <span>B</span>
@@ -231,7 +231,7 @@ export const Seats = ({
           </div>
           <div className='flex items-center justify-between py-5'>
             <button  onClick={prevStep} className='text-[#031e3d] gap-3 flex items-center border-2 rounded-md p-3'><span><FaArrowLeft /></span>Back</button>
-            <button onClick={nextStep} className='flex items-center gap-5 border-2 bg-[#031e3d] p-3 rounded-md text-white text-lg'>Continue to Summary <span><FaAngleRight /></span></button>
+            <button onClick={nextStep} className='flex items-center gap-5 border-2 bg-[#031e3d] p-3 rounded-md text-white text-sm'>Continue to Summary <span><FaAngleRight /></span></button>
           </div>
         </div>
         <div className=' md:flex-[25%] flex-1 flex-col'>

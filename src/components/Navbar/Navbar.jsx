@@ -16,7 +16,8 @@ export const Navbar = () => {
 	];
 	const [open, setOpen] = useState(false);
 	return (
-		<nav className='flex items-center justify-between px-10 bg-[#031e3d] text-white py-3 relative z-50'>
+		<nav className='flex items-center px-16 justify-between  bg-[#031e3d] text-white  relative z-50'>
+
 
 			<div className="logo  z-10">
 				<img src={logo} alt="" className='w-40' />
@@ -34,10 +35,10 @@ export const Navbar = () => {
 						</li>
 					))
 				}
-				
+
 
 				<li className={`${open ? "block sm:hidden" : "hidden"}`}>
-					<button className='py-3 px-5 border rounded-xl text-sm'>Login/Sign Up</button>
+					<button className=' border rounded-xl text-sm'>Login/Sign Up</button>
 				</li>
 
 			</ul>
@@ -46,17 +47,16 @@ export const Navbar = () => {
 
 					<div className='sm:flex items-center px-4 hidden'>
 						<GrLanguage />
-						<span className='px-2'>En </span>
+						<span className='text-xs px-2'>En </span>
 					</div>
 
-					<button className='py-3 px-5 border rounded-xl text-sm'>Login/Sign Up</button>
+					<button className='py-2 px-3  border rounded-xl text-xs'>Login/Sign Up</button>
 				</div>
 
-				<div className='text-4xl md:hidden mx-5' onClick={() => setOpen(!open)}>
+				<div className='text-xl md:hidden mx-5' onClick={() => setOpen(!open)}>
 					{!open ? <span > <IoMenuOutline /> </span> : <IoIosClose />}
 				</div>
 			</div>
-
 
 		</nav>
 	)
