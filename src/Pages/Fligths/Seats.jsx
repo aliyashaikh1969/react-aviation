@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { SearchSummary } from '../../components/SearchSummary'
 import { PiArmchairFill, PiArmchairLight } from "react-icons/pi";
 import { IoIosExit } from "react-icons/io";
-import { FaArrowRight,FaAngleRight } from "react-icons/fa";
+import { FaArrowRight, FaAngleRight } from "react-icons/fa";
 import airplane from '../../assets/airplane.png'
 import { FaArrowLeft } from "react-icons/fa6";
 import { WhyChooseUs } from '../../components/WhyChoose/WhyChooseUs';
+import { SearchFlights } from '../../components/SearchFlights/SearchFlights';
 
 
 
@@ -15,20 +16,28 @@ export const Seats = ({
   prevStep,
   setBookingData,
 }) => {
-   
+  const [edit, setEdit] = useState(false);
   const handleSeatSelect = (seat) => {
 
-  setBookingData((prev) => ({
-    ...prev,
-    selectedSeats: [seat],
-  }));
-};
+    setBookingData((prev) => ({
+      ...prev,
+      selectedSeats: [seat],
+    }));
+  };
   return (
     <div >
       <div className='px-16 pt-20 '>
         <h2 className='md:text-xl text-lg text-[#031e3d] font-semibold'>Choose Your Seats</h2>
         <p className='text-[#031e3d] py-2  text-sm'>Select Your preferred seats ans enjoy your journey.</p>
-        <SearchSummary />
+        {edit ? (
+          <SearchFlights
+            onSearch={() => setEdit(false)}
+          />
+        ) : (
+          <SearchSummary
+            onModify={() => setEdit(true)}
+          />
+        )}
       </div>
       <div className='px-16 flex gap-5 flex-col md:flex-row '>
         <div className='shadow-lg md:flex-[50%] flex flex-col p-5' >
@@ -50,7 +59,7 @@ export const Seats = ({
           </div>
           <div className='h-[1350px] relative' style={{ background: `url(${airplane}) no-repeat center`, backgroundSize: "cover" }}>
             <div className='w-[350px] absolute top-[15.3rem] md:left-[30%] left-[24%]'>
-              
+
               <div className='flex items-center gap-11 pl-2'>
                 <span>A</span>
                 <span>B</span>
@@ -68,7 +77,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div>  
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -77,8 +86,8 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div>  
-             <div className='my-3 flex items-center justify-between'>
+              </div>
+              <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -86,7 +95,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div>  
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -96,7 +105,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
               </div>
-               <div className='my-3 flex items-center justify-between'>
+              <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -104,7 +113,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div>  
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -114,7 +123,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
               </div>
-                <div className='my-3 flex items-center justify-between'>
+              <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -122,7 +131,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div>  
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -140,7 +149,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div>  
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -149,7 +158,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div> 
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -158,7 +167,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div>  
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -176,7 +185,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl invisible'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl invisible'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl invisible'><PiArmchairFill /></span>
-              </div> 
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -185,7 +194,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div>  
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl '><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -203,7 +212,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div> 
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -212,7 +221,7 @@ export const Seats = ({
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
-              </div>  
+              </div>
               <div className='my-3 flex items-center justify-between'>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
                 <span className='text-gray-400 border-2 text-4xl'><PiArmchairFill /></span>
@@ -230,7 +239,7 @@ export const Seats = ({
             <button className='text-sm text-red-600'>clear Selection</button>
           </div>
           <div className='flex items-center justify-between py-5'>
-            <button  onClick={prevStep} className='text-[#031e3d] gap-3 flex items-center border-2 rounded-md p-3'><span><FaArrowLeft /></span>Back</button>
+            <button onClick={prevStep} className='text-[#031e3d] gap-3 flex items-center border-2 rounded-md p-3'><span><FaArrowLeft /></span>Back</button>
             <button onClick={nextStep} className='flex items-center gap-5 border-2 bg-[#031e3d] p-3 rounded-md text-white text-sm'>Continue to Summary <span><FaAngleRight /></span></button>
           </div>
         </div>

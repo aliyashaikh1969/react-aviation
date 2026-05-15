@@ -8,13 +8,14 @@ import { LiaExchangeAltSolid } from "react-icons/lia";
 import { SlCalender } from "react-icons/sl";
 import { useLocation } from "react-router-dom";
 import { PiPencilSimpleLineLight } from "react-icons/pi";
+import { useFlight } from "../context/FlightContext";
 
 
-export const SearchSummary = ({ from, to, date, travellers, onModify }) => {
-      const location = useLocation();
-  // const { from, to, date, travellers } = location.state;
+export const SearchSummary = ({ onModify }) => {
 
-console.log(location.state)
+  const {flightData} = useFlight()
+
+  console.log(flightData)
 
   return (
     <div className="bg-white text-black rounded-xl shadow-md">
@@ -56,7 +57,7 @@ console.log(location.state)
           <div className='flex items-center justify-between pt-2'>
             <div className='flex items-center'>
               <span className='text-[#06448a] p-2 text-xl'><FiMapPin /></span>
-              <p className='font-bold'>{from}</p>
+              <p className='font-bold'>{flightData.from}</p>
             </div>
             {/* <p className='text-gray-700'>DEL</p> */}
           </div>
@@ -69,7 +70,7 @@ console.log(location.state)
           <div className='flex items-center justify-between pt-2'>
             <div className='flex items-center '>
               <span className='text-[#06448a] p-2 text-xl'><BsAirplane /></span>
-              <p className='font-bold'>{to}</p>
+              <p className='font-bold'>{flightData.to}</p>
             </div>
             {/* <p className='text-gray-700'>BOM</p> */}
           </div>
@@ -79,7 +80,7 @@ console.log(location.state)
           <div className='flex items-center pt-2'>
             <span className='text-[#06448a] p-4 text-xl'><SlCalender /></span>
             <div>
-              <p className='font-medium text-sm'>{date}</p>
+              <p className='font-medium text-sm'>{flightData.date}</p>
               {/* <span className='text-sm text-gray-600'>Friday</span> */}
             </div>
           </div>
@@ -89,7 +90,7 @@ console.log(location.state)
           <div className='flex items-center pt-2'>
             <span className='text-[#06448a] p-4 text-xl'><IoPersonOutline /></span>
             <div>
-              <p className='font-semibold flex items-center'>{travellers} </p>
+              <p className='font-semibold flex items-center'>{flightData.travellers} </p>
               <span className='text-sm text-gray-600'>Economy</span>
             </div>
 

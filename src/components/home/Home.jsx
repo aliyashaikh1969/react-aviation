@@ -9,7 +9,7 @@ export const Home = () => {
 		<>
 			<div className="w-full bg-cover bg-center px-16 py-5 flex justify-between flex-col"
 				style={{ backgroundImage: `url(${HeroImg})` }}>
-				<div className='mx-auto'>
+				<div className=''>
 
 					<div className=''>
 						<p className='text-[#56B6C6] text-sm'>Your Journey, Our Priority</p>

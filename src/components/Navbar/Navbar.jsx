@@ -22,7 +22,7 @@ export const Navbar = () => {
 			<div className="logo  z-10">
 				<img src={logo} alt="" className='w-40' />
 			</div>
-			<ul className={`nav-list p-5 flex gap-8 flex-col top-[4.9rem] left-0 bg-[#031e3d] w-full  items-start flex-1 absolute md:static  md:flex-row md:h-fit ${!open ? "hidden md:flex" : "flex-col"}`}>
+			<ul className={`nav-list p-5 flex gap-8 flex-col top-[3.3rem] left-0 bg-[#031e3d] w-full  items-start flex-1 absolute md:static  md:flex-row md:h-fit ${!open ? "hidden md:flex" : "flex-col"}`}>
 				{
 					navItems.map((items, i) => (
 						<li key={i} className="relative mx-8 cursor-pointer group">
