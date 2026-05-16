@@ -1,63 +1,124 @@
-import React, { useState } from 'react'
-import logo from '../../assets/aviation-logo.png'
-import { GrLanguage } from "react-icons/gr";
-import { IoCloseOutline, IoMenuOutline } from "react-icons/io5";
-import { IoIosClose } from 'react-icons/io';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from "react";
+import logo from "../../assets/aviation-logo.png";
 
+import { GrLanguage } from "react-icons/gr";
+import { IoMenuOutline } from "react-icons/io5";
+import { IoIosClose } from "react-icons/io";
+
+import { NavLink } from "react-router-dom";
 
 export const Navbar = () => {
-	const navItems = [
-		{ name: "Home", path: "/" },
-		{ name: "Flights", path: "/results" },
-		{ name: "My Trips", path: "/myTrips" },
-		{ name: "Deals", path: "/deals" },
-		{ name: "Contact", path: "/contact" }
-	];
-	const [open, setOpen] = useState(false);
-	return (
-		<nav className='flex items-center px-16 justify-between  bg-[#031e3d] text-white  relative z-50'>
+  const [open, setOpen] = useState(false);
 
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "Flights", path: "/booking" },
+    { name: "My Trips", path: "/myTrips" },
+    { name: "Deals", path: "/deals" },
+    { name: "Contact", path: "/contact" },
+  ];
 
-			<div className="logo  z-10">
-				<img src={logo} alt="" className='w-40' />
-			</div>
-			<ul className={`nav-list p-5 flex gap-8 flex-col top-[3.3rem] left-0 bg-[#031e3d] w-full  items-start flex-1 absolute md:static  md:flex-row md:h-fit ${!open ? "hidden md:flex" : "flex-col"}`}>
-				{
-					navItems.map((items, i) => (
-						<li key={i} className="relative mx-8 cursor-pointer group">
-							<NavLink to={items.path} onClick={() => setOpen(false)}
-								className={({ isActive }) =>
-									`relative ${isActive ? 'text-white opacity-100  after:w-full after:left-0'
-										: 'opacity-55 hover:opacity-100'
-									} after:content-[''] after:absolute   after:bottom-[-8px] after:w-0 after:h-[2px] after:bg-white after:transition-all after:duration-300 hover:after:w-full hover:after:left-0`}>
-								{items.name}</NavLink>
-						</li>
-					))
-				}
+  return (
+    <nav className="bg-[#031e3d] text-white w-full sticky top-0 z-50 shadow-lg">
+      <div className="flex items-center justify-between px-5 md:px-14 h-20">
+        
+        {/* LOGO */}
+        <div className="z-50">
+          <img src={logo} alt="logo" className="w-36 md:w-40" />
+        </div>
 
+        {/* DESKTOP NAV */}
+        <ul className="hidden md:flex items-center gap-10">
+          {navItems.map((item, i) => (
+            <li key={i}>
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  `relative text-sm tracking-wide transition-all duration-300
+                  ${
+                    isActive
+                      ? "opacity-100 after:w-full"
+                      : "opacity-60 hover:opacity-100"
+                  }
+                  
+                  after:content-['']
+                  after:absolute
+                  after:left-0
+                  after:bottom-[-6px]
+                  after:h-[2px]
+                  after:w-0
+                  after:bg-white
+                  after:transition-all
+                  after:duration-300
+                  hover:after:w-full`
+                }
+              >
+                {item.name}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
 
-				<li className={`${open ? "block sm:hidden" : "hidden"}`}>
-					<button className=' border rounded-xl text-sm'>Login/Sign Up</button>
-				</li>
+        {/* RIGHT SIDE */}
+        <div className="hidden md:flex items-center gap-5">
+          <div className="flex items-center text-sm">
+            <GrLanguage />
+            <span className="ml-2">EN</span>
+          </div>
 
-			</ul>
-			<div className={`flex items-center justify-end  `}>
-				<div className={`sm:flex hidden`}>
+          <button>
+          <NavLink to={'AuthPage'} className={({ isActive }) =>`border border-white/30 px-4 py-2 rounded-xl text-sm transition-all duration-300  ${
+                    isActive
+                      ? "bg-white text-[#031e3d]"
+                      : "hover:bg-white hover:text-[#031e3d] "
+                  }`}> Login / Sign Up
+			</NavLink> 
+          </button>
+        </div>
 
-					<div className='sm:flex items-center px-4 hidden'>
-						<GrLanguage />
-						<span className='text-xs px-2'>En </span>
-					</div>
+        {/* MOBILE MENU BUTTON */}
+        <div
+          className="md:hidden text-3xl z-50 cursor-pointer"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <IoIosClose /> : <IoMenuOutline />}
+        </div>
+      </div>
 
-					<button className='py-2 px-3  border rounded-xl text-xs'>Login/Sign Up</button>
-				</div>
+      {/* MOBILE MENU */}
+      <div
+        className={`md:hidden absolute top-0 left-0 w-full bg-[#031e3d] transition-all duration-500 overflow-hidden
+        ${
+          open
+            ? "h-screen opacity-100"
+            : "h-0 opacity-0 pointer-events-none"
+        }`}
+      >
+        <ul className="flex flex-col items-center justify-center h-full gap-10 text-lg">
+          {navItems.map((item, i) => (
+            <li key={i}>
+              <NavLink
+                to={item.path}
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `${isActive ? "opacity-100" : "opacity-70"}`
+                }
+              >
+                {item.name}
+              </NavLink>
+            </li>
+          ))}
 
-				<div className='text-xl md:hidden mx-5' onClick={() => setOpen(!open)}>
-					{!open ? <span > <IoMenuOutline /> </span> : <IoIosClose />}
-				</div>
-			</div>
+          <div className="flex items-center gap-2">
+            <GrLanguage />
+            <span>EN</span>
+          </div>
 
-		</nav>
-	)
-}
+          <button className="border px-6 py-3 rounded-xl">
+            Login / Sign Up
+          </button>
+        </ul>
+      </div>
+    </nav>
+  );
+};

@@ -21,11 +21,12 @@ import { Deals } from './Pages/Deals/Deals'
 import { MyTrips } from './Pages/MyTrips/MyTrips'
 import Layout from './components/Layout'
 import { BookingFlow } from './Pages/BookingFlow'
+import AuthPage from './Pages/AuthPage'
 
 
 
 function App() {
-	
+
 	return (
 		< div className=''>
 			<Routes>
@@ -36,11 +37,13 @@ function App() {
 
 					{/* <Route path="results" element={<Results />} /> */}
 					<Route path="flight/:id" element={<FlightsDetails />} />
-					
-					<Route path='/booking' element={<BookingFlow/>}/>
+
+					<Route path='/booking' element={<BookingFlow />} />
 					<Route path="myTrips" element={<MyTrips />} />
 					<Route path="deals" element={<Deals />} />
 					<Route path="contact" element={<Contact />} />
+					<Route path="AuthPage" element={<AuthPage />} />
+
 				</Route>
 				<Route path='*' element={<NotFound />} />
 

@@ -12,7 +12,10 @@ export const MainPage = () => {
     return (
         <div>
             <Home/>
+            <div className='px-16'>
+
             <Features />
+            </div>
             <Popular />
             <OfferBanner />
             <WhyChooseUs />
