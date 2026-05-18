@@ -16,8 +16,12 @@ import {
 import {
   BsAirplaneFill,
 } from "react-icons/bs";
+import { useFlight } from '../../context/FlightContext';
 
 export const Confirmation = () => {
+
+    const { selectedFlight } = useFlight()
+  
   return (
     <div className="min-h-screen bg-[#F5F7FB] px-16 pt-20 pb-10">
 

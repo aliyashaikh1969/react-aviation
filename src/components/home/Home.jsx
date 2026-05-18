@@ -2,9 +2,14 @@ import React from 'react'
 import HeroImg from '../../assets/heroimg.png'
 import logo from '../../assets/aviation-logo.png'
 import { SearchFlights } from '../SearchFlights/SearchFlights';
+// import { useEffect } from 'react';
+// import { globalPostService } from '../../globalApiServices';
+
 
 
 export const Home = () => {
+
+
 	return (
 		<>
 			<div className="w-full bg-cover bg-center px-16 py-5 flex justify-between flex-col"

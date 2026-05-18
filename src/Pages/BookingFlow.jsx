@@ -7,14 +7,9 @@ import { Results } from '../Pages/Fligths/Results'
 import { Stepper } from './Stepper'
 
 
-
 export const BookingFlow = () => {
     const [step, setStep] = useState(2);
 
-    const [bookingData, setBookingData] = useState({
-        selectedSeats: [],
-        totalPrice: 0,
-    });
 
     const nextStep = () => {
         setStep((prev) => prev + 1);
@@ -25,20 +20,20 @@ export const BookingFlow = () => {
     }
     return (
         <div>
-             <Stepper step={step} />
+            <Stepper step={step} />
             {
                 step == 2 && (
-                    <Results 
-                    nextStep={nextStep}/>
+                    <Results
+                        nextStep={nextStep} />
                 )
             }
             {
                 step === 3 && (
                     <Seats
                         nextStep={nextStep}
-                        bookingData={bookingData}
-                        prevStep = {prevStep}
-                        setBookingData={setBookingData}
+                
+                        prevStep={prevStep}
+                        
                     />
                 )
             }
@@ -47,7 +42,6 @@ export const BookingFlow = () => {
                     <Summary
                         nextStep={nextStep}
                         prevStep={prevStep}
-                        bookingData={bookingData}
                     />
                 )
             }
@@ -61,10 +55,7 @@ export const BookingFlow = () => {
             }
             {
                 step === 6 && (
-                    <Confirmation
-                        bookingData={bookingData}
-                    
-                    />
+                    <Confirmation/>
                 )
             }
         </div>

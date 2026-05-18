@@ -15,7 +15,6 @@ export const SearchSummary = ({ onModify }) => {
 
   const {flightData} = useFlight()
 
-  console.log(flightData)
 
   return (
     <div className="bg-white text-black rounded-xl shadow-md">

@@ -13,7 +13,7 @@ import { useFlight } from '../../context/FlightContext';
 
 export const SearchFlights = ({ initialData = {}, onSearch }) => {
   const dateRef = useRef(null);
-  const { flightData,setFlightData } = useFlight();
+  const { flightData, setFlightData } = useFlight();
 
 
   const openCalendar = () => {
@@ -32,8 +32,8 @@ export const SearchFlights = ({ initialData = {}, onSearch }) => {
 
     setFlightData({
       ...flightData,
-      from:flightData.to,
-      to:flightData.from,
+      from: flightData.to,
+      to: flightData.from,
     });
   };
 
@@ -65,13 +65,13 @@ export const SearchFlights = ({ initialData = {}, onSearch }) => {
       </div>
 
       {/* search form */}
-      <div className="relative p-4 shadow-2xl flex flex-col lg:flex-row  overflow-visible bg-white justify-between  w-full md:rounded-e-xl md:rounded-bl-xl">
+      <div className="relative p-4 shadow-2xl flex flex-col lg:flex-row overflow-visible bg-white justify-between  w-full md:rounded-e-xl md:rounded-bl-xl">
 
         {/* FROM */}
-        <div className="flex-1 min-w-0 p-2 lg:border-r">
+        <div className="flex-1 min-w-0 p-2 lg:border overflow-hidden">
           <p className="text-xs text-gray-600 font-semibold">FROM</p>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between md:pr-3">
             <div className="flex items-center w-full">
               <span className="text-[#06448a] p-2 text-xl">
                 <FiMapPin />
@@ -94,18 +94,21 @@ export const SearchFlights = ({ initialData = {}, onSearch }) => {
         </div>
 
         {/* SWAP BUTTON */}
-        <button
-          onClick={swapLocation}
-          className="absolute lg:left-[24%] lg:top-1/2 lg:-translate-y-1/2 left-1/2 top-[92px] -translate-x-1/2 border p-2 rounded-full bg-white shadow-lg text-[#06448a] z-20"
-        >
-          <LiaExchangeAltSolid />
-        </button>
+        <div className='md:w-2 h-2  flex items-center justify-center -translate-x-[2px]'>
+
+          <button
+            onClick={swapLocation}
+            className=" border p-2 rounded-full bg-white shadow-lg text-[#06448a] z-20"
+          >
+            <LiaExchangeAltSolid />
+          </button>
+        </div>
 
         {/* TO */}
-        <div className="flex-1 min-w-0 p-2 lg:border-r">
+        <div className="flex-1 min-w-0 p-2 lg:border overflow-hidden">
           <p className="text-xs text-gray-600 font-semibold">TO</p>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between md:pl-3">
             <div className="flex items-center w-full">
               <span className="text-[#06448a] p-2 text-xl">
                 <BsAirplane />

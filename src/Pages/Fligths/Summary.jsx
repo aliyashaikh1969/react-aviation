@@ -10,10 +10,9 @@ import { FaArrowLeft } from "react-icons/fa6";
 export const Summary = ({
   nextStep,
   prevStep,
-  bookingData
 }) => {
 
-  console.log(bookingData)
+
   return (
     <div className='px-16 pt-20 '>
        <h2 className='md:text-xl text-lg text-[#031e3d] font-semibold'>Booking Summary</h2>

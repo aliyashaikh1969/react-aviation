@@ -6,13 +6,20 @@ import { IoMenuOutline } from "react-icons/io5";
 import { IoIosClose } from "react-icons/io";
 
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+
+import { FiUser, FiLogOut } from "react-icons/fi";
+
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  const { authData, logout } = useAuth()
+
 
   const navItems = [
     { name: "Home", path: "/" },
-    { name: "Flights", path: "/booking" },
     { name: "My Trips", path: "/myTrips" },
     { name: "Deals", path: "/deals" },
     { name: "Contact", path: "/contact" },
@@ -21,7 +28,7 @@ export const Navbar = () => {
   return (
     <nav className="bg-[#031e3d] text-white w-full sticky top-0 z-50 shadow-lg">
       <div className="flex items-center justify-between px-5 md:px-14 h-20">
-        
+
         {/* LOGO */}
         <div className="z-50">
           <img src={logo} alt="logo" className="w-36 md:w-40" />
@@ -35,10 +42,9 @@ export const Navbar = () => {
                 to={item.path}
                 className={({ isActive }) =>
                   `relative text-sm tracking-wide transition-all duration-300
-                  ${
-                    isActive
-                      ? "opacity-100 after:w-full"
-                      : "opacity-60 hover:opacity-100"
+                  ${isActive
+                    ? "opacity-100 after:w-full"
+                    : "opacity-60 hover:opacity-100"
                   }
                   
                   after:content-['']
@@ -66,14 +72,103 @@ export const Navbar = () => {
             <span className="ml-2">EN</span>
           </div>
 
-          <button>
-          <NavLink to={'AuthPage'} className={({ isActive }) =>`border border-white/30 px-4 py-2 rounded-xl text-sm transition-all duration-300  ${
-                    isActive
+          <div className="relative">
+
+            {
+              authData.isLoggedIn ? (
+
+                <div>
+
+                  {/* PROFILE BUTTON */}
+
+                  <button
+                    onClick={() =>
+                      setProfileOpen(!profileOpen)
+                    }
+                    className="flex items-center gap-3 border border-white/20 px-4 py-2 rounded-2xl hover:bg-white hover:text-[#031e3d] transition-all duration-300"
+                  >
+
+                    <div className="w-9 h-9 rounded-full bg-white text-[#031e3d] flex items-center justify-center font-semibold">
+                      {authData.name?.charAt(0).toUpperCase()}
+                    </div>
+
+                    <span className="text-sm font-medium">
+                      {authData.name}
+                    </span>
+
+                  </button>
+
+                  {/* DROPDOWN */}
+
+                  {
+                    profileOpen && (
+
+                      <div className="absolute right-0 mt-3 w-60 bg-white text-[#031e3d] rounded-2xl shadow-2xl overflow-hidden border border-slate-200 z-50">
+
+                        {/* TOP */}
+
+                        <div className="px-5 py-4 border-b border-slate-100">
+
+                          <h3 className="font-semibold">
+                            {authData.name}
+                          </h3>
+
+                          <p className="text-sm text-slate-500 mt-1">
+                            {authData.email}
+                          </p>
+
+                        </div>
+
+                        {/* MENU */}
+
+                        <div className="p-2">
+
+                          <NavLink
+                            to="/profile"
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 transition-all text-sm"
+                          >
+                            <FiUser />
+
+                            My Profile
+                          </NavLink>
+
+
+                          <button
+                            onClick={logout}
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 text-red-500 transition-all text-sm"
+                          >
+                            <FiLogOut />
+
+                            Logout
+                          </button>
+
+                        </div>
+                      </div>
+
+                    )
+                  }
+
+                </div>
+
+              ) : (
+
+                <NavLink
+                  to="/AuthPage"
+                  className={({ isActive }) =>
+                    `border border-white/30 px-4 py-2 rounded-xl text-sm transition-all duration-300
+          ${isActive
                       ? "bg-white text-[#031e3d]"
-                      : "hover:bg-white hover:text-[#031e3d] "
-                  }`}> Login / Sign Up
-			</NavLink> 
-          </button>
+                      : "hover:bg-white hover:text-[#031e3d]"
+                    }`
+                  }
+                >
+                  Login / Sign Up
+                </NavLink>
+
+              )
+            }
+
+          </div>
         </div>
 
         {/* MOBILE MENU BUTTON */}
@@ -88,11 +183,10 @@ export const Navbar = () => {
       {/* MOBILE MENU */}
       <div
         className={`md:hidden absolute top-0 left-0 w-full bg-[#031e3d] transition-all duration-500 overflow-hidden
-        ${
-          open
+        ${open
             ? "h-screen opacity-100"
             : "h-0 opacity-0 pointer-events-none"
-        }`}
+          }`}
       >
         <ul className="flex flex-col items-center justify-center h-full gap-10 text-lg">
           {navItems.map((item, i) => (
@@ -113,10 +207,33 @@ export const Navbar = () => {
             <GrLanguage />
             <span>EN</span>
           </div>
-
-          <button className="border px-6 py-3 rounded-xl">
-            Login / Sign Up
-          </button>
+          {
+            authData.isLoggedIn ? (
+              <button
+                onClick={() => {
+                  logout();
+                  setOpen(false);
+                }}
+                className="border border-red-400 px-4 py-2 rounded-xl text-sm hover:bg-red-500 transition-all"
+              >
+                Logout
+              </button>
+            ) : (
+              <NavLink
+                to="/AuthPage"
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `border border-white/30 px-4 py-2 rounded-xl text-sm transition-all duration-300
+        ${isActive
+                    ? "bg-white text-[#031e3d]"
+                    : "hover:bg-white hover:text-[#031e3d]"
+                  }`
+                }
+              >
+                Login / Sign Up
+              </NavLink>
+            )
+          }
         </ul>
       </div>
     </nav>

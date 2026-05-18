@@ -10,8 +10,11 @@ import {
 } from "react-icons/fi";
 
 import { BsAirplaneFill } from "react-icons/bs";
+import { useFlight } from '../../context/FlightContext';
 
 export const Payment = ({ nextStep }) => {
+
+  const { selectedFlight } = useFlight()
   return (
     <div className='flex justify-center gap-5 pb-10 pt-20 px-16 flex-col md:flex-row'>
       <div>
@@ -42,7 +45,9 @@ export const Payment = ({ nextStep }) => {
               </h3>
 
               <p className="text-xs text-slate-500 mt-1">
-                IndiGo 6E 523 · Airbus A320
+                {selectedFlight?.flights.map((item) => item?.airline)}
+                {selectedFlight?.flights.map((item) => item?.flight_number)}  | Economy
+                · Airbus A320
               </p>
             </div>
 
@@ -55,7 +60,7 @@ export const Payment = ({ nextStep }) => {
           <div className="flex items-center gap-3 mb-6">
 
             <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center">
-              <BsAirplaneFill className="text-blue-700 text-xl rotate-45" />
+              <img src={selectedFlight?.airline_logo} className='w-[100%] h-[100%] object-cover' alt="" />
             </div>
 
             <div>
@@ -75,15 +80,17 @@ export const Payment = ({ nextStep }) => {
             {/* From */}
             <div>
               <h2 className="text-2xl font-bold text-[#0A2A6B]">
-                DEL
+                {selectedFlight?.flights.map((item) => item?.departure_airport?.id)}
+
               </h2>
 
-              <p className="text-slate-500 mt-1 text-xs">
-                New Delhi
+              <p className="text-slate-500 mt-1 text-xs max-w-32">
+                {selectedFlight?.flights.map((item) => item?.departure_airport?.name)}
+
               </p>
 
               <p className="text-sm font-semibold text-slate-800 mt-2">
-                10:30 AM
+                {selectedFlight?.flights.map((item) => item?.departure_airport?.time.split(" ")[1])}
               </p>
             </div>
 
@@ -91,7 +98,7 @@ export const Payment = ({ nextStep }) => {
             <div className="flex flex-col items-center flex-1 px-4">
 
               <span className="text-xs text-slate-500 mb-2">
-                2h 20m
+                {selectedFlight?.total_duration}
               </span>
 
               <div className="relative w-full flex items-center">
@@ -106,22 +113,24 @@ export const Payment = ({ nextStep }) => {
               </div>
 
               <span className="text-xs text-blue-700 bg-blue-50 px-3 py-1 rounded-full mt-3 font-medium">
-                Non-stop
+                {selectedFlight?.type == "One way" ? "Non-stop" : selectedFlight?.type}
               </span>
             </div>
 
             {/* To */}
             <div className="text-right">
               <h2 className="text-2xl font-bold text-[#0A2A6B]">
-                BOM
+                {selectedFlight?.flights.map((item) => item?.arrival_airport?.id)}
+
               </h2>
 
-              <p className="text-slate-500 mt-1 text-xs">
-                Mumbai
+              <p className="text-slate-500 mt-1 text-xs max-w-32">
+                {selectedFlight?.flights.map((item) => item?.arrival_airport?.name)}
+
               </p>
 
               <p className="text-xs font-semibold text-slate-800 mt-2">
-                12:50 PM
+                {selectedFlight?.flights.map((item) => item?.arrival_airport?.time.split(" ")[1])}
               </p>
             </div>
           </div>
@@ -140,7 +149,8 @@ export const Payment = ({ nextStep }) => {
                 </p>
 
                 <h4 className="font-semibold text-xs text-slate-800 mt-1">
-                  24 May 2024
+                  {selectedFlight?.flights.map((item) => item?.departure_airport?.time.split(" ")[0])}
+
                 </h4>
               </div>
             </div>
@@ -199,7 +209,7 @@ export const Payment = ({ nextStep }) => {
 
             <div className="text-xs flex items-center justify-between text-slate-600">
               <span>Base Fare</span>
-              <span className="font-medium">₹ 6,499</span>
+              <span className="font-medium">₹ {selectedFlight?.price}</span>
             </div>
 
             <div className="text-xs flex items-center justify-between text-slate-600">

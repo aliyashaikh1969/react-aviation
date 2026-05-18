@@ -8,6 +8,8 @@ import {
   FiCalendar,
   FiHeadphones,
   FiTag,
+  FiEyeOff,
+  FiEye,
 } from "react-icons/fi";
 
 import {
@@ -22,10 +24,101 @@ import {
   FaYoutube,
   FaXTwitter,
 } from "react-icons/fa6";
+import { Features } from "../components/Features/Features";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const AuthPage = () => {
 
+
   const [activeTab, setActiveTab] = useState("login");
+  const { authData, setAuthData } = useAuth()
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate()
+
+  const handleChange = (e) => {
+
+    const { name, value, type, checked } = e.target;
+    console.log(name, value, checked, type)
+    setAuthData({
+      ...authData, [name]: type === "checkbox" ? checked : value
+    })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (activeTab === "signup") {
+
+      // Empty fields check
+
+      if (
+        !authData.name ||
+        !authData.email ||
+        !authData.password ||
+        !authData.confirmPassword
+      ) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      // Password match check
+
+      if (authData.password !== authData.confirmPassword) {
+        toast.error("Passwords do not match");
+        return;
+      }
+
+      // Save user
+
+      const userData = {
+        name: authData.name,
+        email: authData.email,
+        password: authData.password,
+        remember: authData.remember,
+        isLoggedIn: true,
+      };
+
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      setAuthData(userData);
+
+toast.success("Login Successful");
+      navigate("/")
+
+    } else {
+
+      // LOGIN
+
+      const savedUser =
+        JSON.parse(localStorage.getItem("user"));
+
+      if (!savedUser) {
+        toast.error("user not found")
+      
+        return;
+      }
+
+      if (
+        authData.email === savedUser.email &&
+        authData.password === savedUser.password
+      ) {
+
+        setAuthData({
+          ...savedUser,
+          isLoggedIn: true,
+        });
+
+  toast.success("Login Successful");
+        navigate('/')
+      } else {
+toast.error("Invalid Email or Password");      }
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-[#F5F7FB]">
@@ -123,12 +216,12 @@ const AuthPage = () => {
 
             {/* Plane */}
 
-            <div className="relative z-10 hidden lg:flex justify-end mt-10">
+            {/* <div className="relative z-10 hidden lg:flex justify-end mt-10">
 
               <div className="w-52 h-52 rounded-full bg-white/10 flex items-center justify-center backdrop-blur">
                 <FaPlane className="text-[110px] rotate-45 text-white" />
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* RIGHT SIDE */}
@@ -141,11 +234,10 @@ const AuthPage = () => {
 
               <button
                 onClick={() => setActiveTab("login")}
-                className={`h-14 text-lg font-semibold transition-all border-b-2 flex items-center justify-center gap-2 ${
-                  activeTab === "login"
-                    ? "border-[#0A58FF] text-[#0A58FF]"
-                    : "border-transparent text-slate-500"
-                }`}
+                className={`h-14 text-lg font-semibold transition-all border-b-2 flex items-center justify-center gap-2 ${activeTab === "login"
+                  ? "border-[#0A58FF] text-[#0A58FF]"
+                  : "border-transparent text-slate-500"
+                  }`}
               >
                 <FiUser />
 
@@ -154,11 +246,10 @@ const AuthPage = () => {
 
               <button
                 onClick={() => setActiveTab("signup")}
-                className={`h-14 text-lg font-semibold transition-all border-b-2 flex items-center justify-center gap-2 ${
-                  activeTab === "signup"
-                    ? "border-[#0A58FF] text-[#0A58FF]"
-                    : "border-transparent text-slate-500"
-                }`}
+                className={`h-14 text-lg font-semibold transition-all border-b-2 flex items-center justify-center gap-2 ${activeTab === "signup"
+                  ? "border-[#0A58FF] text-[#0A58FF]"
+                  : "border-transparent text-slate-500"
+                  }`}
               >
                 <FiUser />
 
@@ -168,7 +259,7 @@ const AuthPage = () => {
 
             {/* FORM */}
 
-            <div className="max-w-xl mx-auto pt-10">
+            <form onSubmit={handleSubmit} className="max-w-xl mx-auto pt-10">
 
               <div className="text-center">
 
@@ -197,7 +288,10 @@ const AuthPage = () => {
                     <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg" />
 
                     <input
+                      name="name"
                       type="text"
+                      value={authData.name}
+                      onChange={handleChange}
                       placeholder="Enter your full name"
                       className="w-full h-14 rounded-2xl border border-slate-200 bg-white pl-12 pr-4 outline-none focus:border-[#0A58FF]"
                     />
@@ -216,7 +310,10 @@ const AuthPage = () => {
                   <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg" />
 
                   <input
+                    name="email"
                     type="email"
+                    value={authData.email}
+                    onChange={handleChange}
                     placeholder="Enter your email"
                     className="w-full h-14 rounded-2xl border border-slate-200 bg-white pl-12 pr-4 outline-none focus:border-[#0A58FF]"
                   />
@@ -242,10 +339,17 @@ const AuthPage = () => {
                   <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg" />
 
                   <input
-                    type="password"
+                    name="password"
+                    value={authData.password}
+                    onChange={handleChange}
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     className="w-full h-14 rounded-2xl border border-slate-200 bg-white pl-12 pr-4 outline-none focus:border-[#0A58FF]"
                   />
+
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                  </button>
                 </div>
               </div>
 
@@ -261,10 +365,17 @@ const AuthPage = () => {
                     <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg" />
 
                     <input
-                      type="password"
-                      placeholder="Confirm your password"
+                      name="confirmPassword"
+                      value={authData.confirmPassword}
+                      onChange={handleChange}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
                       className="w-full h-14 rounded-2xl border border-slate-200 bg-white pl-12 pr-4 outline-none focus:border-[#0A58FF]"
                     />
+
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                      {showPassword ? <FiEyeOff /> : <FiEye />}
+                    </button>
                   </div>
                 </div>
               )}
@@ -274,7 +385,7 @@ const AuthPage = () => {
               <div className="flex items-center justify-between mt-6">
 
                 <label className="flex items-center gap-3 text-slate-600 text-sm">
-                  <input type="checkbox" className="w-4 h-4" />
+                  <input type="checkbox" className="w-4 h-4" name="remember" checked={authData.remember} onChange={handleChange} />
 
                   Remember Me
                 </label>
@@ -331,6 +442,7 @@ const AuthPage = () => {
                   : "Already have an account?"}
 
                 <button
+                  type="button"
                   onClick={() =>
                     setActiveTab(
                       activeTab === "login" ? "signup" : "login"
@@ -341,177 +453,10 @@ const AuthPage = () => {
                   {activeTab === "login" ? "Sign up" : "Login"}
                 </button>
               </p>
-            </div>
+            </form>
           </div>
-        </div>
-
-        {/* FEATURES */}
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mt-8">
-
-          {[
-            {
-              icon: <FiTag />,
-              title: "Best Price Guarantee",
-              desc: "We ensure you get the best fares on every booking.",
-            },
-            {
-              icon: <FiHeadphones />,
-              title: "24/7 Customer Support",
-              desc: "We're here to help you anytime, anywhere.",
-            },
-            {
-              icon: <FiCalendar />,
-              title: "Easy Booking",
-              desc: "Simple steps to book your perfect flight.",
-            },
-            {
-              icon: <FiShield />,
-              title: "Secure Payments",
-              desc: "Your payments are safe with us.",
-            },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm flex gap-4"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#0A58FF] flex items-center justify-center text-2xl shrink-0">
-                {item.icon}
-              </div>
-
-              <div>
-                <h3 className="font-semibold text-[#0A2A6B]">
-                  {item.title}
-                </h3>
-
-                <p className="text-sm text-slate-500 mt-1 leading-6">
-                  {item.desc}
-                </p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
-
-      {/* ================= FOOTER ================= */}
-
-      <footer className="bg-[#001B5E] text-white mt-12">
-
-        <div className="max-w-7xl mx-auto px-4 py-14 grid md:grid-cols-2 lg:grid-cols-5 gap-10">
-
-          {/* Logo */}
-
-          <div>
-
-            <div className="flex items-center gap-3">
-
-              <FaPlane className="text-3xl rotate-45" />
-
-              <div>
-                <h2 className="text-3xl font-bold">
-                  SkyBook
-                </h2>
-
-                <p className="text-blue-200 text-sm">
-                  Fly Beyond Limits
-                </p>
-              </div>
-            </div>
-
-            <p className="text-blue-100 mt-6 leading-7">
-              Your trusted travel partner for safe,
-              comfortable & affordable journeys.
-            </p>
-
-            <div className="flex gap-3 mt-6">
-
-              {[FaFacebookF, FaXTwitter, FaInstagram, FaYoutube].map(
-                (Icon, index) => (
-                  <button
-                    key={index}
-                    className="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-all"
-                  >
-                    <Icon />
-                  </button>
-                )
-              )}
-            </div>
-          </div>
-
-          {/* Links */}
-
-          {[
-            {
-              title: "Company",
-              items: ["About Us", "Careers", "Press", "Blog"],
-            },
-            {
-              title: "Support",
-              items: ["Help Center", "FAQs", "Baggage Info", "Contact Us"],
-            },
-            {
-              title: "Policies",
-              items: [
-                "Privacy Policy",
-                "Terms & Conditions",
-                "Cancellation Policy",
-                "Refund Policy",
-              ],
-            },
-          ].map((section, index) => (
-            <div key={index}>
-
-              <h3 className="text-xl font-semibold">
-                {section.title}
-              </h3>
-
-              <div className="mt-6 space-y-4">
-
-                {section.items.map((item, i) => (
-                  <button
-                    key={i}
-                    className="block text-blue-100 hover:text-white transition-all"
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {/* Newsletter */}
-
-          <div>
-
-            <h3 className="text-xl font-semibold">
-              Subscribe to our Newsletter
-            </h3>
-
-            <p className="text-blue-100 mt-6 leading-7">
-              Get the best deals, travel tips and updates straight to your inbox.
-            </p>
-
-            <div className="flex mt-6">
-
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="flex-1 h-14 rounded-l-2xl px-4 bg-white text-slate-700 outline-none"
-              />
-
-              <button className="px-6 rounded-r-2xl bg-[#0A58FF] hover:bg-blue-600 transition-all font-semibold">
-                Subscribe
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom */}
-
-        <div className="border-t border-white/10 py-5 text-center text-blue-200 text-sm">
-          © 2024 SkyBook. All rights reserved.
-        </div>
-      </footer>
     </div>
   );
 };

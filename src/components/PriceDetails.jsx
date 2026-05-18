@@ -4,9 +4,12 @@ import {
   FiTag,
   FiCheckCircle,
 } from "react-icons/fi";
+import { useFlight } from '../context/FlightContext';
 
 
 export const PriceDetails = () => {
+
+  const { selectedFlight } = useFlight()
   return (
     <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
 
@@ -33,11 +36,11 @@ export const PriceDetails = () => {
         {/* Base Fare */}
         <div className="flex items-center justify-between text-slate-600">
           <span className="text-sm">
-            Base Fare (1 × ₹2,499)
+            Base Fare (1 × {selectedFlight?.price})
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
-            ₹ 2,499
+            {selectedFlight?.price}
           </span>
         </div>
 

@@ -7,10 +7,14 @@ import {
 } from "react-icons/fi";
 
 import { BsAirplaneFill } from "react-icons/bs";
+import { useFlight } from '../context/FlightContext';
 
 export const FlightDetails = () => {
+
+  const { selectedFlight } = useFlight()
+
   return (
-     <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
+    <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
 
       {/* Heading */}
       <div className="flex items-center gap-3 mb-6">
@@ -19,12 +23,12 @@ export const FlightDetails = () => {
           <BsAirplaneFill className="text-blue-700 text-lg rotate-45" />
         </div>
 
-        
-          <h2 className="text-xl font-bold text-[#0A2A6B]">
-            Flight Details
-          </h2>
 
-       
+        <h2 className="text-xl font-bold text-[#0A2A6B]">
+          Flight Details
+        </h2>
+
+
       </div>
 
       {/* Flight Card */}
@@ -36,16 +40,18 @@ export const FlightDetails = () => {
           <div className="flex items-center gap-4">
 
             <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center">
-              <BsAirplaneFill className="text-blue-700 text-xl rotate-45" />
+              <img src={selectedFlight?.airline_logo} className='w-[100%] h-[100%] object-cover' alt="" />
+
             </div>
 
             <div>
               <h3 className="text-lg font-bold text-[#0A2A6B]">
-                IndiGo
+                {selectedFlight?.flights.map((item) => item?.airline)}
               </h3>
 
               <p className="text-xs text-slate-500">
-                6E 2112 | Economy
+                {selectedFlight?.flights.map((item) => item?.flight_number)}  |                   {selectedFlight?.flights.map((item) => item.travel_class)}
+
               </p>
             </div>
           </div>
@@ -65,20 +71,22 @@ export const FlightDetails = () => {
             <div className="text-center lg:text-left">
 
               <h2 className="text-2xl font-bold text-[#0A2A6B]">
-                10:00
+                {selectedFlight?.flights.map((item) => item?.departure_airport?.time.split(" ")[1])}
               </h2>
 
               <p className="text-xs text-slate-500 mt-2">
-                24 May 2024
+                {selectedFlight?.flights.map((item) => item?.departure_airport?.time.split(" ")[0])}
+
               </p>
 
               <h4 className="text-base font-semibold text-slate-800 mt-4">
-                Mumbai (BOM)
+                {selectedFlight?.flights.map((item) => item?.departure_airport?.id)}
+
               </h4>
 
               <p className="text-xs text-slate-500 mt-1 leading-6">
-                Chhatrapati Shivaji <br />
-                Maharaj Intl. Airport
+                {selectedFlight?.flights.map((item) => item?.departure_airport?.name)}
+
               </p>
             </div>
 
@@ -87,7 +95,7 @@ export const FlightDetails = () => {
 
               <div className="flex items-center gap-2 text-slate-500 text-xs mb-3">
                 <FiClock />
-                <span>2h 30m</span>
+                <span>{selectedFlight?.total_duration}</span>
               </div>
 
               {/* Flight Line */}
@@ -104,7 +112,7 @@ export const FlightDetails = () => {
 
               {/* Non Stop */}
               <div className="mt-4 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
-                Non-stop
+                {selectedFlight?.type == "One way" ? "Non-stop" : selectedFlight?.type}
               </div>
             </div>
 
@@ -112,20 +120,20 @@ export const FlightDetails = () => {
             <div className="text-center lg:text-right">
 
               <h2 className="text-2xl font-bold text-[#0A2A6B]">
-                12:30
+                {selectedFlight?.flights.map((item) => item?.arrival_airport?.time.split(" ")[1])}
               </h2>
 
               <p className="text-xs text-slate-500 mt-2">
-                24 May 2024
+                {selectedFlight?.flights.map((item) => item?.arrival_airport?.time.split(" ")[0])}
               </p>
 
               <h4 className="text-base font-semibold text-slate-800 mt-4">
-                Delhi (DEL)
+                {selectedFlight?.flights.map((item) => item?.arrival_airport?.id)}
               </h4>
 
               <p className="text-xs text-slate-500 mt-1 leading-6">
-                Indira Gandhi Intl. <br />
-                Airport
+                {selectedFlight?.flights.map((item) => item?.arrival_airport?.name)}
+
               </p>
             </div>
           </div>
@@ -146,7 +154,7 @@ export const FlightDetails = () => {
                 </p>
 
                 <h4 className="text-sm font-semibold text-slate-800 mt-1">
-                  Airbus A320
+                  {selectedFlight?.flights.map((item) => item.airplane)}
                 </h4>
               </div>
             </div>
@@ -179,10 +187,11 @@ export const FlightDetails = () => {
               <div>
                 <p className="text-xs text-slate-500">
                   Cabin Class
+
                 </p>
 
                 <h4 className="text-sm font-semibold text-slate-800 mt-1">
-                  Economy
+                  {selectedFlight?.flights.map((item) => item.travel_class)}
                 </h4>
               </div>
             </div>
