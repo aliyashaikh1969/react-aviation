@@ -19,7 +19,7 @@ export const FlightProvider = ({ children }) => {
 
 
   const [selectedFlight ,setSelectedFlight] = useState()
-  const [selectedSeats,setSelectedSeates] = useState([])
+  const [selectedSeats,setSelectedSeats] = useState([])
 
   useEffect(()=>{
     localStorage.setItem('flightData',JSON.stringify(flightData))
@@ -30,7 +30,7 @@ export const FlightProvider = ({ children }) => {
   },[selectedFlight])
 
   return (
-    <FlightContext.Provider value={{ flightData, setFlightData ,selectedFlight,setSelectedFlight,selectedSeats,setSelectedSeates}}>
+    <FlightContext.Provider value={{ flightData, setFlightData ,selectedFlight,setSelectedFlight,selectedSeats,setSelectedSeats}}>
       {children}
     </FlightContext.Provider>
   );
