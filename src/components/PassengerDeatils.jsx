@@ -7,6 +7,7 @@ import {
 } from "react-icons/fi";
 
 import { LiaIdCardSolid } from "react-icons/lia";
+import { usePassenger } from '../context/PassengerContext';
 
 export const PassengerDeatils = () => {
   const dateRef = useRef(null);
@@ -18,6 +19,31 @@ export const PassengerDeatils = () => {
       dateRef.current.focus();
     }
   };
+
+
+
+  const {
+    passengerData,
+    setPassengerData,
+  } = usePassenger();
+
+
+  const handleChange = (e) => {
+
+    const { name, value } = e.target;
+
+    setPassengerData({
+      ...passengerData,
+      [name]: value
+    })
+    console.log(name, value)
+  }
+
+
+  const handleSubmit = ()=>{
+    e.preventDefault();
+  }
+
   return (
     <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
 
@@ -39,7 +65,7 @@ export const PassengerDeatils = () => {
       </div>
 
       {/* Form */}
-      <form className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-3">
 
         {/* Full Name */}
         <div>
@@ -49,6 +75,9 @@ export const PassengerDeatils = () => {
 
           <input
             type="text"
+            name='name'
+            value={passengerData.name}
+            onChange={handleChange}
             placeholder="Rahul Sharma"
             className="text-sm w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
           />
@@ -61,7 +90,10 @@ export const PassengerDeatils = () => {
           </label>
 
           <input
+            name='email'
             type="email"
+            value={passengerData.email}
+            onChange={handleChange}
             placeholder="rahul@email.com"
             className=" text-sm w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
           />
@@ -74,7 +106,10 @@ export const PassengerDeatils = () => {
           </label>
 
           <input
+            name='number'
             type="tel"
+            value={passengerData.number}
+            onChange={handleChange}
             placeholder="+91 98765 43210"
             className=" text-sm w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
           />
@@ -93,6 +128,9 @@ export const PassengerDeatils = () => {
               <input
                 ref={dateRef}
                 type="date"
+                name='dob'
+                value={passengerData.dob}
+                onChange={handleChange}
                 className="hide-date-icon appearance-none w-full h-14 px-4 pr-12 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
               />
 
@@ -110,7 +148,7 @@ export const PassengerDeatils = () => {
             </label>
 
             <div className="relative">
-              <select className=" text-sm appearance-none w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white">
+              <select name='gender' value={passengerData.gender} onChange={handleChange} className=" text-sm appearance-none w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white">
                 <option>Male</option>
                 <option>Female</option>
                 <option>Other</option>
@@ -131,7 +169,7 @@ export const PassengerDeatils = () => {
             </label>
 
             <div className="relative">
-              <select className=" text-sm appearance-none w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white">
+              <select name='nationality' value={passengerData.nationality} onChange={handleChange} className=" text-sm appearance-none w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white">
                 <option>Indian</option>
                 <option>American</option>
                 <option>Canadian</option>
@@ -148,7 +186,7 @@ export const PassengerDeatils = () => {
             </label>
 
             <div className="relative">
-              <select className=" text-sm appearance-none w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white">
+              <select name='IDProof' value={passengerData.IDProof} onChange={handleChange} className=" text-sm appearance-none w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white">
                 <option>Aadhaar Card</option>
                 <option>PAN Card</option>
                 <option>Passport</option>
@@ -167,6 +205,9 @@ export const PassengerDeatils = () => {
 
           <div className="relative">
             <input
+              name='IDNumber'
+              value={passengerData.IDNumber}
+              onChange={handleChange}
               type="text"
               placeholder="1234 5678 9012"
               className=" text-sm w-full h-14 px-4 pr-12 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
