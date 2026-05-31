@@ -1,36 +1,82 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 const FlightContext = createContext();
 
-export const FlightProvider = ({ children }) => {
-  const [flightData, setFlightData] = useState(()=>{
 
-    const savedFlightData = localStorage.getItem("flightData");
+const initialFlightData = {
+  from: "",
+  to: "",
+  date: "",
+  returnDate: "",
+  travellers: 1,
+  tripType: "oneway",
+};
 
-    return savedFlightData ? JSON.parse(savedFlightData):
-    {
-    from: "DELHI",
-    to: "MUMBAI",
-    date: "",
-    returnDate: "",
-    travellers: 1,
-    tripType: "oneway",
-  }});
+export const FlightProvider = ({
+  children,
+}) => {
 
 
-  const [selectedFlight ,setSelectedFlight] = useState()
-  const [selectedSeats,setSelectedSeats] = useState([])
+  const [flightData, setFlightData] =
+    useState(() => {
+      try {
+        const savedData = localStorage.getItem("flightData");
+        return savedData ? JSON.parse(savedData) : initialFlightData;
 
-  useEffect(()=>{
-    localStorage.setItem('flightData',JSON.stringify(flightData))
-  },[flightData])
+      } catch {
+        return initialFlightData
+      }
+    });
 
-  useEffect(()=>{
-    console.log("selectedFlight",selectedFlight)
-  },[selectedFlight])
+  // save in localStorage
+  useEffect(() => {
+    localStorage.setItem(
+      "flightData",
+      JSON.stringify(flightData)
+    );
+  }, [flightData]);
+
+  const [selectedFlight, setSelectedFlight] = useState(null);
+
+  const [selectedSeats, setSelectedSeats] = useState([]);
+
+
+
+  const upadateFlighhtData = (fields)=>{
+     setFlightData(prev=>({...prev , ...fields}))
+  }
+
+  const resetFlightData = () => {
+    localStorage.removeItem('flightData')
+    setFlightData(initialFlightData);
+    setSelectedFlight(null);
+    setSelectedSeats([]);
+
+  }
 
   return (
-    <FlightContext.Provider value={{ flightData, setFlightData ,selectedFlight,setSelectedFlight,selectedSeats,setSelectedSeats}}>
+    <FlightContext.Provider
+      value={{
+        flightData,
+        setFlightData,
+
+        initialFlightData,
+
+        selectedFlight,
+        setSelectedFlight,
+
+        selectedSeats,
+        setSelectedSeats,
+
+        resetFlightData,
+
+      }}
+    >
       {children}
     </FlightContext.Provider>
   );

@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import HeroImg from '../../assets/heroimg.png'
 import logo from '../../assets/aviation-logo.png'
 import { SearchFlights } from '../SearchFlights/SearchFlights';
+import { useFlight } from '../../context/FlightContext';
 // import { useEffect } from 'react';
 // import { globalPostService } from '../../globalApiServices';
 
@@ -9,6 +10,11 @@ import { SearchFlights } from '../SearchFlights/SearchFlights';
 
 export const Home = () => {
 
+	const {resetFlightData} = useFlight();
+
+	useEffect(()=>{
+		resetFlightData();
+	},[])
 
 	return (
 		<>

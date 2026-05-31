@@ -1,8 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-export const Filters = () => {
+export const Filters = ({filters,setFilters ,flights =[]}) => {
+
+
+    const handlePrice = (e) => {
+    setFilters(prev => ({ ...prev, price: Number(e.target.value) }))
+  }
+
   return (
-    <div className=' bg-white p-3 rounded-xl shadow-md'>
+    <div className=' bg-white p-3 rounded-xl shadow-md '>
       <div>
         {/* heading */}
         <div className='flex items-center justify-between py-3 border-b'>
@@ -14,11 +20,11 @@ export const Filters = () => {
           {/* price range */}
           <div className='py-3 border-b'>
             <p className='font-semibold text-gray-800'>Price Range</p>
-            <p className='font-semibold text-gray-800'>2000rs - 15000rs</p>
-            <input type="range" min={2000} max={15000} className='w-full h-1' />
+            <p className='font-semibold text-gray-800'>₹2000 - ₹{flights.price}</p>
+            <input onChange={handlePrice} type="range" value={filters.price} min={2000} max={15000} className='w-full h-1' />
             <div className='flex items-center justify-between text-gray-700 text-sm'>
-              <span>2000rs</span>
-              <span>15000rs</span>
+              <span>₹2000</span>
+              <span>₹15000</span>
             </div>
           </div>
 

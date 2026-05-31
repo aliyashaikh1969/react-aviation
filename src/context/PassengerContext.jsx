@@ -6,27 +6,13 @@ const PassengerContext = createContext();
 export const PassengerProvider = ({ children }) => {
 
     const [passengerData, setPassengerData] = useState({
-        name:"",
-        email:"",
-        number:"",
-        dob:"",
-        gender:"",
-        nationality:"",
-        IDProof:"",
-        IDNumber :"",
-    })
+      passengers:[]
+     })
 
     return (
-        <PassengerContext.Provider
-      value={{
-        passengerData,
-        setPassengerData,
-      }}
-    >
-
-      {children}
-
-    </PassengerContext.Provider>
+        <PassengerContext.Provider value={{passengerData,setPassengerData,}}>
+                {children}
+        </PassengerContext.Provider>
     )
 }
 

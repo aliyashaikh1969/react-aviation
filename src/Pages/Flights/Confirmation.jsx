@@ -17,11 +17,29 @@ import {
   BsAirplaneFill,
 } from "react-icons/bs";
 import { useFlight } from '../../context/FlightContext';
+import { useNavigate } from 'react-router-dom';
 
 export const Confirmation = () => {
 
-    const { selectedFlight } = useFlight()
-  
+const { selectedFlight, selectedSeats, flightData } = useFlight();
+const { passengerData } = usePassenger();
+
+const navigate = useNavigate();
+
+
+const firstFlight = selectedFlight?.flights?.[0];
+const TAXES = 1201;
+const seatTotal = selectedSeats.reduce((t, s) => t + s.price, 0);
+const grandTotal = (selectedFlight?.price ?? 0) + seatTotal + TAXES;
+
+
+const [pnr] = useState(
+  () => `SBLK${Math.random().toString(36).slice(2,7).toUpperCase()}`
+);
+const bookingDate = new Date().toLocaleDateString('en-IN', {
+  day: 'numeric', month: 'short', year: 'numeric'
+});
+
   return (
     <div className="min-h-screen bg-[#F5F7FB] px-16 pt-20 pb-10">
 

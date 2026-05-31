@@ -9,8 +9,25 @@ import {
   FiCheckSquare,
   FiShield,
 } from "react-icons/fi";
+import { useFlight } from "../context/FlightContext";
 
 const PaymentMethod = ({ nextStep }) => {
+  const { selectedFlight, selectedSeats } = useFlight();
+  const TAXES = 1201;
+  const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0);
+  const grandTotal = (selectedFlight?.price ?? 0) + seatTotal + TAXES;
+
+
+  const [cardData, setCardData] = useState({
+    number: "", name: "", expiry: "", cvv: ""
+  });
+
+  const formatCard = (val) =>
+  val.replace(/\D/g, "").slice(0, 16)
+     .replace(/(.{4})/g, "$1 ").trim();
+
+  const [errors, setErrors] = useState({});
+
 
   const [selectedMethod, setSelectedMethod] = useState("card");
 
@@ -40,6 +57,30 @@ const PaymentMethod = ({ nextStep }) => {
       icon: <FiBriefcase />,
     },
   ];
+
+
+  const handlePay =(e)=>{
+      e.preventDefault();
+
+
+      const newErrors = {};
+
+       if (cardData.number.replace(/\s/g, "").length !== 16)
+    newErrors.number = "Valid card number enter karo";
+  if (!cardData.name.trim())
+    newErrors.name = "Cardholder name enter karo";
+  if (!/^\d{2}\/\d{2}$/.test(cardData.expiry))
+    newErrors.expiry = "MM/YY format mein enter karo";
+  if (cardData.cvv.length !== 3)
+    newErrors.cvv = "3 digit CVV enter karo";
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+       nextStep();
+  }
 
   return (
     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
@@ -152,7 +193,7 @@ const PaymentMethod = ({ nextStep }) => {
           </div>
 
           {/* Form */}
-          <form className="space-y-5">
+          <form className="space-y-5" onSubmit={handlePay}>
 
             {/* Card Number */}
             <div>
@@ -162,6 +203,9 @@ const PaymentMethod = ({ nextStep }) => {
 
               <div className="relative">
                 <input
+                value={cardData.number}
+                onChange={(e)=>setCardData(p=>({...p, number:formatCard(e.target.value)}))}
+                maxLength={19}
                   type="text"
                   placeholder="1234 5678 9012 3456"
                   className="w-full h-14 rounded-2xl border border-slate-200 px-4 pr-12 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
@@ -236,13 +280,12 @@ const PaymentMethod = ({ nextStep }) => {
             <div className="flex  justify-center">
 
               <button
-                onClick={nextStep}
                 type="submit"
                 className="p-3 rounded-2xl bg-[#0A2A6B] hover:bg-[#081f52] transition-all duration-300 text-white text-lg font-semibold shadow-lg shadow-blue-100 flex items-center justify-center gap-3"
               >
                 <FiLock className="text-xl" />
 
-                Pay Securely ₹ 6,499
+                Pay Securely ₹{grandTotal.toLocaleString('en-IN')}
               </button>
             </div>
           </form>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import { SearchSummary } from '../../components/SearchSummary'
 import { PiArmchairFill, PiArmchairLight } from "react-icons/pi";
 import { IoIosExit } from "react-icons/io";
@@ -9,33 +9,32 @@ import { WhyChooseUs } from '../../components/WhyChoose/WhyChooseUs';
 import { SearchFlights } from '../../components/SearchFlights/SearchFlights';
 import { useFlight } from '../../context/FlightContext';
 import { seatLayoutData } from './SeatLayout';
+import toast from "react-hot-toast";
+import { SearchModify } from '../../components/search/SearchModify';
 
 
+export const Seats = ({ nextStep, prevStep }) => {
 
-export const Seats = ({
-	nextStep,
-	prevStep,
-}) => {
-	const [edit, setEdit] = useState(false);
-	
-	
-	
 	const { selectedFlight, selectedSeats, setSelectedSeats, flightData } = useFlight()
-	const seatTotal = selectedSeats.reduce((total,seat)=>total+ seat.price,0)
+	const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
 
 	const seatAlpha = ["F", "E", "D", null, "C", "B", "A"]
 
-	const occupiedSeats = ["8A","8B","9A","9B","9C","10A","10B","10C","11A","11B"];
-	let availableseats = 108-selectedSeats.length-occupiedSeats.length
-	
+	const TAXES = 1201;
+
+
+	let TOTAL_SEATS = 108;
+	const OCCUPIED_SEATS = ["8A", "8B", "9A", "9B", "9C", "10A", "10B", "10C", "11A", "11B"];
+	let availableSeats  = TOTAL_SEATS - selectedSeats.length - OCCUPIED_SEATS.length
+
 
 	const handleSeatSelect = (seat) => {
 
 		if (
-			occupiedSeats.includes(seat.seatNo)
+			OCCUPIED_SEATS.includes(seat.seatNo)
 		) return;
 
-		const alreadySelected =selectedSeats.includes(seat);
+		const alreadySelected = selectedSeats.some(s => s.seatNo === seat.seatNo)
 
 		if (alreadySelected) {
 
@@ -46,33 +45,27 @@ export const Seats = ({
 			);
 
 		} else {
-			const upadatedSeats = [
-				...selectedSeats,
-				seat
-			]
-			const latestSeats = upadatedSeats.splice(-flightData.travellers);
-			setSelectedSeats(
-				latestSeats
-			);
-			
-		}
-		
+			const updatedSeats = [...selectedSeats, seat]
+			const latestSeats = updatedSeats.slice(-flightData.travellers);
+			setSelectedSeats(latestSeats);
 
+		}
 	};
+
+	const handleNextStep = () => {
+		selectedSeats.length === flightData.travellers ? nextStep() : toast.error("Select seats")
+	}
+
+	const clearSeats = () => {
+		setSelectedSeats([])
+	}
 	return (
 		<div >
 			<div className='px-16 pt-20 '>
 				<h2 className='md:text-xl text-lg text-[#031e3d] font-semibold'>Choose Your Seats</h2>
-				<p className='text-[#031e3d] py-2  text-sm'>Select Your preferred seats ans enjoy your journey.</p>
-				{edit ? (
-					<SearchFlights
-						onSearch={() => setEdit(false)}
-					/>
-				) : (
-					<SearchSummary
-						onModify={() => setEdit(true)}
-					/>
-				)}
+				<p className='text-[#031e3d] py-2  text-sm'>Select Your preferred seats and enjoy your journey.</p>
+				{/* <SearchModify/> */}
+				<SearchSummary />
 			</div>
 			<div className='px-16 flex gap-5 flex-col md:flex-row '>
 				<div className='shadow-lg md:w-[70%] w-full flex flex-col p-3' >
@@ -112,7 +105,7 @@ export const Seats = ({
 							<div className=' pl-20'>
 								{
 									seatLayoutData.map((row, rowIndex) => (
-										<>
+										<Fragment>
 
 
 											{/* <h1>1{rowIndex}</h1> */}
@@ -148,7 +141,7 @@ export const Seats = ({
 															);
 														}
 
-														const isOccupied = occupiedSeats.includes(seat.seatNo);
+														const isOccupied = OCCUPIED_SEATS.includes(seat.seatNo);
 
 														const isSelected =
 															selectedSeats.some(
@@ -171,7 +164,7 @@ export const Seats = ({
 
 																<PiArmchairFill className="text-2xl rotate-90 " />
 																<div className=" absolute -top-14 left-1/2 -translate-x-1/2 hidden group-hover:flex gap-2 items-center bg-black text-white text-[10px] px-2 py-1 rounded-md z-100">
-																	<span>Seat:{seat.seatNo } </span>
+																	<span>Seat:{seat.seatNo} </span>
 																	<span>₹{seat.price}</span>
 																	<span>{seat.type}</span>
 
@@ -183,7 +176,7 @@ export const Seats = ({
 													})
 												}
 											</div>
-										</>
+										</Fragment>
 									))
 								}
 
@@ -193,12 +186,12 @@ export const Seats = ({
 						<div></div>
 					</div>
 					<div className='bg-blue-100 text-[#031e3d] font-semibold rounded-md flex items-center justify-between p-3'>
-						<p>Selected Seat: <span className='text-green-600'>{selectedSeats.map((seat) => seat.seatNo).join(", ")}</span></p>
-						<button className='text-sm text-red-600'>clear Selection</button>
+						<p>Selected Seat: <span className='text-green-600'>{selectedSeats.length > 0 ? selectedSeats.map((seat) => seat.seatNo).join(", ") : "--"}</span></p>
+						<button className='text-sm text-red-600' onClick={clearSeats}>clear Selection</button>
 					</div>
 					<div className='flex items-center justify-between py-3'>
 						<button onClick={prevStep} className='text-[#031e3d] gap-3 flex items-center border-2 rounded-md p-3'><span><FaArrowLeft /></span>Back</button>
-						<button onClick={nextStep} className='flex items-center gap-5 border-2 bg-[#031e3d] p-3 rounded-md text-white text-sm'>Continue to Summary <span><FaAngleRight /></span></button>
+						<button onClick={handleNextStep} className='flex items-center gap-5 border-2 bg-[#031e3d] p-3 rounded-md text-white text-sm'>Continue to Summary <span><FaAngleRight /></span></button>
 					</div>
 				</div>
 				<div className='w-full flex-col'>
@@ -231,11 +224,16 @@ export const Seats = ({
 						</div>
 						<div className='flex items-center justify-between py-3 border-b text-sm font-semibold'>
 							<p>Passengers</p>
-							<p>1 Adult</p>
+							<p>{flightData.travellers} Adult{flightData.travellers > 1 ? "s" : ""}</p>
 						</div>
 						<div className='flex items-center justify-between py-3 border-b text-sm font-semibold'>
 							<p>Seat</p>
-							<p>7E</p>
+
+							<p>
+								{selectedSeats.length > 0
+									? selectedSeats.map(s => s.seatNo).join(", ")
+									: "--"}
+							</p>
 						</div>
 						<div className='py-3 border-b'>
 							<p className='text-lg font-semibold'>Fare Details</p>
@@ -249,12 +247,12 @@ export const Seats = ({
 							</div>
 							<div className='flex items-center justify-between text-sm font-semibold text-gray-500'>
 								<span>Taxes & Charges</span>
-								<span>1201rs</span>
+								<span>₹{TAXES}</span>
 							</div>
 						</div>
 						<div className='flex items-center justify-between pt-2'>
 							<p className='text-xl font-semibold'>Total Amount</p>
-							<p className='text-xl text-blue-600 font-semibold'>₹{seatTotal+ selectedFlight?.price}</p>
+							<p className='text-xl text-blue-600 font-semibold'>₹{seatTotal + selectedFlight?.price + TAXES}</p>
 						</div>
 					</div>
 					<div className='shadow-lg p-3 flex flex-col gap-3'>
@@ -264,21 +262,21 @@ export const Seats = ({
 								<span className='border-2 text-2xl '><PiArmchairLight /></span>
 								<p>Availabe Seat</p>
 							</div>
-							<span className='text-gray-500'>{availableseats}</span>
+							<span className='text-gray-500'>{availableSeats }</span>
 						</div>
 						<div className='flex items-center justify-between text-sm font-semibold '>
 							<div className='flex items-center gap-3'>
 								<span className='text-green-600 border-2 text-2xl'><PiArmchairFill /></span>
 								<p>Selected Seat</p>
 							</div>
-							<span className='text-gray-500'>{selectedSeats.map((seat) => seat.seatNo).join(", ")}</span>
+							<span className='text-gray-500'>{selectedSeats.length > 0 ? selectedSeats.map((seat) => seat.seatNo).join(", ") : "--"}</span>
 						</div>
 						<div className='flex items-center justify-between text-sm font-semibold '>
 							<div className='flex items-center gap-3'>
 								<span className='text-gray-400 border-2 text-2xl'><PiArmchairFill /></span>
 								<p>Occupied Seat</p>
 							</div>
-							<span className='text-gray-500'>{occupiedSeats.length}</span>
+							<span className='text-gray-500'>{OCCUPIED_SEATS.length}</span>
 						</div>
 						<div className='flex items-center justify-between text-sm font-semibold '>
 							<div className='flex items-center gap-3'>
