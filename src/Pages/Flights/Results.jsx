@@ -39,12 +39,9 @@ export const Results = ({ nextStep }) => {
             const stopsCount = flight.flights?.length - 1
             const stopsMatch = filters.stops.length === 0 || filters.stops.includes(stopsCount)
 
+            // airline
+            const airlineMatch = filters.airlines.length === 0 || filters.airlines.includes(firstFlight?.airline)
 
-
-            // airline 
-
-
-            const airlineMatch =filters.airlines.length ===0 || filters.airlines.includes(firstFlight?.airline)
             // time slot
 
             const depTime = firstFlight?.departure_airport?.time
