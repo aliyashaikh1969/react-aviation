@@ -20,43 +20,48 @@ export const Results = ({ nextStep }) => {
     const { flightData } = useFlight()
     const [showFilter, setShowFilter] = useState(false)
     const [filters, setFilters] = useState({
-        price: 10000,
+        price: 15000,
         stops: [],
         airlines: [],
         departure: [],
     });
+    // console.log(allFlights[0])
 
     const filteredFlights = useMemo(() => {
-        return allFlights.filter(flight => {
-            const firstFlight = flight.flights?.[0]
 
+        return allFlights.filter(flight => {
+
+            const firstFlight = flight.flights?.[0]
 
             const priceMatch = flight.price <= filters.price
 
+            // // stops
             const stopsCount = flight.flights?.length - 1
+            const stopsMatch = filters.stops.length === 0 || filters.stops.includes(stopsCount)
 
-            const stopsMatch = filters.stops.length === 0 || filters.stops.includes(firstFlight?.airline);
 
-            const airLineMatch = filters.airlines.length === 0 || filters.airlines.includes(firstFlight?.airline)
+
+            // airline 
+
+
+            const airlineMatch =filters.airlines.length ===0 || filters.airlines.includes(firstFlight?.airline)
+            // time slot
 
             const depTime = firstFlight?.departure_airport?.time
-            const hours =depTime ? parseInt(depTime.split(" ")[1].split(":")):0
+            const hour = depTime ? parseInt(depTime.split(" ")[1].split(":")[0]) : 0
 
-            const timeSlot = 
-            hours<6 ? "earlymorning":
-            hours<12 ? "morning":
-            hours <18 ? "afternoon":'night'
+            const timeSlot =
+                hour < 6 ? "earlymorning" :
+                    hour < 12 ? "morning" :
+                        hour < 18 ? "afternoon" : "night"
 
 
-            const departureMatch = filters.departure.length ===0 || filters.departure.includes(timeSlot)
+            const departureMatch = filters.departure.length === 0 || filters.departure.includes(timeSlot)
 
-            
 
-            return priceMatch && stopsMatch && airLineMatch && departureMatch
+            return priceMatch && stopsMatch && departureMatch && airlineMatch
         })
-
-
-    }, [allFlights], [filters])
+    }, [allFlights, filters])
 
 
     return (
@@ -76,7 +81,10 @@ export const Results = ({ nextStep }) => {
 
                 {/* LEFT SIDE */}
                 <div className={`md:flex-[30%] flex-[40%]  `} >
-                    <Filters filters={filters} setFilters={setFilters} flights={allFlights} />
+                    <Filters
+                        filters={filters}
+                        setFilters={setFilters}
+                        flights={allFlights} />
                 </div>
 
                 {/* RIGHT SIDE (your results) */}
@@ -90,7 +98,7 @@ export const Results = ({ nextStep }) => {
                     ) : (
                         filteredFlights.map(flight => (
                             <FlightCard
-                                key={flight.booking_token}  
+                                key={flight.booking_token}
                                 flight={flight}
                                 nextStep={nextStep}
                             />
