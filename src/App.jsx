@@ -16,6 +16,8 @@ import { Protected } from './context/Protected'
 
 function App() {
 
+	// VITE_API_KEY = pg_VFAc44c58xnRaSMubDk_0_M2WyrLz9nG
+
 	// useEffect(() => {
 
 	// 	const fetchData = async () => {
@@ -29,66 +31,65 @@ function App() {
 	// 					departure_date: "2026-05-20",
 	// 				},
 	// 				{
-	// 					headers: {
-	// 						"Content-Type": "application/json",
-	// 						"X-Api-Key": "pg_VFAc44c58xnRaSMubDk_0_M2WyrLz9nG",
-	// 						"X-Playground-Token": "pg_VFAc44c58xnRaSMubDk_0_M2WyrLz9nG",
-	// 					},
-	// 				}
-	// 			);
-	// 				debugger
-	// 			console.log("response", response);
+	// 	// 					headers: {
+	//   "X-Api-Key": import.meta.env.VITE_API_KEY,
+	//   "X-Playground-Token": import.meta.env.VITE_API_KEY,
+// }
+// 				}
+// 			);
+// 				debugger
+// 			console.log("response", response);
 
-	// 			console.log("result", response.data);
+// 			console.log("result", response.data);
 
-	// 		} catch (error) {
+// 		} catch (error) {
 
-	// 			console.log("error", error);
+// 			console.log("error", error);
 
-	// 			// Full axios error response
-	// 			if (error.response) {
-	// 				console.log("Error Data:", error.response.data);
-	// 				console.log("Error Status:", error.response.status);
-	// 			}
-	// 		}
-	// 	};
+// 			// Full axios error response
+// 			if (error.response) {
+// 				console.log("Error Data:", error.response.data);
+// 				console.log("Error Status:", error.response.status);
+// 			}
+// 		}
+// 	};
 
-	// 	fetchData();
+// 	fetchData();
 
-	// }, []);
+// }, []);
 
-	return (
-		< div className=''>
-			<Routes>
+return (
+	< div className=''>
+		<Routes>
 
-				<Route path="/" element={<Layout />}>
-					<Route index element={<MainPage />} />
+			<Route path="/" element={<Layout />}>
+				<Route index element={<MainPage />} />
 
-					{/* <Route path="flight/:id" element={<FlightsDetails />} /> */}
+				{/* <Route path="flight/:id" element={<FlightsDetails />} /> */}
 
-					<Route path="/booking" element={
-						// <Protected>
-							<BookingFlow />
-						// </Protected>
-					}
-					/>
-					<Route path="/myTrips" element={
-						<Protected>
-							<MyTrips />
-						</Protected>
-					} />
-					<Route path="deals" element={<Deals />} />
-					<Route path="contact" element={<Contact />} />
-					<Route path="AuthPage" element={<AuthPage />} />
+				<Route path="/booking" element={
+					// <Protected>
+					<BookingFlow />
+					// </Protected>
+				}
+				/>
+				<Route path="/myTrips" element={
+					<Protected>
+						<MyTrips />
+					</Protected>
+				} />
+				<Route path="deals" element={<Deals />} />
+				<Route path="contact" element={<Contact />} />
+				<Route path="AuthPage" element={<AuthPage />} />
 
-				</Route>
-				<Route path='*' element={<NotFound />} />
+			</Route>
+			<Route path='*' element={<NotFound />} />
 
-			</Routes>
+		</Routes>
 
 
-		</ div>
-	)
+	</ div>
+)
 }
 
 export default App

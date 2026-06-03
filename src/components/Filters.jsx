@@ -92,7 +92,7 @@ export const Filters = ({ filters, setFilters, flights = [] }) => {
           {/* price range */}
           <div className='py-3 border-b'>
             <p className='font-semibold text-gray-800'>Price Range</p>
-            <p className='font-semibold text-gray-800'>₹2000 - ₹{filters.price}</p>
+            <p className='font-semibold text-gray-800'>₹2,000 - ₹{filters.price.toLocaleString('en-IN')}</p>
             <input
               type="range"
               value={filters.price}

@@ -23,8 +23,8 @@ const PaymentMethod = ({ nextStep }) => {
   });
 
   const formatCard = (val) =>
-  val.replace(/\D/g, "").slice(0, 16)
-     .replace(/(.{4})/g, "$1 ").trim();
+    val.replace(/\D/g, "").slice(0, 16)
+      .replace(/(.{4})/g, "$1 ").trim();
 
   const [errors, setErrors] = useState({});
 
@@ -59,27 +59,29 @@ const PaymentMethod = ({ nextStep }) => {
   ];
 
 
-  const handlePay =(e)=>{
-      e.preventDefault();
+  const handlePay = (e) => {
+    e.preventDefault();
+
+    console.log("jj")
 
 
-      const newErrors = {};
+    const newErrors = {};
 
-       if (cardData.number.replace(/\s/g, "").length !== 16)
-    newErrors.number = "Valid card number enter karo";
-  if (!cardData.name.trim())
-    newErrors.name = "Cardholder name enter karo";
-  if (!/^\d{2}\/\d{2}$/.test(cardData.expiry))
-    newErrors.expiry = "MM/YY format mein enter karo";
-  if (cardData.cvv.length !== 3)
-    newErrors.cvv = "3 digit CVV enter karo";
+    // if (cardData.number.replace(/\s/g, "").length !== 16)
+    //   newErrors.number = "Valid card number enter karo";
+    // if (!cardData.name.trim())
+    //   newErrors.name = "Cardholder name enter karo";
+    // if (!/^\d{2}\/\d{2}$/.test(cardData.expiry))
+    //   newErrors.expiry = "MM/YY format mein enter karo";
+    // if (cardData.cvv.length !== 3)
+    //   newErrors.cvv = "3 digit CVV enter karo";
 
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    return;
-  }
+    // if (Object.keys(newErrors).length > 0) {
+    //   setErrors(newErrors);
+    //   return;
+    // }
 
-       nextStep();
+    nextStep();
   }
 
   return (
@@ -203,9 +205,9 @@ const PaymentMethod = ({ nextStep }) => {
 
               <div className="relative">
                 <input
-                value={cardData.number}
-                onChange={(e)=>setCardData(p=>({...p, number:formatCard(e.target.value)}))}
-                maxLength={19}
+                  value={cardData.number}
+                  onChange={(e) => setCardData(p => ({ ...p, number: formatCard(e.target.value) }))}
+                  maxLength={19}
                   type="text"
                   placeholder="1234 5678 9012 3456"
                   className="w-full h-14 rounded-2xl border border-slate-200 px-4 pr-12 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"

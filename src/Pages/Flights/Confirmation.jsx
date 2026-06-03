@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   FiCheck,
   FiCalendar,
@@ -18,6 +18,7 @@ import {
 } from "react-icons/bs";
 import { useFlight } from '../../context/FlightContext';
 import { useNavigate } from 'react-router-dom';
+import { usePassenger } from '../../context/PassengerContext';
 
 export const Confirmation = () => {
 
@@ -395,7 +396,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
             {/* Action Buttons */}
             <div className="flex flex-col md:flex-row gap-4">
 
-              <button className="flex-1 h-16 rounded-2xl border-2 border-blue-600 text-blue-700 font-semibold text-lg hover:bg-blue-50 transition-all flex items-center justify-center gap-3">
+              <button onClick={() => window.print()} className="flex-1 h-16 rounded-2xl border-2 border-blue-600 text-blue-700 font-semibold text-lg hover:bg-blue-50 transition-all flex items-center justify-center gap-3">
                 <FiDownload className="text-xl" />
 
                 Download Ticket

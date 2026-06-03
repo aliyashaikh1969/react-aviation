@@ -89,8 +89,8 @@ export const Results = ({ nextStep }) => {
                     {/* Flight cards here */}
                     {filteredFlights.length === 0 ? (
                         <div className="text-center py-20 text-gray-500">
-                            <p className="text-xl font-semibold">Koi flight nahi mili 😕</p>
-                            <p className="text-sm mt-2">Filters thoda adjust karo</p>
+                            <p className="text-xl font-semibold">There is no fligh available</p>
+                            <p className="text-sm mt-2"> adjust the Filters</p>
                         </div>
                     ) : (
                         filteredFlights.map(flight => (
