@@ -62,7 +62,6 @@ const PaymentMethod = ({ nextStep }) => {
   const handlePay = (e) => {
     e.preventDefault();
 
-    console.log("jj")
 
 
     const newErrors = {};

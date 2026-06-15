@@ -66,7 +66,7 @@ export const SearchSummary = ({ onModify }) => {
         </div>
         <div className='flex-1 flex items-center justify-center'>
           
-          <button className='flex items-center bg-[#031e3d] px-5 py-2 rounded-lg text-white' onClick={onModify}> <span><PiPencilSimpleLineLight /></span> Modify </button>
+          <button className='flex items-center gap-2 bg-[#031e3d] px-5 py-2 rounded-lg text-white' onClick={onModify}> <span><PiPencilSimpleLineLight /> </span> Modify </button>
         </div>
       </div>
     </div>

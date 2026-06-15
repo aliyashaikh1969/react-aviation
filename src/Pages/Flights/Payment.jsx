@@ -7,19 +7,30 @@ import {
   FiShield,
   FiRefreshCcw,
   FiHeadphones,
+  FiClock,
 } from "react-icons/fi";
 
 import { BsAirplaneFill } from "react-icons/bs";
 import { useFlight } from '../../context/FlightContext';
 import { FaArrowLeft } from 'react-icons/fa';
+import { useScrollToTop } from "../../hooks/useScrollToTop"
+
 
 export const Payment = ({ nextStep, prevStep }) => {
 
+  useScrollToTop();
+  
   const { selectedFlight, selectedSeats, flightData } = useFlight()
-  const TAXES = 1201;
+  const TAXES = 1125;
 
   const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0);
   const grandTotal = (selectedFlight?.price ?? 0) + seatTotal + TAXES
+
+
+  const flightDuration = selectedFlight?.total_duration
+
+  const hours = String(Math.floor(flightDuration / 60)).padStart(2, "0");
+  const minutes = String(flightDuration % 60).padStart(2, "0");
 
 
   return (
@@ -102,10 +113,10 @@ export const Payment = ({ nextStep, prevStep }) => {
 
             {/* Flight Middle */}
             <div className="flex flex-col items-center flex-1 px-4">
-
-              <span className="text-xs text-slate-500 mb-2">
-                {selectedFlight?.total_duration}
-              </span>
+              <div className='flex items-center gap-2  text-xs text-gray-500'>
+                <FiClock />
+                <span className='text-xs text-gray-500'>{hours}:{minutes}</span>
+              </div>
 
               <div className="relative w-full flex items-center">
 
@@ -313,12 +324,13 @@ export const Payment = ({ nextStep, prevStep }) => {
             </p>
           </div>
         </div>
-        <div className="flex justify-between mt-4">
+       
+      </div>
+       <div className="flex justify-between mt-4">
           <button onClick={prevStep} className="flex items-center gap-2 text-blue-600">
             <FaArrowLeft /> Back to Summary
           </button>
         </div>
-      </div>
     </div>
   )
 }

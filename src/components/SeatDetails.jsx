@@ -1,14 +1,10 @@
-import React, { useState } from "react";
-import {
-  FiCheck,
-  FiX,
-} from "react-icons/fi";
-
 import { MdAirlineSeatReclineNormal } from "react-icons/md";
 import { useFlight } from "../context/FlightContext";
+import { TbEdit } from "react-icons/tb";
 
 export const SeatDetails = ({ prevStep }) => {
-  const { selectedSeats } = useFlight()
+  const { selectedSeats, flightData } = useFlight()
+  const seatTotal = selectedSeats.reduce((t, s) => t + s.price, 0)
 
   return (
     <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-md w-full">
@@ -23,60 +19,69 @@ export const SeatDetails = ({ prevStep }) => {
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-[#0A2A6B]">
+            <p className="text-2xl font-bold text-[#0A2A6B]">
               Selected Seats
-            </h2>
+            </p>
 
             <p className="text-sm text-slate-500">
-              Choose your preferred seats
+              Your selected seats for this flight
             </p>
           </div>
         </div>
 
-         <button onClick={prevStep} className="text-blue-700 font-semibold hover:underline text-sm mt-4">
-      Change Seats
-    </button>
+        <button onClick={prevStep} className="text-blue-700 border border-[#0A2A6B] font-semibold  text-sm mt-4 px-3 py-1.5 rounded-lg flex items-center gap-2 hover:bg-[#e8eef7]">
+          <TbEdit /> Change Seats
+        </button>
       </div>
 
-      {/* Seat Layout */}
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="w-full bg-slate-50 border border-slate-200 rounded-3xl p-5">
 
-        {/* Left Side */}
+        <h3 className="text-lg font-bold text-[#0A2A6B] mb-5">
+          Your Seats
+        </h3>
 
-
-        {/* Right Side */}
-        <div className="w-full lg:w-[240px] bg-slate-50 border border-slate-200 rounded-3xl p-5">
-
-          <h3 className="text-lg font-bold text-[#0A2A6B] mb-5">
-            Your Seats
-          </h3>
-
+        {selectedSeats.length > 0 ? (
           <div className="flex flex-wrap gap-3">
-            {selectedSeats.length > 0 ? (
-              selectedSeats.map(seat => (
-                <div key={seat.seatNo} className="px-5 py-3 rounded-2xl bg-blue-600 text-white font-semibold">
-                  {seat.seatNo}  {/* ✅ seat.seatNo — object hai string nahi */}
-                </div>
-              ))
-            ) : (
-              <p className="text-slate-500 text-sm">Koi seat select nahi ki</p>
-            )}
+            {selectedSeats.map(seat => (
+
+              <div key={seat.seatNo} className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold flex flex-col items-center">
+                <span>
+                  {seat.seatNo}
+                </span>
+                <span>{seat.type}</span>
+              </div>
+            ))}
           </div>
-          {/* Info */}
-          <div className="mt-6 pt-5 border-t border-slate-200">
-            <div className="flex justify-between mb-3">
-              <span className="text-sm text-slate-500">Total Seats</span>
-              <span className="font-semibold">{selectedSeats.length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-slate-500">Seat Charges</span>
-              <span className="font-semibold">
-                ₹{selectedSeats.reduce((total, seat) => total + seat.price, 0)}
-              </span>
-            </div>
+        ) : (
+          <p className="text-slate-500 text-sm">No setat is selected</p>
+        )}
+
+        {/* Info */}
+        <div className="mt-6 pt-5 border-t border-slate-200">
+          <div className="flex justify-between mb-3">
+            <span className="text-sm text-slate-500">Passengers</span>
+            <span className="font-semibold">{flightData.travellers} Adult{flightData.travellers > 1 ? "s" : ""}</span>
+          </div>
+          <div className="flex justify-between mb-3">
+            <span className="text-sm text-slate-500">Seat Charges</span>
+            <span className="font-semibold">
+              ₹{selectedSeats.reduce((total, seat) => total + seat.price, 0)}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-sm text-slate-500">Seat type</span>
+            <span className="font-semibold">
+              {selectedSeats?.[0]?.type}           
+               </span>
           </div>
         </div>
+        <hr className="border-slate-200 my-3" />
+        <div className="flex justify-between">
+          <span className="font-medium text-[#0A2A6B]">Total seat charges</span>
+          <span className="text-[#0A2A6B] font-medium text-lg">₹{seatTotal}</span>
+        </div>
       </div>
+
     </div>
 
   )

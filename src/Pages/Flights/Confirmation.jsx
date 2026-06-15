@@ -1,45 +1,70 @@
-import React, { useState } from 'react'
-import {
-  FiCheck,
-  FiCalendar,
-  FiDownload,
-  FiArrowRight,
-  FiUser,
-  FiCreditCard,
-  FiHeadphones,
-  FiGift,
-  FiShield,
-  FiClock,
-  FiMail,
-} from "react-icons/fi";
-
-import {
-  BsAirplaneFill,
-} from "react-icons/bs";
+import React, { useEffect, useRef, useState } from 'react'
+import { FiCheck, FiCalendar, FiDownload, FiArrowRight, FiUser, FiCreditCard, FiHeadphones, FiGift, FiShield, FiClock, FiMail, } from "react-icons/fi";
+import { BsAirplaneFill, } from "react-icons/bs";
 import { useFlight } from '../../context/FlightContext';
 import { useNavigate } from 'react-router-dom';
 import { usePassenger } from '../../context/PassengerContext';
+import { useScrollToTop } from "../../hooks/useScrollToTop";
+import { Ticket } from '../../ticket/Ticket';
+
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
+
+
 
 export const Confirmation = () => {
+  useScrollToTop();
 
-const { selectedFlight, selectedSeats, flightData } = useFlight();
-const { passengerData } = usePassenger();
+  const [showTicket, setShowTicket] = useState(false)
 
-const navigate = useNavigate();
+  const { selectedFlight, resetFlightData, selectedSeats, flightData } = useFlight();
+  const { passengerData, passengers } = usePassenger();
+
+  const navigate = useNavigate();
+
+  const firstFlight = selectedFlight?.flights?.[0];
+  const TAXES = 1201;
+  const seatTotal = selectedSeats.reduce((t, s) => t + s.price, 0);
+  const grandTotal = (selectedFlight?.price ?? 0) + seatTotal + TAXES;
 
 
-const firstFlight = selectedFlight?.flights?.[0];
-const TAXES = 1201;
-const seatTotal = selectedSeats.reduce((t, s) => t + s.price, 0);
-const grandTotal = (selectedFlight?.price ?? 0) + seatTotal + TAXES;
+ const flightDuration = selectedFlight?.total_duration
+
+    const hours = String(Math.floor(flightDuration / 60)).padStart(2, "0");
+    const minutes = String(flightDuration % 60).padStart(2, "0");
 
 
-const [pnr] = useState(
-  () => `SBLK${Math.random().toString(36).slice(2,7).toUpperCase()}`
-);
-const bookingDate = new Date().toLocaleDateString('en-IN', {
-  day: 'numeric', month: 'short', year: 'numeric'
-});
+
+
+  const [pnr] = useState(
+    () => `SBLK${Math.random().toString(36).slice(2, 7).toUpperCase()}`
+  );
+
+
+  const bookingDate = new Date().toLocaleDateString('en-IN', {
+    day: 'numeric', month: 'short', year: 'numeric'
+  });
+
+
+  const ticketRef = useRef(null)
+
+
+
+  const handleDownload = async () => {
+    const ticket = ticketRef.current
+    const canvas = await html2canvas(ticket, {
+      scale: 2,          // better quality
+      useCORS: true,     // airline logo load karne ke liye
+    })
+    const imgData = canvas.toDataURL('image/png')
+
+    const pdf = new jsPDF('p', 'mm', 'a4')
+    const width = pdf.internal.pageSize.getWidth()
+    const height = (canvas.height * width) / canvas.width
+
+    pdf.addImage(imgData, 'PNG', 0, 0, width, height)
+    pdf.save(`ticket-SBLK72451.pdf`)
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F7FB] px-16 pt-20 pb-10">
@@ -76,12 +101,10 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
                 <div className="flex flex-wrap gap-10 mt-4">
 
                   <div>
-                    <p className="text-sm text-slate-500">
-                      Booking Reference (PNR)
-                    </p>
+                    <p className="text-sm text-slate-500">  Booking Reference (PNR)  </p>
 
                     <h3 className="text-lg font-bold text-[#0A2A6B] mt-1">
-                      SBLK72451
+                      {pnr}
                     </h3>
                   </div>
 
@@ -97,7 +120,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
                       </p>
 
                       <h4 className="font-bold text-[#0A2A6B] text-lg mt-1">
-                        24 May 2024 · 09:45 AM
+                        {bookingDate}· 09:45 AM
                       </h4>
                     </div>
                   </div>
@@ -123,47 +146,42 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
         {/* Main Grid */}
         <div className="grid lg:grid-cols-[1fr_350px] gap-6 mt-6">
 
-          {/* Left Side */}
-          <div className="space-y-6">
+          <div className="space-y-2">
 
             {/* Flight Details */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+            <div className="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm">
 
               {/* Top */}
               <div className="flex items-center justify-between mb-6">
-
-                <h2 className="text-2xl font-bold text-[#0A2A6B]">
-                  Flight Details
-                </h2>
+                <h2 className="text-2xl font-bold text-[#0A2A6B]"> Flight Details </h2>
 
                 <div className="flex items-center gap-3">
-                  <BsAirplaneFill className="text-blue-700 text-2xl rotate-45" />
-
+                  <img src={firstFlight.airline_logo} alt=""  className='w-8'/>
                   <span className="text-xl font-bold text-[#0A2A6B]">
-                    IndiGo
+                    {firstFlight.airline}
                   </span>
                 </div>
               </div>
 
               {/* Flight Route */}
-              <div className="grid md:grid-cols-3 items-center gap-6">
+              <div className="grid grid-cols-3 items-center gap-6">
 
                 {/* Departure */}
                 <div>
                   <h3 className="text-xl font-bold text-[#0A2A6B]">
-                    New Delhi (DEL)
+                    {firstFlight?.departure_airport.id}
                   </h3>
 
-                  <p className="text-sm text-slate-500 mt-1">
-                    Indira Gandhi Intl. Airport
+                  <p className="text-xs text-slate-500 mt-1">
+                   {firstFlight?.departure_airport.name}
                   </p>
 
-                  <h2 className="text-4xl font-bold text-[#0A2A6B] mt-5">
-                    10:30
+                  <h2 className="text-2xl font-bold text-[#0A2A6B] mt-5">
+                     {firstFlight?.departure_airport?.time.split(" ")[1]}
                   </h2>
 
-                  <p className="text-sm text-slate-500 mt-2">
-                    24 May 2024
+                  <p className="text-xs text-slate-500 mt-2">
+                     {firstFlight?.departure_airport?.time.split(" ")[0]}
                   </p>
                 </div>
 
@@ -172,14 +190,14 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
 
                   <div className=" text-xs flex items-center gap-2 text-slate-500 mb-4">
                     <FiClock />
-                    <span>2h 15m</span>
+                    <span>{hours}h {minutes}m</span>
                   </div>
 
                   <div className="relative w-full flex items-center">
 
                     <div className="h-[2px] bg-slate-200 flex-1"></div>
 
-                    <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center mx-3 shadow-lg shadow-blue-100">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center mx-3 shadow-lg shadow-blue-100">
                       <BsAirplaneFill className="text-white text-lg rotate-90" />
                     </div>
 
@@ -194,7 +212,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
                 {/* Arrival */}
                 <div className="text-left md:text-right">
 
-                  <h3 className="text-xl font-bold text-[#0A2A6B]">
+                  <h3 className="text-sm font-bold text-[#0A2A6B]">
                     Mumbai (BOM)
                   </h3>
 
@@ -202,18 +220,18 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
                     Chhatrapati Shivaji Airport
                   </p>
 
-                  <h2 className="text-4xl font-bold text-[#0A2A6B] mt-5">
+                  <h2 className="text-2xl font-bold text-[#0A2A6B] mt-5">
                     12:45
                   </h2>
 
-                  <p className="text-slate-500 mt-2">
+                  <p className="text-xs text-slate-500 mt-2">
                     24 May 2024
                   </p>
                 </div>
               </div>
 
               {/* Bottom Info */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-8 pt-6 border-t border-slate-200">
+              <div className="grid grid-cols-4 md:grid-cols-4 gap-5 mt-8 pt-6 border-t border-slate-200">
 
                 <div>
                   <p className="text-sm text-slate-500">
@@ -221,7 +239,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
                   </p>
 
                   <h4 className="font-bold text-[#0A2A6B] mt-1">
-                    6E 2345
+                    {firstFlight?.flight_number}
                   </h4>
                 </div>
 
@@ -231,7 +249,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
                   </p>
 
                   <h4 className="font-bold text-[#0A2A6B] mt-1">
-                    Airbus A320
+                   {firstFlight?.airplane}
                   </h4>
                 </div>
 
@@ -241,7 +259,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
                   </p>
 
                   <h4 className="font-bold text-[#0A2A6B] mt-1">
-                    Economy
+                {firstFlight?.travel_class}
                   </h4>
                 </div>
 
@@ -258,10 +276,10 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
             </div>
 
             {/* Cards */}
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-4">
 
               {/* Passenger */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm">
+              <div className="bg-white rounded-3xl border border-slate-200 p-3 shadow-sm">
 
                 <div className="flex items-center gap-3 mb-5">
 
@@ -305,7 +323,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
               </div>
 
               {/* Seat */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm">
+              <div className="bg-white rounded-3xl border border-slate-200 p-3 shadow-sm">
 
                 <div className="flex items-center gap-3 mb-5">
 
@@ -332,7 +350,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
                     </p>
 
                     <h2 className="text-3xl font-bold text-[#0A2A6B] mt-2">
-                      7E
+                     {selectedSeats[0].seatNo}
                     </h2>
                   </div>
 
@@ -343,7 +361,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
               </div>
 
               {/* Payment */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm">
+              <div className="bg-white rounded-3xl border border-slate-200 p-3 shadow-sm">
 
                 <div className="flex items-center gap-3 mb-5">
 
@@ -366,17 +384,17 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
 
                   <div className="text-xs flex justify-between text-slate-600">
                     <span>Base Fare</span>
-                    <span>₹ 8,999</span>
+                    <span>₹ {selectedFlight?.price}</span>
                   </div>
 
                   <div className="text-xs flex justify-between text-slate-600">
                     <span>Taxes</span>
-                    <span>₹ 1,501</span>
+                    <span>₹ {TAXES}</span>
                   </div>
 
                   <div className="text-xs flex justify-between text-slate-600">
                     <span>Seat Charge</span>
-                    <span>₹ 299</span>
+                    <span>₹ {seatTotal}</span>
                   </div>
 
                   <div className="border-t border-slate-200 pt-4 flex justify-between items-center">
@@ -386,7 +404,7 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
                     </span>
 
                     <span className="text-2xl font-bold text-[#0A58FF]">
-                      ₹ 10,799
+                      ₹ {grandTotal}
                     </span>
                   </div>
                 </div>
@@ -396,13 +414,13 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
             {/* Action Buttons */}
             <div className="flex flex-col md:flex-row gap-4">
 
-              <button onClick={() => window.print()} className="flex-1 h-16 rounded-2xl border-2 border-blue-600 text-blue-700 font-semibold text-lg hover:bg-blue-50 transition-all flex items-center justify-center gap-3">
+              <button onClick={handleDownload} className="flex-1 h-16 rounded-2xl border-2 border-blue-600 text-blue-700 font-semibold text-lg hover:bg-blue-50 transition-all flex items-center justify-center gap-3">
                 <FiDownload className="text-xl" />
 
                 Download Ticket
               </button>
 
-              <button className="flex-1 h-16 rounded-2xl bg-[#0A2A6B] hover:bg-[#081f52] transition-all text-white font-semibold text-lg shadow-lg shadow-blue-100 flex items-center justify-center gap-3">
+              <button onClick={()=>navigate("/myTrips")} className="flex-1 h-16 rounded-2xl bg-[#0A2A6B] hover:bg-[#081f52] transition-all text-white font-semibold text-lg shadow-lg shadow-blue-100 flex items-center justify-center gap-3">
                 Go to My Trips
 
                 <FiArrowRight className="text-xl" />
@@ -511,6 +529,111 @@ const bookingDate = new Date().toLocaleDateString('en-IN', {
           </div>
         </div>
       </div>
+
+      <div ref={ticketRef} className="absolute -left-[9999px]">
+
+        {/* Header — Navy Blue */}
+        <div className="bg-[#0A2A6B] p-5 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <img src={selectedFlight?.airline_logo} className="w-10 h-10 rounded-lg bg-white object-contain p-1" alt="" />
+            <div>
+              <p className="text-white font-medium">{firstFlight?.airline}</p>
+              <p className="text-[#a8bcd8] text-xs">
+                {firstFlight?.flight_number} · {firstFlight?.travel_class} · {firstFlight?.airplane}
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-[#a8bcd8] text-xs">Booking ref (PNR)</p>
+            <p className="text-white font-medium tracking-widest mt-1">SBLK72451</p>
+          </div>
+        </div>
+
+        {/* Route */}
+        <div className="flex items-center justify-between p-6">
+          <div>
+            <p className="text-4xl font-medium text-[#0A2A6B]">{firstFlight?.departure_airport?.id}</p>
+            <p className="text-xs text-gray-500 mt-1">{firstFlight?.departure_airport?.name}</p>
+            <p className="font-medium mt-2">{firstFlight?.departure_airport?.time?.split(" ")[1]}</p>
+            <p className="text-xs text-gray-500">{firstFlight?.departure_airport?.time?.split(" ")[0]}</p>
+          </div>
+          <div className="flex flex-col items-center flex-1 px-4">
+            <p className="text-xs text-gray-500 mb-2">{selectedFlight?.total_duration}m</p>
+            <div className="flex items-center w-full gap-2">
+              <div className="flex-1 h-px bg-gray-300"></div>
+              <span className="text-[#0A2A6B] text-xl">✈</span>
+              <div className="flex-1 h-px bg-gray-300"></div>
+            </div>
+            <p className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full mt-2">Non-stop</p>
+          </div>
+          <div className="text-right">
+            <p className="text-4xl font-medium text-[#0A2A6B]">{firstFlight?.arrival_airport?.id}</p>
+            <p className="text-xs text-gray-500 mt-1">{firstFlight?.arrival_airport?.name}</p>
+            <p className="font-medium mt-2">{firstFlight?.arrival_airport?.time?.split(" ")[1]}</p>
+            <p className="text-xs text-gray-500">{firstFlight?.arrival_airport?.time?.split(" ")[0]}</p>
+          </div>
+        </div>
+
+        {/* Info Grid */}
+        <div className="grid grid-cols-4 border-t border-gray-200">
+          {[
+            { label: "Seat", value: selectedSeats.map(s => s.seatNo).join(", ") || "--" },
+            { label: "Baggage", value: "15 kg" },
+            { label: "Duration", value: `${selectedFlight?.total_duration}m` },
+            { label: "Booked on", value: new Date().toLocaleDateString('en-IN') },
+          ].map((item, i) => (
+            <div key={i} className="p-4 border-r border-gray-200 last:border-r-0">
+              <p className="text-xs text-gray-500">{item.label}</p>
+              <p className="font-medium mt-1 text-sm">{item.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Passenger Details */}
+        <div className="border-t border-gray-200 p-4">
+          <p className="text-xs text-gray-500 mb-3">Passenger details</p>
+          {passengers?.map((p, i) => (
+            <div key={i} className="grid grid-cols-3 gap-3 mb-3">
+              <div><p className="text-xs text-gray-400">Name</p><p className="text-sm font-medium">{p.name}</p></div>
+              <div><p className="text-xs text-gray-400">Phone</p><p className="text-sm font-medium">{p.number}</p></div>
+              <div><p className="text-xs text-gray-400">Email</p><p className="text-sm font-medium">{p.email}</p></div>
+              <div><p className="text-xs text-gray-400">DOB</p><p className="text-sm font-medium">{p.dob}</p></div>
+              <div><p className="text-xs text-gray-400">Gender</p><p className="text-sm font-medium">{p.gender}</p></div>
+              <div><p className="text-xs text-gray-400">ID</p><p className="text-sm font-medium">{p.IDProof} · {p.IDNumber}</p></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Fare Breakdown */}
+        <div className="border-t border-gray-200 p-4">
+          <p className="text-xs text-gray-500 mb-3">Fare breakdown</p>
+          <div className="flex justify-between text-sm py-1">
+            <span className="text-gray-500">Base fare</span>
+            <span className="font-medium">₹{selectedFlight?.price?.toLocaleString('en-IN')}</span>
+          </div>
+          <div className="flex justify-between text-sm py-1">
+            <span className="text-gray-500">Seat charge</span>
+            <span className="font-medium">₹{seatTotal}</span>
+          </div>
+          <div className="flex justify-between text-sm py-1">
+            <span className="text-gray-500">Taxes & fees</span>
+            <span className="font-medium">₹{TAXES}</span>
+          </div>
+          <div className="flex justify-between border-t border-gray-200 pt-3 mt-2">
+            <span className="font-medium">Total paid</span>
+            <span className="font-medium text-[#0A2A6B] text-lg">
+              ₹{grandTotal.toLocaleString('en-IN')}
+            </span>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="bg-blue-50 p-4 flex justify-between items-center">
+          <p className="text-blue-700 text-xs">E-ticket sent to {passengers?.[0]?.email}</p>
+          <span className="text-green-700 bg-green-50 text-xs px-3 py-1 rounded-full">Confirmed</span>
+        </div>
+      </div>
+
     </div>
   )
 }

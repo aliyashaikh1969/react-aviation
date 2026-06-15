@@ -6,11 +6,15 @@ import { FlightCard } from "../../components/FlightCard/FlightCard"
 
 import { SearchFlights } from "../../components/SearchFlights/SearchFlights";
 import { Features } from "../../components/Features/Features"
-import planeImage from '../../assets/plane.jpg'
+import saleBack from '../../assets/sale-back.jpg'
 import { useFlight } from "../../context/FlightContext";
 import { flightApiData, getAllFlights } from "../../helperFunction";
 import { SearchModify } from "../../components/search/SearchModify";
+import { useScrollToTop } from "../../hooks/useScrollToTop"
+
 export const Results = ({ nextStep }) => {
+
+    useScrollToTop();
 
     const flights = flightApiData[0]?.other_flights ?? []
 
@@ -64,7 +68,7 @@ export const Results = ({ nextStep }) => {
     return (
         <div>
             <div className="w-full bg-cover bg-center px-16  pt-20 pb-7"
-                style={{ backgroundImage: `url(${planeImage})` }}>
+                style={{ backgroundImage: `url(${saleBack})` }}>
 
                 <h2 className='md:text-3xl text-3xl text-white font-semibold '> Search Results</h2>
                 <p className='text-white py-4 md:text-lg text-sm '>Choose from{" "} <span>{filteredFlights.length}</span>+ flights from <span>{flightData.from}</span> to{" "} <span>{flightData.to}</span></p>
@@ -74,10 +78,10 @@ export const Results = ({ nextStep }) => {
             <div className="px-16">
                 <Features />
             </div>
-            <div className="flex gap-6 mt-6 bg-gray-100 p-3 px-16">
+            <div className="flex gap-6 mt-6 bg-gray-100 p-3 px-16 h-screen">
 
                 {/* LEFT SIDE */}
-                <div className={`md:flex-[30%] flex-[40%]  `} >
+                <div className={`md:flex-[30%] flex-[40%] sticky top-0 `} >
                     <Filters
                         filters={filters}
                         setFilters={setFilters}
@@ -85,7 +89,7 @@ export const Results = ({ nextStep }) => {
                 </div>
 
                 {/* RIGHT SIDE (your results) */}
-                <div className="md:flex-[70%]  flex-[60%] flex flex-col gap-6">
+                <div className="md:flex-[70%]  flex-[60%] flex flex-col gap-6 overflow-y-auto pr-2 pb-2">
                     {/* Flight cards here */}
                     {filteredFlights.length === 0 ? (
                         <div className="text-center py-20 text-gray-500">

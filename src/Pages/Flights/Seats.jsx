@@ -11,9 +11,13 @@ import { useFlight } from '../../context/FlightContext';
 import { seatLayoutData } from './SeatLayout';
 import toast from "react-hot-toast";
 import { SearchModify } from '../../components/search/SearchModify';
+import { FiClock } from 'react-icons/fi';
+import { useScrollToTop } from "../../hooks/useScrollToTop"
 
 
 export const Seats = ({ nextStep, prevStep }) => {
+
+	useScrollToTop();
 
 	const { selectedFlight, selectedSeats, setSelectedSeats, flightData } = useFlight()
 	const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
@@ -59,9 +63,17 @@ export const Seats = ({ nextStep, prevStep }) => {
 	const clearSeats = () => {
 		setSelectedSeats([])
 	}
+
+
+
+    const flightDuration = selectedFlight?.total_duration
+
+    const hours = String(Math.floor(flightDuration / 60)).padStart(2, "0");
+    const minutes = String(flightDuration % 60).padStart(2, "0");
+
 	return (
 		<div >
-			<div className='px-16 pt-20 '>
+			<div className='px-16 pt-2 '>
 				<h2 className='md:text-xl text-lg text-[#031e3d] font-semibold'>Choose Your Seats</h2>
 				<p className='text-[#031e3d] py-2  text-sm'>Select Your preferred seats and enjoy your journey.</p>
 				{/* <SearchModify/> */}
@@ -209,9 +221,12 @@ export const Seats = ({ nextStep, prevStep }) => {
 									<span className='text-xs text-gray-500'>{selectedFlight?.flights.map((item) => item?.departure_airport?.time.split(" ")[1])}</span>
 									<span className='text-xs text-gray-500'>{selectedFlight?.flights.map((item) => item?.departure_airport?.time.split(" ")[0])}</span>
 								</div>
-								<div className='flex flex-col'>
+								<div className='flex flex-col items-center'>
 									<span><FaArrowRight /></span>
-									<span className='text-xs text-gray-500'>{selectedFlight?.total_duration}</span>
+									<div className='flex items-center gap-2  text-xs text-gray-500'>
+										<FiClock />
+										<span className='text-xs text-gray-500'>{hours}:{minutes}</span>
+									</div>
 									<span className='text-xs text-gray-500'>{selectedFlight?.type == "One way" ? "Nonstop" : selectedFlight?.type}</span>
 								</div>
 								<div className='flex flex-col'>

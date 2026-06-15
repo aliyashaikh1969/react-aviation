@@ -8,8 +8,15 @@ import { useFlight } from '../context/FlightContext';
 
 
 export const PriceDetails = () => {
-
   const { selectedFlight } = useFlight()
+
+  const baseFair =selectedFlight?.price
+  const airportCharges =500
+  const servicefee =250
+  const gst =375
+  const totalAmount =baseFair +airportCharges +servicefee +gst
+
+
   return (
     <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
 
@@ -31,7 +38,7 @@ export const PriceDetails = () => {
       </div>
 
       {/* Price List */}
-      <div className="space-y-4">
+      <div className="space-y-2">
 
         {/* Base Fare */}
         <div className="flex items-center justify-between text-slate-600">
@@ -40,7 +47,7 @@ export const PriceDetails = () => {
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
-            {selectedFlight?.price}
+           ₹ {baseFair}
           </span>
         </div>
 
@@ -51,7 +58,7 @@ export const PriceDetails = () => {
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
-            ₹ 500
+            ₹ {airportCharges}
           </span>
         </div>
 
@@ -62,7 +69,7 @@ export const PriceDetails = () => {
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
-            ₹ 250
+            ₹ {servicefee}
           </span>
         </div>
 
@@ -73,13 +80,13 @@ export const PriceDetails = () => {
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
-            ₹ 375
+            ₹ {gst}
           </span>
         </div>
       </div>
 
       {/* Divider */}
-      <div className="border-t border-dashed border-slate-200 my-6"></div>
+      <div className="border-t border-dashed border-slate-200 my-3"></div>
 
       {/* Total */}
       <div className="flex items-center justify-between">
@@ -90,7 +97,7 @@ export const PriceDetails = () => {
           </p>
 
           <h3 className="text-2xl font-bold text-[#0A58FF] mt-1">
-            ₹ 3,624
+            ₹ {totalAmount}
           </h3>
         </div>
 
@@ -100,9 +107,9 @@ export const PriceDetails = () => {
       </div>
 
       {/* Savings Box */}
-      <div className="mt-6 bg-green-50 border border-green-200 rounded-2xl p-4 flex items-start gap-3">
+      <div className="mt-4 bg-green-50 border border-green-200 rounded-2xl p-2 flex items-start gap-3">
 
-        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0">
           <FiCheckCircle className="text-green-700 text-xl" />
         </div>
 

@@ -13,6 +13,13 @@ export const FlightDetails = () => {
 
   const { selectedFlight } = useFlight()
 
+    const flightDuration = selectedFlight?.total_duration
+
+    const hours = String(Math.floor(flightDuration / 60)).padStart(2, "0");
+    const minutes = String(flightDuration % 60).padStart(2, "0");
+
+
+
   return (
     <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
 
@@ -65,7 +72,7 @@ export const FlightDetails = () => {
         {/* Flight Timing */}
         <div className="p-3">
 
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="flex  items-center justify-between gap-8">
 
             {/* Departure */}
             <div className="text-center lg:text-left">
@@ -95,7 +102,7 @@ export const FlightDetails = () => {
 
               <div className="flex items-center gap-2 text-slate-500 text-xs mb-3">
                 <FiClock />
-                <span>{selectedFlight?.total_duration}</span>
+                <span>{hours}:{minutes}</span>
               </div>
 
               {/* Flight Line */}
@@ -139,7 +146,7 @@ export const FlightDetails = () => {
           </div>
 
           {/* Bottom Details */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-3 pt-6 border-t border-slate-200">
+          <div className="grid grid-cols-3 gap-5 mt-3 pt-6 border-t border-slate-200">
 
             {/* Aircraft */}
             <div className="flex items-start gap-3">

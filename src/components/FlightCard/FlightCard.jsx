@@ -3,6 +3,7 @@ import { GiMeal } from "react-icons/gi";
 import { PiSeatBold } from "react-icons/pi";
 import { IoIosAirplane } from "react-icons/io";
 import { useFlight } from '../../context/FlightContext';
+import { FiClock } from "react-icons/fi";
 
 
 export const FlightCard = ({ flight, nextStep }) => {
@@ -15,7 +16,13 @@ export const FlightCard = ({ flight, nextStep }) => {
         nextStep()
     }
 
-      const firstFlight = flight?.flights?.[0]  // ✅ ek baar lo, baar baar map mat karo
+    const firstFlight = flight?.flights?.[0]  // ✅ ek baar lo, baar baar map mat karo
+
+    const flightDuration = firstFlight?.duration
+
+    const hours = String(Math.floor(flightDuration / 60)).padStart(2, "0");
+    const minutes = String(flightDuration % 60).padStart(2, "0");
+
 
     return (
         <div className="bg-white text-black p-2 rounded-xl shadow-md flex justify-between md:items-center md:flex-row flex-col">
@@ -42,8 +49,11 @@ export const FlightCard = ({ flight, nextStep }) => {
                             <span className='text-gray-400'>
                                 < IoIosAirplane />
                             </span>
-                            <div className='flex flex-col'>
-                                <span className='text-xs text-gray-500 font-semibold pb-3 px-5 border-b-2 border-gray-400'>{flight.total_duration}</span>
+                            <div className='flex flex-col items-center'>
+                                <div className="flex items-center gap-2  text-xs pb-3 px-5 border-b-2 border-gray-400">
+                                    <FiClock className="text-gray-500" />
+                                    <span className=' text-gray-500 font-semibold '>{hours}:{minutes}</span>
+                                </div>
                                 <span className='text-xs text-gray-500 font-semibold pt-3 px-5'>{flight?.type == "One way" ? "Non-stop" : flight?.type}</span>
                             </div>
                             <span className='text-gray-400'>
@@ -83,8 +93,8 @@ export const FlightCard = ({ flight, nextStep }) => {
 
                     </button>
                     <p className='text-xs font-semibold text-green-600'>{flight.seatsAvailable
-    ? `${flight.seatsAvailable} seats left`
-    : "Seats available"}</p>
+                        ? `${flight.seatsAvailable} seats left`
+                        : "Seats available"}</p>
                 </div>
             </div>
 
