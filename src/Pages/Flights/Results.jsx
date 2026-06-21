@@ -78,7 +78,7 @@ export const Results = ({ nextStep }) => {
             <div className="px-16">
                 <Features />
             </div>
-            <div className="flex gap-6 mt-6 bg-gray-100 p-3 px-16 h-screen">
+            <div className="flex gap-6 mt-6 bg-gray-100 p-3 px-16 h-[700px]">
 
                 {/* LEFT SIDE */}
                 <div className={`md:flex-[30%] flex-[40%] sticky top-0 `} >

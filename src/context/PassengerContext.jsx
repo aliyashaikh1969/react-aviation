@@ -17,14 +17,10 @@ export const PassengerProvider = ({ children }) => {
         const newErrors = passengers.map(passenger => {
             const err = {}
             if (!passenger.name.trim()) err.name = "Name required"
-            // if (!passenger.email.includes("@")) err.email = "Valid email required"
             if (passenger.number.length !== 10) err.number = "10 digit number required"
-            // if (!passenger.dob) err.dob = "Date of birth required"
-            // if (!passenger.gender) err.gender = "Gender is required"
-            // if (!passenger.nationality) err.nationality = "Nationality is required"
-            // if (!passenger.IDProof) err.IDProof = "ID Proof required"
-            // if (!passenger.IDNumber.trim()) err.IDNumber = "ID number required"
-
+            if (!passenger.dob) err.dob = "Date of birth required"
+            if (!passenger.gender) err.gender = "Gender is required"
+           
             return err
         })
 

@@ -15,7 +15,6 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 export const PassengerDetails = () => {
   const { passengerData, setPassengerData, passengers, setPassengers, errors, list, setList } = usePassenger();
 
-
   const { flightData } = useFlight()
   const totalPassengers = flightData.travellers;
   const dateRef = useRef([]);
@@ -134,13 +133,9 @@ export const PassengerDetails = () => {
                       value={passenger.email}
                       onChange={(e) => handleChange(index, "email", e.target.value)}
                       placeholder="rahul@email.com"
-                      className={`text-sm w-full h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.email ? "border-red-500":"border-slate-200" }`}
+                      className={`text-sm w-full h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.email ? "border-red-500" : "border-slate-200"}`}
                     />
-                    {
-                      errors[index]?.email && (
-                        <p>{errors[index].email}</p>
-                      )
-                    }
+
                   </div>
 
                   {/* Phone */}
@@ -152,14 +147,15 @@ export const PassengerDetails = () => {
                     <input
                       name='number'
                       type="tel"
+                      max={10}
                       value={passenger.number}
                       onChange={(e) => handleChange(index, "number", e.target.value)}
                       placeholder="+91 98765 43210"
                       className={` text-sm w-full h-14 px-4 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.name ? "border-red-500" : "border-slate-200"}`}
                     />
-                     {
+                    {
                       errors[index]?.number && (
-                        <p>{errors[index].number}</p>
+                        <p className="text-red-500 text-xs mt-1">{errors[index].number}</p>
                       )
                     }
                   </div>
@@ -180,7 +176,7 @@ export const PassengerDetails = () => {
                           name='dob'
                           value={passenger.dob}
                           onChange={(e) => handleChange(index, "dob", e.target.value)}
-                          className={`hide-date-icon appearance-none w-full h-14 px-4 pr-12 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.name ? "border-red-500" : "border-slate-200"}`}
+                          className={`hide-date-icon appearance-none w-full h-14 px-4 pr-12 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.dob ? "border-red-500" : "border-slate-200"}`}
                         />
 
                         <FiCalendar
@@ -188,11 +184,11 @@ export const PassengerDetails = () => {
                           className="absolute right-4 top-1/2 -translate-y-1/2 text-lg text-slate-400 cursor-pointer"
                         />
                       </div>
-                       {
-                      errors[index]?.dob && (
-                        <p>{errors[index].dob}</p>
-                      )
-                    }
+                      {
+                        errors[index]?.dob && (
+                          <p className="text-red-500 text-xs mt-1">{errors[index].dob}</p>
+                        )
+                      }
                     </div>
 
                     {/* Gender */}
@@ -202,19 +198,26 @@ export const PassengerDetails = () => {
                       </label>
 
                       <div className="relative">
-                        <select name='gender' value={passenger.gender} onChange={(e) => handleChange(index, "gender", e.target.value)} className={`text-sm appearance-none w-full h-14 px-4 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white ${errors[index]?.name ? "border-red-500" : "border-slate-200"}`}>
-                          <option>Male</option>
-                          <option>Female</option>
-                          <option>Other</option>
+                        <select
+                          name="gender"
+                          value={passenger.gender}
+                          onChange={(e) => handleChange(index, "gender", e.target.value)}
+                          className={`text-sm appearance-none w-full h-14 px-4 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white ${errors[index]?.gender ? "border-red-500" : "border-slate-200"
+                            }`}
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
                         </select>
 
                         <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" />
                       </div>
                       {
-                      errors[index]?.gender && (
-                        <p>{errors[index].gender}</p>
-                      )
-                    }
+                        errors[index]?.gender && (
+                          <p className="text-red-500 text-xs mt-1">{errors[index].gender}</p>
+                        )
+                      }
                     </div>
                   </div>
 
@@ -228,19 +231,16 @@ export const PassengerDetails = () => {
                       </label>
 
                       <div className="relative">
-                        <select name='nationality' value={passenger.nationality} onChange={(e) => handleChange(index, "nationality", e.target.value)} className={`text-sm appearance-none w-full h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white ${errors[index]?.name ? "border-red-500" : "border-slate-200"}`}>
-                          <option>Indian</option>
-                          <option>American</option>
-                          <option>Canadian</option>
+                        <select name='nationality' value={passenger.nationality} onChange={(e) => handleChange(index, "nationality", e.target.value)} className={`text-sm appearance-none w-full h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white  "border-slate-200"`}>
+                          <option value="">Select Nationality</option>
+                          <option value="indian">Indian</option>
+                          <option value="american">American</option>
+                          <option value="canadian">Canadian</option>
                         </select>
 
                         <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" />
                       </div>
-                      {
-                      errors[index]?.nationality && (
-                        <p>{errors[index].nationality}</p>
-                      )
-                    }
+
                     </div>
 
                     {/* ID Proof */}
@@ -251,18 +251,15 @@ export const PassengerDetails = () => {
 
                       <div className="relative">
                         <select name='IDProof' value={passenger.IDProof} onChange={(e) => handleChange(index, "IDProof", e.target.value)} className=" text-sm appearance-none w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white">
-                          <option>Aadhaar Card</option>
-                          <option>PAN Card</option>
-                          <option>Passport</option>
+                          <option value="">Select ID Proof</option>
+                          <option value="Aadhaarcard">Aadhaar Card</option>
+                          <option value="PANCard">PAN Card</option>
+                          <option value="Passport">Passport</option>
                         </select>
 
                         <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" />
                       </div>
-                      {
-                      errors[index]?.IDProof && (
-                        <p>{errors[index].IDProof}</p>
-                      )
-                    }
+
                     </div>
                   </div>
 
@@ -284,11 +281,7 @@ export const PassengerDetails = () => {
 
                       <LiaIdCardSolid className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-2xl" />
                     </div>
-                    {
-                      errors[index]?.IDNumber && (
-                        <p>{errors[index].IDNumber}</p>
-                      )
-                    }
+
                   </div>
                 </div>
               }

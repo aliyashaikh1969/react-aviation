@@ -20,25 +20,20 @@ export const Summary = ({ nextStep, prevStep }) => {
   const { passengerData, validatePassengers, setList, errors, } = usePassenger()
 
 
-  // console.log(validatePassengers())
-
   const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0);
   const grandTotal = (selectedFlight?.price ?? 0) + seatTotal + TAXES
-
-
 
   const handleNextStep = () => {
     const newErrors = validatePassengers()
     const hasErrors = newErrors.some(err => Object.keys(err).length > 0)
-    // if (hasErrors) {
-    //   toast.error("Please fill all passenger details")
-    //   const errorIndexes = newErrors
-    //     .map((err, i) => Object.keys(err).length)
-    //     .filter(i => i !== null)
-    //   setList(errorIndexes)
-    //   return
-    // }
-
+    if (hasErrors) {
+      toast.error("Please fill all passenger details")
+      const errorIndexes = newErrors
+        .map((err, i) => Object.keys(err).length > 0 ? i : null)
+        .filter(i => i !== null)
+      setList(errorIndexes)
+      return
+    }
     nextStep();
   }
   return (

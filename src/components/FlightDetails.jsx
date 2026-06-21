@@ -102,7 +102,7 @@ export const FlightDetails = () => {
 
               <div className="flex items-center gap-2 text-slate-500 text-xs mb-3">
                 <FiClock />
-                <span>{hours}:{minutes}</span>
+                <span>{hours}h:{minutes}m</span>
               </div>
 
               {/* Flight Line */}

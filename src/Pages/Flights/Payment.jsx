@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PaymentMethod from '../../components/PaymentMethod'
 import {
   FiCalendar,
@@ -33,10 +33,13 @@ export const Payment = ({ nextStep, prevStep }) => {
   const minutes = String(flightDuration % 60).padStart(2, "0");
 
 
+
+
   return (
-    <div className='flex justify-center gap-5 pb-10 pt-20 px-16 flex-col md:flex-row'>
+    <div className='relative flex justify-center gap-5 pb-10 pt-20 px-16 flex-col md:flex-row'>
       <div>
         <PaymentMethod nextStep={nextStep} />
+
       </div>
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-3 w-full md:max-w-md">
 
@@ -115,7 +118,7 @@ export const Payment = ({ nextStep, prevStep }) => {
             <div className="flex flex-col items-center flex-1 px-4">
               <div className='flex items-center gap-2  text-xs text-gray-500'>
                 <FiClock />
-                <span className='text-xs text-gray-500'>{hours}:{minutes}</span>
+                <span className='text-xs text-gray-500'>{hours}h:{minutes}m</span>
               </div>
 
               <div className="relative w-full flex items-center">
@@ -326,7 +329,7 @@ export const Payment = ({ nextStep, prevStep }) => {
         </div>
        
       </div>
-       <div className="flex justify-between mt-4">
+       <div className="flex justify-between  md:absolute bottom-0 left-20 p-3 ">
           <button onClick={prevStep} className="flex items-center gap-2 text-blue-600">
             <FaArrowLeft /> Back to Summary
           </button>

@@ -10,6 +10,8 @@ import {
   FiShield,
 } from "react-icons/fi";
 import { useFlight } from "../context/FlightContext";
+import { UpiQRCode } from "../Pages/Flights/UpiQrCode";
+import toast from "react-hot-toast";
 
 const PaymentMethod = ({ nextStep }) => {
   const { selectedFlight, selectedSeats } = useFlight();
@@ -59,34 +61,71 @@ const PaymentMethod = ({ nextStep }) => {
   ];
 
 
-  const handlePay = (e) => {
+  const validate = () => {
+
+    if (selectedMethod === "card") {
+      if (cardData.number.replace(/\s/g, "").length !== 16)
+        return "Valid 16 digit card number enter karo"
+      if (!cardData.name.trim())
+        return "Cardholder name enter karo"
+      if (!/^\d{2}\/\d{2}$/.test(cardData.expiry))
+        return "Expiry MM/YY format mein enter karo"
+      if (cardData.cvv.length !== 3)
+        return "3 digit CVV enter karo"
+    }
+
+    if (selectedMethod === "upi") {
+      if (!upiId.includes("@"))
+        return "Valid UPI ID enter karo — example@upi"
+    }
+
+    if (selectedMethod === "bank") {
+      if (!selectedBank)
+        return "Bank select karo"
+    }
+
+    if (selectedMethod === "wallet") {
+      if (!selectedWallet)
+        return "Wallet select karo"
+    }
+
+    return null  // koi error nahi
+  }
+
+  const handlePayment = async (e) => {
+
     e.preventDefault();
 
+    // Validate
+    const error = validate()
+    if (error) return toast.error(error)
 
+    // Processing start
+    setIsProcessing(true)
 
-    const newErrors = {};
+    await new Promise(resolve => setTimeout(resolve, 2500))
 
-    // if (cardData.number.replace(/\s/g, "").length !== 16)
-    //   newErrors.number = "Valid card number enter karo";
-    // if (!cardData.name.trim())
-    //   newErrors.name = "Cardholder name enter karo";
-    // if (!/^\d{2}\/\d{2}$/.test(cardData.expiry))
-    //   newErrors.expiry = "MM/YY format mein enter karo";
-    // if (cardData.cvv.length !== 3)
-    //   newErrors.cvv = "3 digit CVV enter karo";
-
-    // if (Object.keys(newErrors).length > 0) {
-    //   setErrors(newErrors);
-    //   return;
-    // }
-
-    nextStep();
+    // Success
+    setIsProcessing(false)
+    toast.success("Payment successful! 🎉")
+    nextStep()
   }
+
+
+
+
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  const [upiId, setUpiId] = useState("")
+
+  const [selectedBank, setSelectedBank] = useState("")
+
+  const [selectedWallet, setSelectedWallet] = useState("")
+
 
   return (
     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
 
-      {/* Header */}
       <div className="p-3 border-b border-slate-200 bg-blue-50/50">
 
         <div className="flex items-center gap-4">
@@ -107,7 +146,6 @@ const PaymentMethod = ({ nextStep }) => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr]">
 
         {/* Payment Methods */}
@@ -164,11 +202,16 @@ const PaymentMethod = ({ nextStep }) => {
         {/* Payment Form */}
         <div className="p-4">
 
+
           <div className="flex items-center justify-between mb-8">
 
             <div>
-              <h3 className="text-xl font-bold text-[#0A2A6B]">
-                Pay using Card
+              <h3>
+                Pay using {
+                  selectedMethod === "card" ? "Card" :
+                    selectedMethod === "upi" ? "UPI" :
+                      selectedMethod === "bank" ? "Net Banking" : "Wallet"
+                }
               </h3>
 
               <p className="text-xs text-slate-500 mt-1">
@@ -194,99 +237,185 @@ const PaymentMethod = ({ nextStep }) => {
           </div>
 
           {/* Form */}
-          <form className="space-y-5" onSubmit={handlePay}>
+          <form className="space-y-5" onSubmit={handlePayment}>
 
-            {/* Card Number */}
-            <div>
-              <label className="text-sm font-medium text-slate-600 block mb-2">
-                Card Number
-              </label>
-
-              <div className="relative">
-                <input
-                  value={cardData.number}
-                  onChange={(e) => setCardData(p => ({ ...p, number: formatCard(e.target.value) }))}
-                  maxLength={19}
-                  type="text"
-                  placeholder="1234 5678 9012 3456"
-                  className="w-full h-14 rounded-2xl border border-slate-200 px-4 pr-12 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
-                />
-
-                <FiCreditCard className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl" />
+            {/* Card Form */}
+            {selectedMethod === "card" && (
+              <div className="space-y-5">
+                <div>
+                  <label className="text-sm font-medium text-slate-600 block mb-2">
+                    Card Number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="1234 5678 9012 3456"
+                    maxLength={19}
+                    value={cardData.number}
+                    onChange={e => {
+                      // Auto format — har 4 digits pe space
+                      const val = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 16)
+                        .replace(/(.{4})/g, "$1 ")
+                        .trim()
+                      setCardData(prev => ({ ...prev, number: val }))
+                    }}
+                    className="w-full h-14 rounded-2xl border border-slate-200 px-4 outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-slate-600 block mb-2">
+                    Cardholder Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter cardholder name"
+                    value={cardData.name}
+                    onChange={e => setCardData(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full h-14 rounded-2xl border border-slate-200 px-4 outline-none focus:border-blue-600"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-5">
+                  <div>
+                    <label className="text-sm font-medium text-slate-600 block mb-2">
+                      Expiry Date
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="MM/YY"
+                      maxLength={5}
+                      value={cardData.expiry}
+                      onChange={e => {
+                        // Auto format — 2 digits ke baad / add karo
+                        let val = e.target.value.replace(/\D/g, "").slice(0, 4)
+                        if (val.length >= 2) val = val.slice(0, 2) + "/" + val.slice(2)
+                        setCardData(prev => ({ ...prev, expiry: val }))
+                      }}
+                      className="w-full h-14 rounded-2xl border border-slate-200 px-4 outline-none focus:border-blue-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-600 block mb-2">
+                      CVV
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="123"
+                      maxLength={3}
+                      value={cardData.cvv}
+                      onChange={e => setCardData(prev => ({ ...prev, cvv: e.target.value.replace(/\D/g, "") }))}
+                      className="w-full h-14 rounded-2xl border border-slate-200 px-4 outline-none focus:border-blue-600"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Name + Expiry */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {selectedMethod === "upi" && (
+              <div className="flex flex-col items-center gap-4">
 
-              {/* Name */}
+                {/* UPI ID input */}
+                <div className="w-full">
+                  <label className="text-sm font-medium text-slate-600 block mb-2">
+                    UPI ID enter karo
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="yourname@upi"
+                    value={upiId}
+                    onChange={e => setUpiId(e.target.value)}
+                    className="w-full h-14 rounded-2xl border border-slate-200 px-4 outline-none focus:border-blue-600"
+                  />
+                </div>
+
+                {/* OR divider */}
+                <div className="flex items-center gap-3 w-full">
+                  <div className="flex-1 h-px bg-slate-200"></div>
+                  <span className="text-xs text-slate-400">or scan QR</span>
+                  <div className="flex-1 h-px bg-slate-200"></div>
+                </div>
+
+                {/* QR Card — ye component banao */}
+                <UpiQRCode amount={grandTotal} />
+              </div>
+            )}
+
+            {/* Net Banking Form */}
+            {selectedMethod === "bank" && (
               <div>
                 <label className="text-sm font-medium text-slate-600 block mb-2">
-                  Cardholder Name
+                  Select Bank
                 </label>
-
-                <input
-                  type="text"
-                  placeholder="Enter cardholder name"
-                  className="w-full h-14 rounded-2xl border border-slate-200 px-4 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
-                />
+                <div className="grid grid-cols-2 gap-3">
+                  {["SBI", "HDFC", "ICICI", "Axis", "Kotak", "PNB"].map(bank => (
+                    <button
+                      key={bank}
+                      type="button"
+                      onClick={() => setSelectedBank(bank)}
+                      className={`p-3 rounded-xl border text-sm font-medium transition-all
+                  ${selectedBank === bank
+                          ? "bg-blue-50 border-blue-600 text-blue-700"
+                          : "border-slate-200 text-slate-600 hover:border-blue-300"
+                        }`}
+                    >
+                      {bank}
+                    </button>
+                  ))}
+                </div>
               </div>
+            )}
 
-              {/* Expiry */}
+            {/* Wallet Form */}
+            {selectedMethod === "wallet" && (
               <div>
                 <label className="text-sm font-medium text-slate-600 block mb-2">
-                  Expiry Date
+                  Select Wallet
                 </label>
-
-                <input
-                  type="text"
-                  placeholder="MM / YY"
-                  className="w-full h-14 rounded-2xl border border-slate-200 px-4 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
-                />
+                <div className="grid grid-cols-2 gap-3">
+                  {["Paytm", "PhonePe", "Amazon Pay", "Mobikwik"].map(wallet => (
+                    <button
+                      key={wallet}
+                      type="button"
+                      onClick={() => setSelectedWallet(wallet)}
+                      className={`p-3 rounded-xl border text-sm font-medium transition-all
+                  ${selectedWallet === wallet
+                          ? "bg-blue-50 border-blue-600 text-blue-700"
+                          : "border-slate-200 text-slate-600 hover:border-blue-300"
+                        }`}
+                    >
+                      {wallet}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* CVV */}
-            <div>
-              <label className="text-sm font-medium text-slate-600 block mb-2">
-                CVV
-              </label>
-
-              <div className="relative">
-                <input
-                  type="password"
-                  placeholder="123"
-                  className="w-full h-14 rounded-2xl border border-slate-200 px-4 pr-12 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
-                />
-
-                <FiShield className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl" />
-              </div>
-            </div>
-
-            {/* Save Card */}
-            <label className="flex items-center gap-3 cursor-pointer">
-
-              <input
-                type="checkbox"
-                className="w-5 h-5 accent-blue-600"
-                defaultChecked
-              />
-
-              <span className="text-slate-600">
-                Save card for faster payments
-              </span>
-            </label>
+            )}
 
             {/* Pay Button */}
             <div className="flex  justify-center">
 
               <button
                 type="submit"
-                className="p-3 rounded-2xl bg-[#0A2A6B] hover:bg-[#081f52] transition-all duration-300 text-white text-lg font-semibold shadow-lg shadow-blue-100 flex items-center justify-center gap-3"
+                disabled={isProcessing}
+                className={`p-3 rounded-2xl text-white text-lg font-semibold flex items-center justify-center gap-3 transition-all
+    ${isProcessing
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#0A2A6B] hover:bg-[#081f52]"
+                  }`}
               >
-                <FiLock className="text-xl" />
-
-                Pay Securely ₹{grandTotal.toLocaleString('en-IN')}
+                {isProcessing ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <FiLock />
+                    Pay Securely ₹{grandTotal.toLocaleString('en-IN')}
+                  </>
+                )}
               </button>
             </div>
           </form>
@@ -323,6 +452,8 @@ const PaymentMethod = ({ nextStep }) => {
           </div>
         </div>
       </div>
+
+
     </div>
   );
 };
