@@ -26,9 +26,6 @@ export const PassengerDetails = () => {
   };
 
 
-
-
-
   useEffect(() => {
     if (passengers.length === 0) {
       setPassengers(
