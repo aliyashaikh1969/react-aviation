@@ -16,12 +16,14 @@ export const Summary = ({ nextStep, prevStep }) => {
   useScrollToTop();
 
 
-  const { selectedFlight, selectedSeats } = useFlight()
+  const { selectedFlight, selectedSeats,flightData } = useFlight()
   const { passengerData, validatePassengers, setList, errors, } = usePassenger()
 
+	const totalTaxes = TAXES * flightData.travellers;
 
   const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0);
-  const grandTotal = (selectedFlight?.price ?? 0) + seatTotal + TAXES
+ 	const grandTotal = ((selectedFlight?.price ?? 0) * flightData.travellers) + seatTotal + totalTaxes;
+
 
   const handleNextStep = () => {
     const newErrors = validatePassengers()

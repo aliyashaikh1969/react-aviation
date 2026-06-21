@@ -9,6 +9,7 @@ import QRCode from "react-qr-code";
 
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import { FaArrowRight } from 'react-icons/fa';
 
 
 
@@ -24,12 +25,13 @@ export const Confirmation = () => {
 
   const navigate = useNavigate();
 
-  console.log("flightData", flightData.travellers)
 
   const firstFlight = selectedFlight?.flights?.[0];
-  const TAXES = 1201;
-  const seatTotal = selectedSeats.reduce((t, s) => t + s.price, 0);
-  const grandTotal = ((selectedFlight?.price ?? 0) * flightData.travellers) + seatTotal + TAXES;
+  const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
+  const TAXES = 1125;
+  const totalTaxes = TAXES * flightData.travellers;
+
+  const grandTotal = ((selectedFlight?.price ?? 0) * flightData.travellers) + seatTotal + totalTaxes;
 
 
   const flightDuration = selectedFlight?.total_duration
@@ -107,8 +109,8 @@ export const Confirmation = () => {
 
 
 
-  const resetPage =()=>{
-    navigate("/myTrip")
+  const resetPage = () => {
+    navigate("/myTrips")
     resetFlightData()
   }
 
@@ -421,17 +423,17 @@ export const Confirmation = () => {
                 <div className="space-y-3">
 
                   <div className="text-xs flex justify-between text-slate-600">
-                    <span>Base Fare</span>
-                    <span>₹ {(selectedFlight?.price) * flightData.travellers}</span>
+                    <span>Base Fare  × {flightData.travellers}</span>
+                    <span>₹{((selectedFlight?.price ?? 0) * flightData.travellers).toLocaleString('en-IN')}</span>
                   </div>
 
                   <div className="text-xs flex justify-between text-slate-600">
-                    <span>Taxes</span>
-                    <span>₹ {TAXES}</span>
+                    <span>Taxes  × {flightData.travellers}</span>
+                    <span>₹ {totalTaxes}</span>
                   </div>
 
                   <div className="text-xs flex justify-between text-slate-600">
-                    <span>Seat Charge</span>
+                    <span>Seat Charge  × {flightData.travellers}</span>
                     <span>₹ {seatTotal}</span>
                   </div>
 
@@ -568,9 +570,9 @@ export const Confirmation = () => {
         </div>
       </div>
 
-      <div ref={ticketRef} className=" bg-white"
+      <div ref={ticketRef} className="fixed bg-white"
         style={{
-          top: 0, width: "900px", padding: "20px",
+          left:"-10000px",top: 0, width: "900px", padding: "20px",
         }}>
 
         {/* Header — Navy Blue */}
@@ -590,8 +592,6 @@ export const Confirmation = () => {
           </div>
         </div>
 
-
-
         {/* Route */}
         <div className="flex items-center justify-between p-6 border-b">
           <div>
@@ -600,15 +600,31 @@ export const Confirmation = () => {
             <p className="font-medium mt-2">{firstFlight?.departure_airport?.time?.split(" ")[1]}</p>
             <p className="text-xs text-gray-500">{firstFlight?.departure_airport?.time?.split(" ")[0]}</p>
           </div>
-          <div className="flex flex-col items-center flex-1 px-4">
-            <p className="text-xs text-gray-500 mb-2">{selectedFlight?.total_duration}m</p>
-            <div className="flex items-center w-full gap-2">
-              <div className="flex-1 h-px bg-gray-300"></div>
-              <span className="text-[#0A2A6B] text-xl">✈</span>
-              <div className="flex-1 h-px bg-gray-300"></div>
+          <div className="flex flex-col items-center w-full max-w-[300px]">
+
+            <div className="flex items-center gap-2 text-slate-500 text-xs mb-3">
+              <FiClock />
+              <span>{hours}h:{minutes}m</span>
             </div>
-            <p className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full mt-2">Non-stop</p>
+
+            {/* Flight Line */}
+            <div className="relative w-full flex items-center">
+
+              <div className="h-[2px] bg-slate-200 flex-1"></div>
+
+              <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center mx-3 shadow-lg shadow-blue-100">
+                <BsAirplaneFill className="text-white text-sm rotate-90" />
+              </div>
+
+              <div className="h-[2px] bg-slate-200 flex-1"></div>
+            </div>
+
+            {/* Non Stop */}
+            <div className="mt-4 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
+              {selectedFlight?.type == "One way" ? "Non-stop" : selectedFlight?.type}
+            </div>
           </div>
+
           <div className="text-right">
             <p className="text-4xl font-medium text-[#0A2A6B]">{firstFlight?.arrival_airport?.id}</p>
             <p className="text-xs text-gray-500 mt-1">{firstFlight?.arrival_airport?.name}</p>
@@ -677,9 +693,10 @@ export const Confirmation = () => {
         <div className="flex justify-between items-center p-4 border-t">
           <div>
             <p className="font-semibold">
-              Passenger: {passengers?.[0]?.name}
+              Passenger: {
+                passengers.map((p) => <span>{p.name},</span>)}
             </p>
-            <p>Seat: {selectedSeats?.[0]?.seatNo}</p>
+            <p>Seat: {selectedSeats.map((s) => <span>{s.seatNo},</span>)}</p>
           </div>
 
           <QRCode

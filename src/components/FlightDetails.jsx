@@ -98,30 +98,7 @@ export const FlightDetails = () => {
             </div>
 
             {/* Center */}
-            <div className="flex flex-col items-center w-full max-w-[300px]">
-
-              <div className="flex items-center gap-2 text-slate-500 text-xs mb-3">
-                <FiClock />
-                <span>{hours}h:{minutes}m</span>
-              </div>
-
-              {/* Flight Line */}
-              <div className="relative w-full flex items-center">
-
-                <div className="h-[2px] bg-slate-200 flex-1"></div>
-
-                <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center mx-3 shadow-lg shadow-blue-100">
-                  <BsAirplaneFill className="text-white text-sm rotate-90" />
-                </div>
-
-                <div className="h-[2px] bg-slate-200 flex-1"></div>
-              </div>
-
-              {/* Non Stop */}
-              <div className="mt-4 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
-                {selectedFlight?.type == "One way" ? "Non-stop" : selectedFlight?.type}
-              </div>
-            </div>
+           
 
             {/* Arrival */}
             <div className="text-center lg:text-right">

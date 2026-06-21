@@ -21,10 +21,11 @@ export const Payment = ({ nextStep, prevStep }) => {
   useScrollToTop();
   
   const { selectedFlight, selectedSeats, flightData } = useFlight()
+ const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
   const TAXES = 1125;
+  const totalTaxes = TAXES * flightData.travellers;
 
-  const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0);
-  const grandTotal = (selectedFlight?.price ?? 0) + seatTotal + TAXES
+  const grandTotal = ((selectedFlight?.price ?? 0) * flightData.travellers) + seatTotal + totalTaxes;
 
 
   const flightDuration = selectedFlight?.total_duration
@@ -231,7 +232,7 @@ export const Payment = ({ nextStep, prevStep }) => {
 
             <div className="text-xs flex items-center justify-between text-slate-600">
               <span>Base Fare</span>
-              <span className="font-medium">₹ {selectedFlight?.price}</span>
+              <span className="font-medium">₹ {grandTotal}</span>
             </div>
 
             <div className="text-xs flex items-center justify-between text-slate-600">
@@ -241,7 +242,7 @@ export const Payment = ({ nextStep, prevStep }) => {
 
             <div className="text-xs flex items-center justify-between text-slate-600">
               <span>Taxes & Fees</span>
-              <span className="font-medium">₹{TAXES}</span>
+              <span className="font-medium">₹{totalTaxes}</span>
             </div>
           </div>
 

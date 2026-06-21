@@ -3,10 +3,6 @@ import HeroImg from '../../assets/heroimg.png'
 import logo from '../../assets/aviation-logo.png'
 import { SearchFlights } from '../SearchFlights/SearchFlights';
 import { useFlight } from '../../context/FlightContext';
-// import { useEffect } from 'react';
-// import { globalPostService } from '../../globalApiServices';
-
-
 
 export const Home = () => {
 

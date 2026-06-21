@@ -14,11 +14,13 @@ import { UpiQRCode } from "../Pages/Flights/UpiQrCode";
 import toast from "react-hot-toast";
 
 const PaymentMethod = ({ nextStep }) => {
-  const { selectedFlight, selectedSeats } = useFlight();
-  const TAXES = 1201;
-  const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0);
-  const grandTotal = (selectedFlight?.price ?? 0) + seatTotal + TAXES;
+  const { selectedFlight, selectedSeats, flightData } = useFlight();
 
+  const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
+  const TAXES = 1125;
+  const totalTaxes = TAXES * flightData.travellers;
+
+  const grandTotal = ((selectedFlight?.price ?? 0) * flightData.travellers) + seatTotal + totalTaxes;
 
   const [cardData, setCardData] = useState({
     number: "", name: "", expiry: "", cvv: ""

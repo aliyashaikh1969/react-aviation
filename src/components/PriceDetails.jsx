@@ -8,13 +8,19 @@ import { useFlight } from '../context/FlightContext';
 
 
 export const PriceDetails = () => {
-  const { selectedFlight } = useFlight()
+  const { selectedFlight, selectedSeats, setSelectedSeats, flightData } = useFlight()
 
-  const baseFair =selectedFlight?.price
-  const airportCharges =500
-  const servicefee =250
-  const gst =375
-  const totalAmount =baseFair +airportCharges +servicefee +gst
+  const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
+  const TAXES = 1125;
+  const totalTaxes = TAXES * flightData.travellers;
+
+  const grandTotal = ((selectedFlight?.price ?? 0) * flightData.travellers) + seatTotal + totalTaxes;
+  const charges =  ((selectedFlight?.price ?? 0) * flightData.travellers) + totalTaxes;
+
+  const airportCharges = (500 * flightData?.travellers)
+  const servicefee = (250 * flightData?.travellers)
+  const gst = (375 * flightData?.travellers)
+
 
 
   return (
@@ -41,20 +47,15 @@ export const PriceDetails = () => {
       <div className="space-y-2">
 
         {/* Base Fare */}
-        <div className="flex items-center justify-between text-slate-600">
-          <span className="text-sm">
-            Base Fare (1 × {selectedFlight?.price})
-          </span>
-
-          <span className="font-medium text-slate-800 text-sm">
-           ₹ {baseFair}
-          </span>
+        <div className="flex justify-between text-sm text-gray-600">
+          <span>Base fare × {flightData.travellers}</span>
+          <span className="font-medium text-slate-800 text-sm">₹{((selectedFlight?.price ?? 0) * flightData.travellers).toLocaleString('en-IN')}</span>
         </div>
 
         {/* Airport Charges */}
         <div className="flex items-center justify-between text-slate-600">
           <span className="text-sm">
-            Airport Charges
+            Airport Charges  × {flightData.travellers}
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
@@ -65,7 +66,7 @@ export const PriceDetails = () => {
         {/* Service Fee */}
         <div className="flex items-center justify-between text-slate-600">
           <span className="text-sm">
-            Passenger Service Fee
+            Passenger Service Fee  × {flightData.travellers}
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
@@ -76,7 +77,7 @@ export const PriceDetails = () => {
         {/* GST */}
         <div className="flex items-center justify-between text-slate-600">
           <span className="text-sm">
-            GST
+            GST  × {flightData.travellers}
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
@@ -97,7 +98,7 @@ export const PriceDetails = () => {
           </p>
 
           <h3 className="text-2xl font-bold text-[#0A58FF] mt-1">
-            ₹ {totalAmount}
+            ₹ {charges}
           </h3>
         </div>
 
