@@ -1,33 +1,29 @@
-import React from 'react';
 import { IoBagHandleOutline } from "react-icons/io5";
 import { GiMeal } from "react-icons/gi";
 import { PiSeatBold } from "react-icons/pi";
 import { IoIosAirplane } from "react-icons/io";
-import airIndia from "../../assets/airIndia.png"
-import { useNavigate } from "react-router-dom";
 import { useFlight } from '../../context/FlightContext';
+import { FiClock } from "react-icons/fi";
 
 
 export const FlightCard = ({ flight, nextStep }) => {
 
-    const {slectedFlight,setSelectedFlight} = useFlight()
-
-    const navigate = useNavigate();
-
-    const handleSelectFlight = () => {
-
-        navigate("/booking", {
-            state: {
-                selectedFlight: flight,
-            },
-        });
-    };
+    const { setSelectedFlight } = useFlight()
 
 
-    const selectedFunction =()=>{
-nextStep()
-setSelectedFlight(flight)
+    const selectedFunction = () => {
+        setSelectedFlight(flight)
+        nextStep()
     }
+
+    const firstFlight = flight?.flights?.[0]  // ✅ ek baar lo, baar baar map mat karo
+
+    const flightDuration = firstFlight?.duration
+
+    const hours = String(Math.floor(flightDuration / 60)).padStart(2, "0");
+    const minutes = String(flightDuration % 60).padStart(2, "0");
+
+
     return (
         <div className="bg-white text-black p-2 rounded-xl shadow-md flex justify-between md:items-center md:flex-row flex-col">
 
@@ -36,34 +32,37 @@ setSelectedFlight(flight)
 
                     <div className='flex items-center flex-1  -translate-x-8'>
                         <div className='h-20 '>
-                            <img src={flight?.airline_logo} className='w-[100%] h-[100%] object-cover' alt="" />
+                            <img src={firstFlight?.airline_logo} className='w-[100%] h-[100%] object-cover' alt="" />
                         </div>
                         <div>
-                            <p className="font-bold text-sm">{flight.flights?.map((item => item?.airline))}</p>
-                            <span className='text-gray-600 text-xs'>{flight.flights?.map((item => item?.flight_number))}</span>
+                            <p className="font-bold text-sm">{firstFlight?.airline}</p>
+                            <span className='text-gray-600 text-xs'>{firstFlight?.flight_number}</span>
                         </div>
                     </div>
                     <div className='flex flex-1 md:flex-auto items-center justify-between'>
                         <div>
-                            <p className='font-bold text-xl'>{flight.flights?.map((item => item?.departure_airport?.time.split(" ")[1]))}</p>
-                            <span className='text-sm'>{flight.flights?.map((item => item?.departure_airport?.id))}</span>
+                            <p className='font-bold text-xl'>{firstFlight?.departure_airport?.time.split(" ")[1]}</p>
+                            <span className='text-sm'>{firstFlight?.departure_airport?.id}</span>
                         </div>
                         <div className='flex items-center gap-3'>
 
                             <span className='text-gray-400'>
                                 < IoIosAirplane />
                             </span>
-                            <div className='flex flex-col'>
-                                <span className='text-xs text-gray-500 font-semibold pb-3 px-5 border-b-2 border-gray-400'>{flight.total_duration}</span>
-                                <span className='text-xs text-gray-500 font-semibold pt-3 px-5'>Non-stop</span>
+                            <div className='flex flex-col items-center'>
+                                <div className="flex items-center gap-2  text-xs pb-3 px-5 border-b-2 border-gray-400">
+                                    <FiClock className="text-gray-500" />
+                                    <span className=' text-gray-500 font-semibold '>{hours}:{minutes}</span>
+                                </div>
+                                <span className='text-xs text-gray-500 font-semibold pt-3 px-5'>{flight?.type == "One way" ? "Non-stop" : flight?.type}</span>
                             </div>
                             <span className='text-gray-400'>
                                 <IoIosAirplane />
                             </span>
                         </div>
                         <div className='text-center'>
-                            <p className='font-bold text-xl'>{flight.flights?.map((item => item?.arrival_airport?.time.split(" ")[1]))}</p>
-                            <span className='text-sm'>{flight.flights?.map((item => item?.arrival_airport?.id))}</span>
+                            <p className='font-bold text-xl'>{firstFlight?.arrival_airport?.time.split(" ")[1]}</p>
+                            <span className='text-sm'>{firstFlight?.arrival_airport?.id}</span>
                         </div>
                     </div>
                 </div>
@@ -74,7 +73,7 @@ setSelectedFlight(flight)
                     </div>
                     <div className='flex items-center gap-3'>
                         <span className='text-lg'><GiMeal /></span>
-                        <p className='text-xs font-semibold'>Meal Availabe</p>
+                        <p className='text-xs font-semibold'>Meal Available</p>
                     </div>
                     <div className='flex items-center '>
                         <span className='text-lg'><PiSeatBold /></span>
@@ -93,7 +92,9 @@ setSelectedFlight(flight)
                         Select
 
                     </button>
-                    <p className='text-xs font-semibold text-green-600'>2 seats left</p>
+                    <p className='text-xs font-semibold text-green-600'>{flight.seatsAvailable
+                        ? `${flight.seatsAvailable} seats left`
+                        : "Seats available"}</p>
                 </div>
             </div>
 

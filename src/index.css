@@ -16,6 +16,7 @@
 
 ::-webkit-scrollbar {
   height: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-thumb {

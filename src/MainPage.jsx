@@ -13,7 +13,6 @@ export const MainPage = () => {
         <div>
             <Home/>
             <div className='px-16'>
-
             <Features />
             </div>
             <Popular />

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PaymentMethod from '../../components/PaymentMethod'
 import {
   FiCalendar,
@@ -7,18 +7,40 @@ import {
   FiShield,
   FiRefreshCcw,
   FiHeadphones,
+  FiClock,
 } from "react-icons/fi";
 
 import { BsAirplaneFill } from "react-icons/bs";
 import { useFlight } from '../../context/FlightContext';
+import { FaArrowLeft } from 'react-icons/fa';
+import { useScrollToTop } from "../../hooks/useScrollToTop"
 
-export const Payment = ({ nextStep }) => {
 
-  const { selectedFlight } = useFlight()
+export const Payment = ({ nextStep, prevStep }) => {
+
+  useScrollToTop();
+  
+  const { selectedFlight, selectedSeats, flightData } = useFlight()
+ const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
+  const TAXES = 1125;
+  const totalTaxes = TAXES * flightData.travellers;
+
+  const grandTotal = ((selectedFlight?.price ?? 0) * flightData.travellers) + seatTotal + totalTaxes;
+
+
+  const flightDuration = selectedFlight?.total_duration
+
+  const hours = String(Math.floor(flightDuration / 60)).padStart(2, "0");
+  const minutes = String(flightDuration % 60).padStart(2, "0");
+
+
+
+
   return (
-    <div className='flex justify-center gap-5 pb-10 pt-20 px-16 flex-col md:flex-row'>
+    <div className='relative flex justify-center gap-5 pb-10 pt-20 px-16 flex-col md:flex-row'>
       <div>
         <PaymentMethod nextStep={nextStep} />
+
       </div>
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-3 w-full md:max-w-md">
 
@@ -45,9 +67,8 @@ export const Payment = ({ nextStep }) => {
               </h3>
 
               <p className="text-xs text-slate-500 mt-1">
-                {selectedFlight?.flights.map((item) => item?.airline)}
-                {selectedFlight?.flights.map((item) => item?.flight_number)}  | Economy
-                · Airbus A320
+                {selectedFlight?.flights?.[0]?.flight_number} |{" "}
+                {selectedFlight?.flights?.[0]?.airplane ?? "Economy"}
               </p>
             </div>
 
@@ -65,7 +86,7 @@ export const Payment = ({ nextStep }) => {
 
             <div>
               <h4 className="font-bold text-[#0A2A6B]">
-                IndiGo
+                {selectedFlight?.flights?.[0]?.airline}
               </h4>
 
               <p className="text-xs text-slate-500">
@@ -80,26 +101,26 @@ export const Payment = ({ nextStep }) => {
             {/* From */}
             <div>
               <h2 className="text-2xl font-bold text-[#0A2A6B]">
-                {selectedFlight?.flights.map((item) => item?.departure_airport?.id)}
+                {selectedFlight?.flights[0].departure_airport?.id}
 
               </h2>
 
               <p className="text-slate-500 mt-1 text-xs max-w-32">
-                {selectedFlight?.flights.map((item) => item?.departure_airport?.name)}
+                {selectedFlight?.flights?.[0]?.departure_airport?.name}
 
               </p>
 
               <p className="text-sm font-semibold text-slate-800 mt-2">
-                {selectedFlight?.flights.map((item) => item?.departure_airport?.time.split(" ")[1])}
+                {selectedFlight?.flights?.[0]?.departure_airport?.time.split(" ")[1]}
               </p>
             </div>
 
             {/* Flight Middle */}
             <div className="flex flex-col items-center flex-1 px-4">
-
-              <span className="text-xs text-slate-500 mb-2">
-                {selectedFlight?.total_duration}
-              </span>
+              <div className='flex items-center gap-2  text-xs text-gray-500'>
+                <FiClock />
+                <span className='text-xs text-gray-500'>{hours}h:{minutes}m</span>
+              </div>
 
               <div className="relative w-full flex items-center">
 
@@ -113,7 +134,7 @@ export const Payment = ({ nextStep }) => {
               </div>
 
               <span className="text-xs text-blue-700 bg-blue-50 px-3 py-1 rounded-full mt-3 font-medium">
-                {selectedFlight?.type == "One way" ? "Non-stop" : selectedFlight?.type}
+                {selectedFlight?.type === "One way" ? "Non-stop" : selectedFlight?.type}
               </span>
             </div>
 
@@ -166,7 +187,7 @@ export const Payment = ({ nextStep }) => {
                 </p>
 
                 <h4 className="font-semibold text-xs text-slate-800 mt-1">
-                  1 Adult
+                  {flightData.travellers} Adult{flightData.travellers > 1 ? "s" : ""}
                 </h4>
               </div>
             </div>
@@ -182,7 +203,9 @@ export const Payment = ({ nextStep }) => {
                 </p>
 
                 <h4 className="font-semibold text-xs text-slate-800 mt-1">
-                  2C, 2E
+                  {selectedSeats.length > 0
+                    ? selectedSeats.map(s => s.seatNo).join(", ")
+                    : "--"}
                 </h4>
               </div>
             </div>
@@ -209,17 +232,17 @@ export const Payment = ({ nextStep }) => {
 
             <div className="text-xs flex items-center justify-between text-slate-600">
               <span>Base Fare</span>
-              <span className="font-medium">₹ {selectedFlight?.price}</span>
+              <span className="font-medium">₹ {grandTotal}</span>
             </div>
 
             <div className="text-xs flex items-center justify-between text-slate-600">
               <span>Seat Charges</span>
-              <span className="font-medium">₹ 0</span>
+              <span className="font-medium">₹{seatTotal}</span>
             </div>
 
             <div className="text-xs flex items-center justify-between text-slate-600">
               <span>Taxes & Fees</span>
-              <span className="font-medium">₹ 0</span>
+              <span className="font-medium">₹{totalTaxes}</span>
             </div>
           </div>
 
@@ -231,7 +254,7 @@ export const Payment = ({ nextStep }) => {
             </h3>
 
             <h2 className="text-xl font-bold text-[#0A58FF]">
-              ₹ 6,499
+              ₹{grandTotal.toLocaleString('en-IN')}
             </h2>
           </div>
         </div>
@@ -305,7 +328,13 @@ export const Payment = ({ nextStep }) => {
             </p>
           </div>
         </div>
+       
       </div>
+       <div className="flex justify-between  md:absolute bottom-0 left-20 p-3 ">
+          <button onClick={prevStep} className="flex items-center gap-2 text-blue-600">
+            <FaArrowLeft /> Back to Summary
+          </button>
+        </div>
     </div>
   )
 }

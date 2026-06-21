@@ -8,8 +8,21 @@ import { useFlight } from '../context/FlightContext';
 
 
 export const PriceDetails = () => {
+  const { selectedFlight, selectedSeats, setSelectedSeats, flightData } = useFlight()
 
-  const { selectedFlight } = useFlight()
+  const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
+  const TAXES = 1125;
+  const totalTaxes = TAXES * flightData.travellers;
+
+  const grandTotal = ((selectedFlight?.price ?? 0) * flightData.travellers) + seatTotal + totalTaxes;
+  const charges =  ((selectedFlight?.price ?? 0) * flightData.travellers) + totalTaxes;
+
+  const airportCharges = (500 * flightData?.travellers)
+  const servicefee = (250 * flightData?.travellers)
+  const gst = (375 * flightData?.travellers)
+
+
+
   return (
     <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
 
@@ -31,55 +44,50 @@ export const PriceDetails = () => {
       </div>
 
       {/* Price List */}
-      <div className="space-y-4">
+      <div className="space-y-2">
 
         {/* Base Fare */}
-        <div className="flex items-center justify-between text-slate-600">
-          <span className="text-sm">
-            Base Fare (1 × {selectedFlight?.price})
-          </span>
-
-          <span className="font-medium text-slate-800 text-sm">
-            {selectedFlight?.price}
-          </span>
+        <div className="flex justify-between text-sm text-gray-600">
+          <span>Base fare × {flightData.travellers}</span>
+          <span className="font-medium text-slate-800 text-sm">₹{((selectedFlight?.price ?? 0) * flightData.travellers).toLocaleString('en-IN')}</span>
         </div>
 
         {/* Airport Charges */}
         <div className="flex items-center justify-between text-slate-600">
           <span className="text-sm">
-            Airport Charges
+            Airport Charges  × {flightData.travellers}
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
-            ₹ 500
+            ₹ {airportCharges}
           </span>
         </div>
 
         {/* Service Fee */}
         <div className="flex items-center justify-between text-slate-600">
           <span className="text-sm">
-            Passenger Service Fee
+            Passenger Service Fee  × {flightData.travellers}
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
-            ₹ 250
+            ₹ {servicefee}
           </span>
         </div>
 
         {/* GST */}
         <div className="flex items-center justify-between text-slate-600">
           <span className="text-sm">
-            GST
+            GST  × {flightData.travellers}
           </span>
 
           <span className="font-medium text-slate-800 text-sm">
-            ₹ 375
+            ₹ {gst}
           </span>
         </div>
       </div>
 
       {/* Divider */}
-      <div className="border-t border-dashed border-slate-200 my-6"></div>
+      <div className="border-t border-dashed border-slate-200 my-3"></div>
 
       {/* Total */}
       <div className="flex items-center justify-between">
@@ -90,7 +98,7 @@ export const PriceDetails = () => {
           </p>
 
           <h3 className="text-2xl font-bold text-[#0A58FF] mt-1">
-            ₹ 3,624
+            ₹ {charges}
           </h3>
         </div>
 
@@ -100,9 +108,9 @@ export const PriceDetails = () => {
       </div>
 
       {/* Savings Box */}
-      <div className="mt-6 bg-green-50 border border-green-200 rounded-2xl p-4 flex items-start gap-3">
+      <div className="mt-4 bg-green-50 border border-green-200 rounded-2xl p-2 flex items-start gap-3">
 
-        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0">
           <FiCheckCircle className="text-green-700 text-xl" />
         </div>
 

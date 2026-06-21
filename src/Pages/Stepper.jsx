@@ -2,19 +2,11 @@ import React from "react";
 
 export const Stepper = ({ step }) => {
 
-  const steps = [
-    "Search",
-    "Flight",
-    "Seats",
-    "Summary",
-    "Payment",
-    "Confirm",
-  ];
+  const steps = ["Flight", "Seats", "Summary", "Payment", "Confirm"];
 
   return (
 
-    <div className="w-full absolute py-6 px-4">
-
+    <div className="w-full py-6 px-4 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto gap-4">
 
         {steps.map((item, index) => {
@@ -24,7 +16,7 @@ export const Stepper = ({ step }) => {
           return (
 
             <div
-              key={index}
+              key={item}
               className="flex items-center flex-1 min-w-fit"
             >
 
@@ -39,17 +31,16 @@ export const Stepper = ({ step }) => {
                     text-xs font-semibold
                     transition-all duration-300
 
-                    ${
-                      step >= stepNumber
-                        ? "bg-blue-700 text-white"
-                        : "border border-[#032B6B] text-[#032B6B]"
+                    ${step >= stepNumber
+                      ? "bg-blue-700 text-white"
+                      : "border border-[#032B6B] text-[#032B6B]"
                     }
                   `}
                 >
                   {step > stepNumber ? "✓" : stepNumber}
                 </div>
 
-                <p className="text-[#032B6B] text-xs md:text-sm whitespace-nowrap">
+                <p className={`text-xs md:text-sm whitespace-nowrap font-medium ${step >= stepNumber ? "text-blue-700" : "text-gray-400"}`}>
                   {item}
                 </p>
 
@@ -63,10 +54,9 @@ export const Stepper = ({ step }) => {
                   className={`
                     flex-1 h-[2px] mx-5
 
-                    ${
-                      step > stepNumber
-                        ? "bg-blue-700"
-                        : "bg-gray-400"
+                    ${step > stepNumber
+                      ? "bg-blue-700"
+                      : "bg-gray-400"
                     }
                   `}
                 />

@@ -587,3 +587,13 @@
         ]
     }
 ]
+
+
+
+export const getAllFlights =()=>{
+    const data = flightApiData[0]
+    return [
+        ...(data.best_flights??[]),
+        ...(data.other_flights?? [])
+    ]
+}

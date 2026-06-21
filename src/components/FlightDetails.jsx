@@ -13,6 +13,13 @@ export const FlightDetails = () => {
 
   const { selectedFlight } = useFlight()
 
+    const flightDuration = selectedFlight?.total_duration
+
+    const hours = String(Math.floor(flightDuration / 60)).padStart(2, "0");
+    const minutes = String(flightDuration % 60).padStart(2, "0");
+
+
+
   return (
     <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
 
@@ -65,7 +72,7 @@ export const FlightDetails = () => {
         {/* Flight Timing */}
         <div className="p-3">
 
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="flex  items-center justify-between gap-8">
 
             {/* Departure */}
             <div className="text-center lg:text-left">
@@ -91,30 +98,7 @@ export const FlightDetails = () => {
             </div>
 
             {/* Center */}
-            <div className="flex flex-col items-center w-full max-w-[300px]">
-
-              <div className="flex items-center gap-2 text-slate-500 text-xs mb-3">
-                <FiClock />
-                <span>{selectedFlight?.total_duration}</span>
-              </div>
-
-              {/* Flight Line */}
-              <div className="relative w-full flex items-center">
-
-                <div className="h-[2px] bg-slate-200 flex-1"></div>
-
-                <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center mx-3 shadow-lg shadow-blue-100">
-                  <BsAirplaneFill className="text-white text-sm rotate-90" />
-                </div>
-
-                <div className="h-[2px] bg-slate-200 flex-1"></div>
-              </div>
-
-              {/* Non Stop */}
-              <div className="mt-4 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
-                {selectedFlight?.type == "One way" ? "Non-stop" : selectedFlight?.type}
-              </div>
-            </div>
+           
 
             {/* Arrival */}
             <div className="text-center lg:text-right">
@@ -139,7 +123,7 @@ export const FlightDetails = () => {
           </div>
 
           {/* Bottom Details */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-3 pt-6 border-t border-slate-200">
+          <div className="grid grid-cols-3 gap-5 mt-3 pt-6 border-t border-slate-200">
 
             {/* Aircraft */}
             <div className="flex items-start gap-3">

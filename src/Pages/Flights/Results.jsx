@@ -1,0 +1,114 @@
+import React, { useMemo, useState } from "react";
+import { SearchSummary } from "../../components/SearchSummary";
+import { Filters } from "../../components/Filters";
+import { useLocation } from "react-router-dom";
+import { FlightCard } from "../../components/FlightCard/FlightCard"
+
+import { SearchFlights } from "../../components/SearchFlights/SearchFlights";
+import { Features } from "../../components/Features/Features"
+import saleBack from '../../assets/sale-back.jpg'
+import { useFlight } from "../../context/FlightContext";
+import { flightApiData, getAllFlights } from "../../helperFunction";
+import { SearchModify } from "../../components/search/SearchModify";
+import { useScrollToTop } from "../../hooks/useScrollToTop"
+
+export const Results = ({ nextStep }) => {
+
+    useScrollToTop();
+
+    const flights = flightApiData[0]?.other_flights ?? []
+
+    const allFlights = getAllFlights();
+
+
+    const { flightData } = useFlight()
+    const [showFilter, setShowFilter] = useState(false)
+    const [filters, setFilters] = useState({
+        price: 15000,
+        stops: [],
+        airlines: [],
+        departure: [],
+    });
+    // console.log(allFlights[0])
+
+    const filteredFlights = useMemo(() => {
+
+        return allFlights.filter(flight => {
+
+            const firstFlight = flight.flights?.[0]
+
+            const priceMatch = flight.price <= filters.price
+
+            // // stops
+            const stopsCount = flight.flights?.length - 1
+            const stopsMatch = filters.stops.length === 0 || filters.stops.includes(stopsCount)
+
+            // airline
+            const airlineMatch = filters.airlines.length === 0 || filters.airlines.includes(firstFlight?.airline)
+
+            // time slot
+
+            const depTime = firstFlight?.departure_airport?.time
+            const hour = depTime ? parseInt(depTime.split(" ")[1].split(":")[0]) : 0
+
+            const timeSlot =
+                hour < 6 ? "earlymorning" :
+                    hour < 12 ? "morning" :
+                        hour < 18 ? "afternoon" : "night"
+
+
+            const departureMatch = filters.departure.length === 0 || filters.departure.includes(timeSlot)
+
+
+            return priceMatch && stopsMatch && departureMatch && airlineMatch
+        })
+    }, [allFlights, filters])
+
+
+    return (
+        <div>
+            <div className="w-full bg-cover bg-center px-16  pt-20 pb-7"
+                style={{ backgroundImage: `url(${saleBack})` }}>
+
+                <h2 className='md:text-3xl text-3xl text-white font-semibold '> Search Results</h2>
+                <p className='text-white py-4 md:text-lg text-sm '>Choose from{" "} <span>{filteredFlights.length}</span>+ flights from <span>{flightData.from}</span> to{" "} <span>{flightData.to}</span></p>
+                <SearchModify />
+
+            </div>
+            <div className="px-16">
+                <Features />
+            </div>
+            <div className="flex gap-6 mt-6 bg-gray-100 p-3 px-16 h-[700px]">
+
+                {/* LEFT SIDE */}
+                <div className={`md:flex-[30%] flex-[40%] sticky top-0 `} >
+                    <Filters
+                        filters={filters}
+                        setFilters={setFilters}
+                        flights={allFlights} />
+                </div>
+
+                {/* RIGHT SIDE (your results) */}
+                <div className="md:flex-[70%]  flex-[60%] flex flex-col gap-6 overflow-y-auto pr-2 pb-2">
+                    {/* Flight cards here */}
+                    {filteredFlights.length === 0 ? (
+                        <div className="text-center py-20 text-gray-500">
+                            <p className="text-xl font-semibold">There is no fligh available</p>
+                            <p className="text-sm mt-2"> adjust the Filters</p>
+                        </div>
+                    ) : (
+                        filteredFlights.map(flight => (
+                            <FlightCard
+                                key={flight.booking_token}
+                                flight={flight}
+                                nextStep={nextStep}
+                            />
+                        ))
+                    )}
+                </div>
+
+            </div>
+        </div>
+    );
+};
+

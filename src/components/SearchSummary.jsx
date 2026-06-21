@@ -19,37 +19,6 @@ export const SearchSummary = ({ onModify }) => {
   return (
     <div className="bg-white text-black rounded-xl shadow-md">
 
-      {/* <div className="flex items-center gap-6">
-        <div>
-          <p className="text-sm text-gray-500">From</p>
-          <h2 className="font-bold">{from}</h2>
-        </div>
-
-        ✈
-
-        <div>
-          <p className="text-sm text-gray-500">To</p>
-          <h2 className="font-bold">{to}</h2>
-        </div>
-
-        <div>
-          <p className="text-sm text-gray-500">Date</p>
-          <h2 className="font-bold">{date}</h2>
-        </div>
-
-        <div>
-          <p className="text-sm text-gray-500">Travellers</p>
-          <h2 className="font-bold">{travellers}</h2>
-        </div>
-
-        <button
-          onClick={onModify}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Modify
-        </button>
-      </div> */}
-
       <div className='rounded-2xl relative flex justify-between p-2  w-full md:flex-row flex-col'>
         <div className='flex-1 border-r-2 p-2 pr-8'>
           <p className="text-xs text-gray-600 font-semibold ">FROM</p>
@@ -97,7 +66,7 @@ export const SearchSummary = ({ onModify }) => {
         </div>
         <div className='flex-1 flex items-center justify-center'>
           
-          <button className='flex items-center bg-[#031e3d] px-5 py-2 rounded-lg text-white' onClick={onModify}> <span><PiPencilSimpleLineLight /></span> Modify </button>
+          <button className='flex items-center gap-2 bg-[#031e3d] px-5 py-2 rounded-lg text-white' onClick={onModify}> <span><PiPencilSimpleLineLight /> </span> Modify </button>
         </div>
       </div>
     </div>
