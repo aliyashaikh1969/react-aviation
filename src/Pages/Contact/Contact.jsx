@@ -8,7 +8,7 @@ import {
   FiShield,
   FiHome,
 } from "react-icons/fi";
-import { Home } from '../../components/Home/Home';
+import { Home } from '../../components/home/Home';
 import { ContactCard } from './ContactCard';
 import { Features } from '../../components/Features/Features';
 
