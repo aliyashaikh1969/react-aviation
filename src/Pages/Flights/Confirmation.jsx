@@ -10,6 +10,8 @@ import QRCode from "react-qr-code";
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { FaArrowRight } from 'react-icons/fa';
+import { IoAirplane } from 'react-icons/io5';
+import { FlightDetails } from '../../components/FlightDetails';
 
 
 
@@ -115,7 +117,7 @@ export const Confirmation = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F7FB] px-16 pt-20 pb-10">
+    <div className="px-4 sm:px-8 lg:px-16 pt-2 py-4">
 
       <div className="max-w-7xl mx-auto">
 
@@ -194,280 +196,7 @@ export const Confirmation = () => {
         {/* Main Grid */}
         <div className="grid lg:grid-cols-[1fr_350px] gap-6 mt-6">
 
-          <div className="space-y-2">
-
-            {/* Flight Details */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm">
-
-              {/* Top */}
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-[#0A2A6B]"> Flight Details </h2>
-
-                <div className="flex items-center gap-3">
-                  <img src={firstFlight.airline_logo} alt="" className='w-8' />
-                  <span className="text-xl font-bold text-[#0A2A6B]">
-                    {firstFlight.airline}
-                  </span>
-                </div>
-              </div>
-
-              {/* Flight Route */}
-              <div className="grid grid-cols-3 items-center gap-6">
-
-                {/* Departure */}
-                <div>
-                  <h3 className="text-xl font-bold text-[#0A2A6B]">
-                    {firstFlight?.departure_airport.id}
-                  </h3>
-
-                  <p className="text-xs text-slate-500 mt-1">
-                    {firstFlight?.departure_airport.name}
-                  </p>
-
-                  <h2 className="text-2xl font-bold text-[#0A2A6B] mt-5">
-                    {firstFlight?.departure_airport?.time.split(" ")[1]}
-                  </h2>
-
-                  <p className="text-xs text-slate-500 mt-2">
-                    {firstFlight?.departure_airport?.time.split(" ")[0]}
-                  </p>
-                </div>
-
-                {/* Center */}
-                <div className="flex flex-col items-center">
-
-                  <div className=" text-xs flex items-center gap-2 text-slate-500 mb-4">
-                    <FiClock />
-                    <span>{hours}h {minutes}m</span>
-                  </div>
-
-                  <div className="relative w-full flex items-center">
-
-                    <div className="h-[2px] bg-slate-200 flex-1"></div>
-
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center mx-3 shadow-lg shadow-blue-100">
-                      <BsAirplaneFill className="text-white text-lg rotate-90" />
-                    </div>
-
-                    <div className="h-[2px] bg-slate-200 flex-1"></div>
-                  </div>
-
-                  <div className="mt-4 px-4 py-2 rounded-full bg-blue-50 text-blue-700 font-medium text-xs">
-                    {selectedFlight?.type === "One way" ? "Non-stop" : selectedFlight?.type}
-
-                  </div>
-                </div>
-
-                {/* Arrival */}
-                <div className="text-left md:text-right">
-
-                  <h3 className="text-sm font-bold text-[#0A2A6B]">
-                    {firstFlight?.arrival_airport.id}
-                  </h3>
-
-                  <p className="text-xs text-slate-500 mt-1">
-                    {firstFlight?.arrival_airport.name}
-                  </p>
-
-                  <h2 className="text-2xl font-bold text-[#0A2A6B] mt-5">
-                    {firstFlight?.arrival_airport?.time.split(" ")[1]}
-                  </h2>
-
-                  <p className="text-xs text-slate-500 mt-2">
-                    {firstFlight?.arrival_airport?.time.split(" ")[0]}
-                  </p>
-                </div>
-              </div>
-
-              {/* Bottom Info */}
-              <div className="grid grid-cols-4 md:grid-cols-4 gap-5 mt-8 pt-6 border-t border-slate-200">
-
-                <div>
-                  <p className="text-sm text-slate-500">
-                    Flight Number
-                  </p>
-
-                  <h4 className="font-bold text-[#0A2A6B] mt-1">
-                    {firstFlight?.flight_number}
-                  </h4>
-                </div>
-
-                <div>
-                  <p className="text-sm text-slate-500">
-                    Aircraft
-                  </p>
-
-                  <h4 className="font-bold text-[#0A2A6B] mt-1">
-                    {firstFlight?.airplane}
-                  </h4>
-                </div>
-
-                <div>
-                  <p className="text-sm text-slate-500">
-                    Cabin Class
-                  </p>
-
-                  <h4 className="font-bold text-[#0A2A6B] mt-1">
-                    {firstFlight?.travel_class}
-                  </h4>
-                </div>
-
-                <div>
-                  <p className="text-sm text-slate-500">
-                    Baggage
-                  </p>
-
-                  <h4 className="font-bold text-[#0A2A6B] mt-1">
-                    15 kg
-                  </h4>
-                </div>
-              </div>
-            </div>
-
-            {/* Cards */}
-            <div className="grid md:grid-cols-3 gap-4">
-
-              {/* Passenger */}
-              <div className="md:col-span-2 bg-white rounded-3xl border border-slate-200 p-3 shadow-sm">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                    <FiUsers className="text-blue-700 text-xl" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-[#0A2A6B] text-lg">Passengers</h3>
-                    <p className="text-sm text-slate-500">
-                      {passengers?.length} passenger{passengers?.length > 1 ? "s" : ""}
-                    </p>
-                  </div>
-                </div>
-
-                {passengers?.length > 1 && (
-                  <div className="flex gap-2 flex-wrap mb-4">
-                    {passengers.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setActivePax(i)}
-                        className={`px-4 py-1.5 rounded-full text-sm border transition-all
-            ${activePax === i
-                            ? "bg-[#0A2A6B] text-white border-[#0A2A6B]"
-                            : "text-slate-500 border-slate-300 hover:border-slate-400"
-                          }`}
-                      >
-                        Passenger {i + 1}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {passengers?.[activePax] && (
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { label: "Full name", value: passengers[activePax].name },
-                      { label: "Gender", value: passengers[activePax].gender },
-                      { label: "Date of birth", value: passengers[activePax].dob },
-                      { label: "Phone", value: passengers[activePax].number },
-                      { label: "Email", value: passengers[activePax].email },
-                      { label: "ID proof", value: `${passengers[activePax].IDProof} · ${passengers[activePax].IDNumber}` },
-                    ].map((item, i) => (
-                      <div key={i}>
-                        <p className="text-xs text-slate-400">{item.label}</p>
-                        <p className="text-sm font-medium text-slate-800 mt-0.5">{item.value || "--"}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Seat Badge */}
-                {selectedSeats[activePax] && (
-                  <div className="mt-4 inline-flex items-center gap-2 bg-[#0A2A6B] text-white rounded-lg px-3 py-1.5 text-sm font-medium">
-                    Seat {selectedSeats[activePax].seatNo}
-                  </div>
-                )}
-
-                {/* All seats summary */}
-                {passengers?.length > 1 && (
-                  <>
-                    <hr className="border-slate-200 my-3" />
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-400">All seats</span>
-                      <span className="font-medium">
-                        {selectedSeats.map(s => s.seatNo).join(" · ")}
-                      </span>
-                    </div>
-                  </>
-                )}
-
-              </div>
-
-
-              {/* Payment */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-3 shadow-sm">
-
-                <div className="flex items-center gap-3 mb-5">
-
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center">
-                    <FiShield className="text-blue-700 text-xl" />
-                  </div>
-
-                  <div>
-                    <h3 className="font-bold text-[#0A2A6B] text-lg">
-                      Payment
-                    </h3>
-
-                    <p className="text-xs text-slate-500">
-                      Paid Successfully
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-
-                  <div className="text-xs flex justify-between text-slate-600">
-                    <span>Base Fare  × {flightData.travellers}</span>
-                    <span>₹{((selectedFlight?.price ?? 0) * flightData.travellers).toLocaleString('en-IN')}</span>
-                  </div>
-
-                  <div className="text-xs flex justify-between text-slate-600">
-                    <span>Taxes  × {flightData.travellers}</span>
-                    <span>₹ {totalTaxes}</span>
-                  </div>
-
-                  <div className="text-xs flex justify-between text-slate-600">
-                    <span>Seat Charge  × {flightData.travellers}</span>
-                    <span>₹ {seatTotal}</span>
-                  </div>
-
-                  <div className="border-t border-slate-200 pt-4 flex justify-between items-center">
-
-                    <span className="font-bold text-[#0A2A6B]">
-                      Total
-                    </span>
-
-                    <span className="text-2xl font-bold text-[#0A58FF]">
-                      ₹ {grandTotal}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col md:flex-row gap-4">
-
-              <button onClick={handleDownload} className="flex-1 h-16 rounded-2xl border-2 border-blue-600 text-blue-700 font-semibold text-lg hover:bg-blue-50 transition-all flex items-center justify-center gap-3">
-                <FiDownload className="text-xl" />
-
-                Download Ticket
-              </button>
-
-              <button onClick={() => resetPage()} className="flex-1 h-16 rounded-2xl bg-[#0A2A6B] hover:bg-[#081f52] transition-all text-white font-semibold text-lg shadow-lg shadow-blue-100 flex items-center justify-center gap-3">
-                Go to My Trips
-
-                <FiArrowRight className="text-xl" />
-              </button>
-            </div>
-          </div>
-
+          <FlightDetails/>
           {/* Right Sidebar */}
           <div className="space-y-6">
 
@@ -570,85 +299,108 @@ export const Confirmation = () => {
         </div>
       </div>
 
-      <div ref={ticketRef} className="fixed bg-white"
-        style={{
-          left:"-10000px",top: 0, width: "900px", padding: "20px",
-        }}>
 
-        {/* Header — Navy Blue */}
+
+      {/* ticket  */}
+      <div ref={ticketRef} className="fixed bg-white"
+        style={{ left: "-10000px", top: 0, width: "900px", padding: "0" }}>
+
+        {/* Header */}
         <div className="bg-[#0A2A6B] p-5 flex justify-between">
           <div className="flex items-center gap-3">
             <img src={selectedFlight?.airline_logo} className="w-10 h-10 rounded-lg bg-white object-contain p-1" alt="" />
             <div>
-              <p className="text-white font-medium">{firstFlight?.airline}</p>
+              <p className="text-white font-semibold">{firstFlight?.airline}</p>
               <p className="text-[#a8bcd8] text-xs">
-                {firstFlight?.flight_number} · {firstFlight?.travel_class} · {firstFlight?.airplane}
+                {firstFlight?.flight_number} · {firstFlight?.travel_class} · {firstFlight?.airplane} · SkyBook
               </p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-[#a8bcd8] text-xs">Booking ref ({pnr})</p>
-            <p className="text-white font-medium tracking-widest mt-1">SBLK72451</p>
+            <p className="text-[#a8bcd8] text-xs">Booking Reference (PNR)</p>
+            <p className="text-white font-semibold tracking-widest mt-1">{pnr}</p>  {/* ✅ Fix 1 */}
           </div>
         </div>
 
-        {/* Route */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <div>
-            <p className="text-4xl font-medium text-[#0A2A6B]">{firstFlight?.departure_airport?.id}</p>
-            <p className="text-xs text-gray-500 mt-1">{firstFlight?.departure_airport?.name}</p>
-            <p className="font-medium mt-2">{firstFlight?.departure_airport?.time?.split(" ")[1]}</p>
-            <p className="text-xs text-gray-500">{firstFlight?.departure_airport?.time?.split(" ")[0]}</p>
-          </div>
-          <div className="flex flex-col items-center w-full max-w-[300px]">
-
-            <div className="flex items-center gap-2 text-slate-500 text-xs mb-3">
-              <FiClock />
-              <span>{hours}h:{minutes}m</span>
-            </div>
-
-            {/* Flight Line */}
-            <div className="relative w-full flex items-center">
-
-              <div className="h-[2px] bg-slate-200 flex-1"></div>
-
-              <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center mx-3 shadow-lg shadow-blue-100">
-                <BsAirplaneFill className="text-white text-sm rotate-90" />
-              </div>
-
-              <div className="h-[2px] bg-slate-200 flex-1"></div>
-            </div>
-
-            {/* Non Stop */}
-            <div className="mt-4 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
-              {selectedFlight?.type == "One way" ? "Non-stop" : selectedFlight?.type}
-            </div>
-          </div>
-
-          <div className="text-right">
-            <p className="text-4xl font-medium text-[#0A2A6B]">{firstFlight?.arrival_airport?.id}</p>
-            <p className="text-xs text-gray-500 mt-1">{firstFlight?.arrival_airport?.name}</p>
-            <p className="font-medium mt-2">{firstFlight?.arrival_airport?.time?.split(" ")[1]}</p>
-            <p className="text-xs text-gray-500">{firstFlight?.arrival_airport?.time?.split(" ")[0]}</p>
-          </div>
-        </div>
-        <div className="bg-[#EAF3DE] px-4 py-2">
-          <p className="text-[#3B6D11] text-xs">
-            ✓ Booking confirmed — E-ticket sent to {passengers?.[0]?.email}
+        {/* Confirmed strip */}
+        <div className="bg-[#EAF3DE] px-5 py-2 border-b border-[#c8e6b0]">
+          <p className="text-[#3B6D11] text-xs font-medium">
+            ✓ Booking Confirmed — E-ticket sent to {passengers?.[0]?.email}
           </p>
         </div>
 
+        {/* Booking meta */}
+        <div className="grid grid-cols-4 border-b border-gray-200 bg-gray-50">
+          {[
+            { label: "Booking Date", value: bookingDate },
+            { label: "Ticket Type", value: "E-Ticket" },
+            { label: "Journey Type", value: flightData.tripType === "round" ? "Round Trip" : "One Way" },
+            { label: "Total Passengers", value: `${passengers?.length} Adult${passengers?.length > 1 ? "s" : ""}` },
+          ].map((item, i) => (
+            <div key={i} className="p-3 border-r border-gray-200 last:border-r-0">
+              <p className="text-xs text-gray-400">{item.label}</p>
+              <p className="text-sm font-medium mt-1">{item.value}</p>
+            </div>
+          ))}
+        </div>
 
-        <div className="p-4 border-b">
-          <p className="text-xs text-gray-400 mb-3">Passengers ({passengers?.length})</p>
+        {/* Route */}
+        <div className="flex items-center justify-between p-5 border-b border-gray-200">
+          <div>
+            <p className="text-4xl font-semibold text-[#0A2A6B]">{firstFlight?.departure_airport?.id}</p>
+            <p className="text-xs text-gray-500 mt-1">{firstFlight?.departure_airport?.name}</p>
+            <p className="font-semibold mt-3">{firstFlight?.departure_airport?.time?.split(" ")[1]}</p>
+            <p className="text-xs text-gray-500">Wed, {firstFlight?.departure_airport?.time?.split(" ")[0]}</p>
+          </div>
+          <div className="flex flex-col items-center flex-1 px-6">
+            <p className="text-xs text-gray-500 mb-2">{hours}h {minutes}m</p>  {/* ✅ Fix 5 */}
+            <div className="flex items-center w-full gap-2">
+              <div className="flex-1 h-px bg-gray-300"></div>
+              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shadow">
+                <IoAirplane className="text-white " />
+              </div>
+              <div className="flex-1 h-px bg-gray-300"></div>
+            </div>
+            <span className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full mt-2">
+              {selectedFlight?.type === "One way" ? "Non-stop" : selectedFlight?.type}  {/* ✅ Fix 3 */}
+            </span>
+          </div>
+          <div className="text-right">
+            <p className="text-4xl font-semibold text-[#0A2A6B]">{firstFlight?.arrival_airport?.id}</p>
+            <p className="text-xs text-gray-500 mt-1">{firstFlight?.arrival_airport?.name}</p>
+            <p className="font-semibold mt-3">{firstFlight?.arrival_airport?.time?.split(" ")[1]}</p>
+            <p className="text-xs text-gray-500">Wed, {firstFlight?.arrival_airport?.time?.split(" ")[0]}</p>
+          </div>
+        </div>
+
+        {/* Flight info strip */}
+        <div className="grid grid-cols-5 border-b border-gray-200 bg-gray-50">
+          {[
+            { label: "Flight No.", value: firstFlight?.flight_number },
+            { label: "Aircraft", value: firstFlight?.airplane },
+            { label: "Cabin Class", value: firstFlight?.travel_class },
+            { label: "Baggage", value: "15 kg/person" },
+            { label: "Check-in", value: "Opens 24h prior" },
+          ].map((item, i) => (
+            <div key={i} className="p-3 border-r border-gray-200 last:border-r-0">
+              <p className="text-xs text-gray-400">{item.label}</p>
+              <p className="text-sm font-medium mt-1">{item.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Passengers table */}
+        <div className="p-4 border-b border-gray-200">
+          <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Passenger Details</p>
           <table className="w-full text-sm">
             <thead>
               <tr className="text-xs text-gray-400">
                 <th className="text-left p-2">#</th>
                 <th className="text-left p-2">Name</th>
                 <th className="text-left p-2">Gender</th>
-                <th className="text-left p-2">DOB</th>
-                <th className="text-left p-2">ID proof</th>
+                <th className="text-left p-2">Date of Birth</th>
+                <th className="text-left p-2">ID Proof</th>
+                <th className="text-left p-2">Phone</th>
                 <th className="text-left p-2">Seat</th>
               </tr>
             </thead>
@@ -656,12 +408,13 @@ export const Confirmation = () => {
               {passengers?.map((p, i) => (
                 <tr key={i} className="border-t border-gray-100">
                   <td className="p-2 text-gray-400">{i + 1}</td>
-                  <td className="p-2 font-medium">{p.name}</td>
+                  <td className="p-2 font-semibold">{p.name}</td>
                   <td className="p-2">{p.gender}</td>
                   <td className="p-2">{p.dob}</td>
                   <td className="p-2">{p.IDProof} · {p.IDNumber}</td>
+                  <td className="p-2">{p.number}</td>
                   <td className="p-2">
-                    <span className="bg-[#0A2A6B] text-white text-xs p-2 rounded">
+                    <span className="bg-[#0A2A6B] text-white text-xs px-2 py-1 rounded">
                       {selectedSeats[i]?.seatNo}
                     </span>
                   </td>
@@ -672,47 +425,100 @@ export const Confirmation = () => {
         </div>
 
         {/* Fare summary */}
-        <div className="p-4 border-b">
-          <div className="flex justify-between text-xs text-gray-500 py-1">
-            <span>Base fare × {passengers?.length}</span>
-            <span>₹{((selectedFlight?.price ?? 0) * passengers?.length).toLocaleString('en-IN')}</span>
-          </div>
-          <div className="flex justify-between text-xs text-gray-500 py-1">
-            <span>Seat charges</span>
-            <span>₹{seatTotal.toLocaleString('en-IN')}</span>
-          </div>
-          <div className="flex justify-between text-xs text-gray-500 py-1">
-            <span>Taxes × {passengers?.length}</span>
-            <span>₹{(TAXES * passengers?.length).toLocaleString('en-IN')}</span>
-          </div>
-          <div className="flex justify-between border-t pt-2 mt-1">
-            <span className="font-medium">Total paid</span>
-            <span className="font-medium text-[#0A2A6B]">₹{grandTotal.toLocaleString('en-IN')}</span>
+        <div className="p-4 border-b border-gray-200">
+          <p className="text-xs text-gray-400 uppercase tracking-wide mb-3">Fare Summary</p>
+          <div className="grid grid-cols-2 gap-8">
+            <div>
+              <div className="flex justify-between text-xs text-gray-500 py-1">
+                <span>Base fare × {passengers?.length}</span>
+                <span>₹{((selectedFlight?.price ?? 0) * passengers?.length).toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-500 py-1">
+                <span>Seat charges</span>
+                <span>₹{seatTotal.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-500 py-1">
+                <span>Taxes × {passengers?.length}</span>
+                <span>₹{(TAXES * passengers?.length).toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between border-t border-gray-200 pt-2 mt-2">
+                <span className="font-semibold">Total Paid</span>
+                <span className="font-semibold text-[#0A2A6B]">₹{grandTotal.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+            <div className="text-xs text-gray-500 space-y-1">
+              <div className="flex justify-between py-1"><span>Payment Method</span><span>Credit Card</span></div>
+              <div className="flex justify-between py-1"><span>Booking Date</span><span>{bookingDate}</span></div>
+              <div className="flex justify-between py-1"><span>Cancellation</span><span>Non-refundable</span></div>
+              <div className="flex justify-between py-1"><span>Meal</span><span>Not included</span></div>
+              <div className="flex justify-between py-1"><span>Status</span><span className="text-green-700 font-semibold">✓ Confirmed</span></div>
+            </div>
           </div>
         </div>
-        <div className="flex justify-between items-center p-4 border-t">
-          <div>
-            <p className="font-semibold">
-              Passenger: {
-                passengers.map((p) => <span>{p.name},</span>)}
-            </p>
-            <p>Seat: {selectedSeats.map((s) => <span>{s.seatNo},</span>)}</p>
-          </div>
 
+        {/* Important note */}
+        <div className="mx-5 my-3 bg-[#FFF8E6] border-l-4 border-[#F59E0B] px-3 py-2 rounded-r">
+          <p className="text-xs text-[#92400E] font-semibold">⚠️ Important</p>
+          <p className="text-xs text-[#78350F] mt-1">
+            Carry a valid government-issued photo ID at the airport. Web check-in opens 24 hours before departure.
+          </p>
+        </div>
+
+        {/* QR + summary */}
+        <div className="flex items-start justify-between p-4 border-t border-b border-gray-200">
+          <div className="text-xs text-gray-600 space-y-1">
+            {/* ✅ Fix 2 — join use karo */}
+            <p><strong>Passengers:</strong> {passengers?.map(p => p.name).join(", ")}</p>
+            <p><strong>Seats:</strong> {selectedSeats.map(s => s.seatNo).join(" · ")}</p>
+            <p><strong>Flight:</strong> {firstFlight?.flight_number} · {firstFlight?.departure_airport?.id} → {firstFlight?.arrival_airport?.id}</p>
+            <p><strong>PNR:</strong> {pnr}</p>
+            <p className="text-gray-400 mt-2">Scan QR for digital check-in</p>
+          </div>
           <QRCode
             value={JSON.stringify({
               pnr,
               flightNo: firstFlight?.flight_number,
-              passenger: passengers?.[0]?.name,
+              passengers: passengers?.map(p => p.name).join(", "),
+              seats: selectedSeats.map(s => s.seatNo).join(", "),
+              from: firstFlight?.departure_airport?.id,
+              to: firstFlight?.arrival_airport?.id,
             })}
             size={90}
           />
         </div>
 
+        {/* Terms & Conditions */}
+        <div className="p-4 bg-gray-50 border-b border-gray-200">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Terms & Conditions</p>
+          <ul className="text-xs text-gray-500 space-y-2">
+            {[
+              "Passengers must carry a valid government-issued photo ID (Aadhaar, Passport, Voter ID, or Driving License) at check-in and boarding.",
+              "Web check-in opens 24 hours before departure and closes 1 hour before scheduled departure. Airport check-in closes 45 minutes before departure.",
+              "Baggage allowance is 15 kg check-in and 7 kg cabin baggage per passenger. Excess baggage charges will apply.",
+              "This ticket is non-transferable. The name on the ticket must match the ID presented at the airport.",
+              "Cancellation and rescheduling are subject to airline policy and applicable fees. Please visit the airline website for details.",
+              "Passengers are advised to report at the airport at least 2 hours before departure for domestic flights.",
+              "SkyBook acts as an intermediary and is not responsible for flight delays, cancellations, or changes made by the airline.",
+              "In case of flight cancellation by the airline, refund will be processed within 7-10 business days to the original payment method.",
+              "Prohibited items as per DGCA regulations are not allowed in cabin or checked baggage.",
+              "This is a computer-generated e-ticket and does not require a signature or stamp to be valid.",
+            ].map((term, i) => (
+              <li key={i} className="flex gap-2">
+                <span className="text-[#0A2A6B] flex-shrink-0">•</span>
+                <span>{term}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {/* Footer */}
-        <div className="bg-blue-50 p-4 flex justify-between items-center">
-          <p className="text-blue-700 text-xs">E-ticket sent to {passengers?.[0]?.email}</p>
-          <span className="text-green-700 bg-green-50 text-xs px-3 py-1 rounded-full">Confirmed</span>
+        <div className="bg-[#0A2A6B] p-4 flex justify-between items-center">
+          <p className="text-[#a8bcd8] text-xs">
+            E-ticket · {passengers?.[0]?.email} · Booking ID: {pnr}
+          </p>
+          <p className="text-[#a8bcd8] text-xs">
+            SkyAero · skyAero.com · support@skyAero.com
+          </p>
         </div>
       </div>
 

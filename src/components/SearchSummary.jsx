@@ -11,16 +11,18 @@ import { PiPencilSimpleLineLight } from "react-icons/pi";
 import { useFlight } from "../context/FlightContext";
 
 
-export const SearchSummary = ({ onModify }) => {
+export const SearchSummary = ({ onModify ,
+  showModifyButton = false,
+}) => {
 
-  const {flightData} = useFlight()
+  const { flightData } = useFlight()
 
 
   return (
     <div className="bg-white text-black rounded-xl shadow-md">
 
       <div className='rounded-2xl relative flex justify-between p-2  w-full md:flex-row flex-col'>
-        <div className='flex-1 border-r-2 p-2 pr-8'>
+        <div className='flex-1 md:border-r-2 p-2 pr-8'>
           <p className="text-xs text-gray-600 font-semibold ">FROM</p>
           <div className='flex items-center justify-between pt-2'>
             <div className='flex items-center'>
@@ -30,10 +32,12 @@ export const SearchSummary = ({ onModify }) => {
             {/* <p className='text-gray-700'>DEL</p> */}
           </div>
         </div>
+         {showModifyButton && (
         <span className='absolute md:left-[17.8rem] md:top-10 left-[50%] top-[5.2rem] rotate-90 md:rotate-0 border p-2 rounded-full bg-white shadow-lg text-[#06448a]'>
           <LiaExchangeAltSolid />
         </span>
-        <div className='flex-1 border-r-2 py-2 pl-7 pr-2'>
+         )}
+        <div className='flex-1 md:border-r-2 py-2 pl-7 pr-2'>
           <p className="text-xs text-gray-600 font-semibold">TO</p>
           <div className='flex items-center justify-between pt-2'>
             <div className='flex items-center '>
@@ -43,7 +47,7 @@ export const SearchSummary = ({ onModify }) => {
             {/* <p className='text-gray-700'>BOM</p> */}
           </div>
         </div>
-        <div className='flex-1 border-r-2 p-2'>
+        <div className='flex-1 md:border-r-2 p-2'>
           <p className="text-xs text-gray-600 font-semibold">DEPARTURE</p>
           <div className='flex items-center pt-2'>
             <span className='text-[#06448a] p-4 text-xl'><SlCalender /></span>
@@ -53,7 +57,7 @@ export const SearchSummary = ({ onModify }) => {
             </div>
           </div>
         </div>
-        <div className='flex-1 border-r-2 p-2 '>
+        <div className='flex-1 md:border-r-2 p-2 '>
           <p className="text-xs text-gray-600 font-semibold">PASSANGER & CLASS</p>
           <div className='flex items-center pt-2'>
             <span className='text-[#06448a] p-4 text-xl'><IoPersonOutline /></span>
@@ -64,10 +68,17 @@ export const SearchSummary = ({ onModify }) => {
 
           </div>
         </div>
-        <div className='flex-1 flex items-center justify-center'>
-          
-          <button className='flex items-center gap-2 bg-[#031e3d] px-5 py-2 rounded-lg text-white' onClick={onModify}> <span><PiPencilSimpleLineLight /> </span> Modify </button>
-        </div>
+        {showModifyButton && (
+          <div className="flex-1 flex items-center justify-center">
+            <button
+              onClick={onModify}
+              className="flex items-center gap-2 bg-[#031e3d] px-5 py-2 rounded-lg text-white"
+            >
+              <PiPencilSimpleLineLight />
+              Modify
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

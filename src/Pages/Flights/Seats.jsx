@@ -77,19 +77,17 @@ export const Seats = ({ nextStep, prevStep }) => {
 
 	return (
 		<div >
-			<div className='px-16 pt-2 '>
+			<div className='px-4 sm:px-8 lg:px-16 pt-2'>
 				<h2 className='md:text-xl text-lg text-[#031e3d] font-semibold'>Choose Your Seats</h2>
 				<p className='text-[#031e3d] py-2  text-xs'>Select Your preferred seats and enjoy your journey.</p>
-				{/* <SearchModify/> */}
 				<SearchSummary />
 			</div>
-			<div className='px-16 flex gap-5 flex-col md:flex-row '>
-				<div className='shadow-lg md:w-[70%] w-full flex flex-col p-3' >
+			<div className="px-4 lg:px-16 flex flex-col xl:flex-row gap-5">
+				<div className="shadow-lg w-full xl:w-[70%] flex flex-col p-3">
 					<div className='flex items-center justify-between pb-3'>
 						<div>
 							<p className='text-xs text-[#031e3d] font-semibold'>Select Seats</p>
-							<div className='flex gap-5'>
-
+							<div className='flex flex-wrap gap-3'>
 								<div className='flex items-center gap-5'>
 									<span>{selectedFlight?.flights?.map((item) => item?.departure_airport?.id)}</span>
 									<FaArrowRight />
@@ -206,7 +204,7 @@ export const Seats = ({ nextStep, prevStep }) => {
 						<button onClick={handleNextStep} className='flex items-center gap-5 border-2 bg-[#031e3d] p-3 rounded-md text-white text-xs'>Continue to Summary <span><FaAngleRight /></span></button>
 					</div>
 				</div>
-				<div className='w-full flex-col'>
+				<div className='w-full xl:w-[30%] flex flex-col gap-4 sticky top-24 self-start'>
 					<div className='shadow-lg p-3 '>
 						<div className=' border-b flex flex-col gap-3'>
 							<p className='text-xl font-semibold'>Booking Summary</p>
@@ -215,7 +213,7 @@ export const Seats = ({ nextStep, prevStep }) => {
 								<span>{selectedFlight.flights?.map((item => item?.airline))}</span>
 							</div>
 
-							<div className='flex items-center justify-between'>
+							<div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
 								<div className='flex flex-col'>
 									<p className='text-2xl font-semibold'>{selectedFlight?.flights?.map((item) => item?.departure_airport?.id)}</p>
 									<span className='text-xs text-gray-500'>{selectedFlight?.flights.map((item) => item?.departure_airport?.time.split(" ")[1])}</span>
@@ -247,7 +245,7 @@ export const Seats = ({ nextStep, prevStep }) => {
 								</div>
 								<div className='flex flex-col'>
 									<p className='text-2xl font-semibold'>{selectedFlight?.flights?.map((item) => item?.arrival_airport?.id)}</p>
-									<span className='text-xs text-gray-500'>{selectedFlight?.flights.map((item) => item?.arrival_airport?.time.split(" ")[1])}</span>
+									<span className='text-sm text-gray-800'>{selectedFlight?.flights.map((item) => item?.arrival_airport?.time.split(" ")[1])}</span>
 									<span className='text-xs text-gray-500'>{selectedFlight?.flights.map((item) => item?.arrival_airport?.time.split(" ")[0])}</span>
 								</div>
 							</div>

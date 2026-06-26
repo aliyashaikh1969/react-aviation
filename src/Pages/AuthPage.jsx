@@ -86,7 +86,7 @@ const AuthPage = () => {
 
       setAuthData(userData);
 
-toast.success("Login Successful");
+      toast.success("Login Successful");
       navigate("/")
 
     } else {
@@ -98,7 +98,7 @@ toast.success("Login Successful");
 
       if (!savedUser) {
         toast.error("user not found")
-      
+
         return;
       }
 
@@ -112,10 +112,11 @@ toast.success("Login Successful");
           isLoggedIn: true,
         });
 
-  toast.success("Login Successful");
+        toast.success("Login Successful");
         navigate('/')
       } else {
-toast.error("Invalid Email or Password");      }
+        toast.error("Invalid Email or Password");
+      }
     }
   };
 
@@ -123,7 +124,7 @@ toast.error("Invalid Email or Password");      }
   return (
     <div className="min-h-screen bg-[#F5F7FB]">
 
-      {/* ================= MAIN ================= */}
+      {/*  MAIN  */}
 
       <div className="max-w-7xl mx-auto px-4 py-10">
 

@@ -7,54 +7,54 @@ export const SeatDetails = ({ prevStep }) => {
   const seatTotal = selectedSeats.reduce((t, s) => t + s.price, 0)
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-md w-full">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 p-4 sm:p-5 lg:p-6 shadow-md w-full">
 
       {/* Heading */}
-      <div className="flex items-center justify-between mb-8">
-
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
 
-          <div className="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center">
-            <MdAirlineSeatReclineNormal className="text-blue-700 text-2xl" />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-blue-50 flex items-center justify-center">
+            <MdAirlineSeatReclineNormal className="text-blue-700 text-xl sm:text-2xl" />
           </div>
 
           <div>
-            <p className="text-2xl font-bold text-[#0A2A6B]">
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-[#0A2A6B]">
               Selected Seats
             </p>
 
-            <p className="text-sm text-slate-500">
+            <p className="text-xs sm:text-sm text-slate-500">
               Your selected seats for this flight
             </p>
           </div>
         </div>
 
-        <button onClick={prevStep} className="text-blue-700 border border-[#0A2A6B] font-semibold  text-sm mt-4 px-3 py-1.5 rounded-lg flex items-center gap-2 hover:bg-[#e8eef7]">
+        <button onClick={prevStep} className="w-full sm:w-auto flex items-center justify-center gap-2 border border-[#0A2A6B] text-[#0A2A6B] font-semibold px-4 py-2 rounded-lg hover:bg-blue-50 transition">
           <TbEdit /> Change Seats
         </button>
       </div>
 
-      <div className="w-full bg-slate-50 border border-slate-200 rounded-3xl p-5">
+      <div className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5">
 
         <h3 className="text-lg font-bold text-[#0A2A6B] mb-5">
           Your Seats
         </h3>
 
         {selectedSeats.length > 0 ? (
-          <div className="flex flex-wrap gap-3">
-            {selectedSeats.map(seat => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-wrap gap-3">            {selectedSeats.map(seat => (
 
-              <div key={seat.seatNo} className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold flex flex-col items-center">
-                <span>
-                  {seat.seatNo}
-                </span>
-                <span>{seat.type}</span>
-              </div>
-            ))}
+            <div key={seat.seatNo} className="min-w-[70px] px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold flex flex-col items-center shadow-sm">
+              <span>
+                {seat.seatNo}
+              </span>
+              <span>{seat.type}</span>
+            </div>
+          ))}
           </div>
         ) : (
-          <p className="text-slate-500 text-sm">No setat is selected</p>
-        )}
+          <div className="text-center py-8">
+            <MdAirlineSeatReclineNormal className="mx-auto text-5xl text-slate-300 mb-3" />
+            <p className="text-slate-500"> No seats selected yet</p>
+          </div>)}
 
         {/* Info */}
         <div className="mt-6 pt-5 border-t border-slate-200">
@@ -68,17 +68,16 @@ export const SeatDetails = ({ prevStep }) => {
               ₹{selectedSeats.reduce((total, seat) => total + seat.price, 0)}
             </span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center gap-4 text-sm">
             <span className="text-sm text-slate-500">Seat type</span>
             <span className="font-semibold">
-              {selectedSeats?.[0]?.type}           
-               </span>
+              {[...new Set(selectedSeats.map(seat => seat.type))].join(", ")}            </span>
           </div>
         </div>
         <hr className="border-slate-200 my-3" />
-        <div className="flex justify-between">
+        <div className="mt-4 bg-blue-50 rounded-xl p-4 flex justify-between items-center">
           <span className="font-medium text-[#0A2A6B]">Total seat charges</span>
-          <span className="text-[#0A2A6B] font-medium text-lg">₹{seatTotal}</span>
+          <span className="text-[#0A2A6B] font-medium text-lg">₹{seatTotal.toLocaleString("en-IN")}</span>
         </div>
       </div>
 

@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-
-import {
-  FiUser,
-  FiCalendar,
-  FiChevronDown,
-} from "react-icons/fi";
-
+import { FiUser, FiCalendar, FiChevronDown } from "react-icons/fi";
 import { LiaIdCardSolid } from "react-icons/lia";
 import { usePassenger } from '../context/PassengerContext';
 import { useFlight } from '../context/FlightContext';
@@ -18,6 +12,8 @@ export const PassengerDetails = () => {
   const { flightData } = useFlight()
   const totalPassengers = flightData.travellers;
   const dateRef = useRef([]);
+  const today = new Date().toISOString().split("T")[0];
+
 
   const openCalendar = (index) => {
     const ref = dateRef.current[index]
@@ -66,7 +62,7 @@ export const PassengerDetails = () => {
 
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 p-5 shadow-md w-full">
+    <div className="bg-white rounded-3xl border border-slate-200 p-4 sm:p-5 lg:p-6 shadow-md w-full">
 
       {/* Heading */}
       <div className="flex items-center gap-3 mb-6">
@@ -75,9 +71,7 @@ export const PassengerDetails = () => {
         </div>
 
         <div>
-          <h2 className="text-xl font-bold text-[#0A2A6B]">
-            Passenger Details
-          </h2>
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#0A2A6B]">Passenger Details </h2>
 
           <p className="text-xs text-slate-500">
             Fill in passenger information carefully
@@ -90,198 +84,216 @@ export const PassengerDetails = () => {
           passengers.map((passenger, index) => (
             <div key={index} className=''>
 
-              <div className=' p-2 flex items-center justify-between' onClick={() => showForm(index)}>
-                <h1>passenger {index + 1}</h1>
-                {
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition" onClick={() => showForm(index)}>
+                <h3 className="font-semibold text-[#0A2A6B]">
+                  Passenger {index + 1}
+                </h3>                {
                   list.includes(index) ? <FaChevronUp /> : <FaChevronDown />
                 }
 
               </div>
-              {
-                list.includes(index) &&
-                <div className="">
-                  <div>
-                    <label className="text-xs font-medium text-slate-600 block mb-2">
-                      Full Name (as per ID)
-                    </label>
+              <div className={`overflow-hidden transition-all duration-300 ${list.includes(index)
+                ? "max-h-[1200px] opacity-100 mt-4"
+                : "max-h-0 opacity-0"
+                }`}>
 
-                    <input
-                      type="text"
-                      name='name'
-                      value={passenger.name}
-                      onChange={(e) => handleChange(index, "name", e.target.value)}
-                      placeholder="Rahul Sharma"
-                      className={`text-sm w-full h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.name ? "border-red-500" : "border-slate-200"}`}
-                    />
-                    {errors[index]?.name && (
-                      <p className="text-red-500 text-xs mt-1">{errors[index].name}</p>
-                    )}
 
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-medium text-slate-600 block mb-2">
-                      Email Address
-                    </label>
-
-                    <input
-                      name='email'
-                      type="email"
-                      value={passenger.email}
-                      onChange={(e) => handleChange(index, "email", e.target.value)}
-                      placeholder="rahul@email.com"
-                      className={`text-sm w-full h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.email ? "border-red-500" : "border-slate-200"}`}
-                    />
-
-                  </div>
-
-                  {/* Phone */}
-                  <div>
-                    <label className="text-xs font-medium text-slate-600 block mb-2">
-                      Phone Number
-                    </label>
-
-                    <input
-                      name='number'
-                      type="tel"
-                      max={10}
-                      value={passenger.number}
-                      onChange={(e) => handleChange(index, "number", e.target.value)}
-                      placeholder="+91 98765 43210"
-                      className={` text-sm w-full h-14 px-4 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.name ? "border-red-500" : "border-slate-200"}`}
-                    />
-                    {
-                      errors[index]?.number && (
-                        <p className="text-red-500 text-xs mt-1">{errors[index].number}</p>
-                      )
-                    }
-                  </div>
-
-                  {/* DOB + Gender */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                    {/* DOB */}
+                {
+                  list.includes(index) &&
+                  <div className="space-y-5">
                     <div>
                       <label className="text-xs font-medium text-slate-600 block mb-2">
-                        Date of Birth
+                        Full Name (as per ID)
+                      </label>
+
+                      <input
+                        type="text"
+                        name='name'
+                        value={passenger.name}
+                        onChange={(e) => handleChange(index, "name", e.target.value)}
+                        placeholder="Rahul Sharma"
+                        className={`text-sm w-full h-12 sm:h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.name ? "border-red-500" : "border-slate-200"}`}
+                      />
+                      {errors[index]?.name && (
+                        <p className="text-red-500 text-xs mt-1">{errors[index].name}</p>
+                      )}
+
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-medium text-slate-600 block mb-2">
+                        Email Address
+                      </label>
+
+                      <input
+                        name='email'
+                        type="email"
+                        value={passenger.email}
+                        onChange={(e) => handleChange(index, "email", e.target.value)}
+                        placeholder="rahul@email.com"
+                        className={`text-sm w-full h-12 sm:h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.email ? "border-red-500" : "border-slate-200"}`}
+                      />
+
+                    </div>
+
+                    {/* Phone */}
+                    <div>
+                      <label className="text-xs font-medium text-slate-600 block mb-2">
+                        Phone Number
+                      </label>
+
+                      <input
+                        type="tel"
+                        name="number"
+                        value={passenger.number}
+                        onChange={(e) =>
+                          handleChange(
+                            index,
+                            "number",
+                            e.target.value.replace(/\D/g, "").slice(0, 10)
+                          )
+                        }
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={10}
+                        placeholder="9876543210"
+                        className={`text-sm w-full h-12 sm:h-14 px-4 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.number ? "border-red-500" : "border-slate-200"
+                          }`}
+                      />
+                      {
+                        errors[index]?.number && (
+                          <p className="text-red-500 text-xs mt-1">{errors[index].number}</p>
+                        )
+                      }
+                    </div>
+
+                    {/* DOB + Gender */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-5">
+
+                      {/* DOB */}
+                      <div>
+                        <label className="text-xs font-medium text-slate-600 block mb-2">
+                          Date of Birth
+                        </label>
+
+                        <div className="relative">
+                          <input
+                            ref={el => dateRef.current[index] = el}
+                            type="date"
+                            name='dob'
+                            max={today}
+                            value={passenger.dob}
+                            onChange={(e) => handleChange(index, "dob", e.target.value)}
+                            className={`hide-date-icon appearance-none w-full h-12 sm:h-14 px-4 pr-12 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.dob ? "border-red-500" : "border-slate-200"}`}
+                          />
+
+                          <FiCalendar
+                            onClick={() => openCalendar(index)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-lg text-slate-400 cursor-pointer"
+                          />
+                        </div>
+                        {
+                          errors[index]?.dob && (
+                            <p className="text-red-500 text-xs mt-1">{errors[index].dob}</p>
+                          )
+                        }
+                      </div>
+
+                      {/* Gender */}
+                      <div>
+                        <label className="text-xs font-medium text-slate-600 block mb-2">
+                          Gender
+                        </label>
+
+                        <div className="relative">
+                          <select
+                            name="gender"
+                            value={passenger.gender}
+                            onChange={(e) => handleChange(index, "gender", e.target.value)}
+                            className={`text-sm appearance-none w-full h-12  sm:h-14 px-4 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white ${errors[index]?.gender ? "border-red-500" : "border-slate-200"
+                              }`}
+                          >
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
+
+                          <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" />
+                        </div>
+                        {
+                          errors[index]?.gender && (
+                            <p className="text-red-500 text-xs mt-1">{errors[index].gender}</p>
+                          )
+                        }
+                      </div>
+                    </div>
+
+                    {/* Nationality + ID Proof */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                      {/* Nationality */}
+                      <div>
+                        <label className="text-xs font-medium text-slate-600 block mb-2">
+                          Nationality
+                        </label>
+
+                        <div className="relative">
+                          <select name='nationality' value={passenger.nationality} onChange={(e) => handleChange(index, "nationality", e.target.value)} className={`text-sm appearance-none w-full h-12 sm:h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white  "border-slate-200"`}>
+                            <option value="">Select Nationality</option>
+                            <option value="indian">Indian</option>
+                            <option value="american">American</option>
+                            <option value="canadian">Canadian</option>
+                          </select>
+
+                          <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" />
+                        </div>
+
+                      </div>
+
+                      {/* ID Proof */}
+                      <div>
+                        <label className="text-xs font-medium text-slate-600 block mb-2">
+                          ID Proof
+                        </label>
+
+                        <div className="relative">
+                          <select name='IDProof' value={passenger.IDProof} onChange={(e) => handleChange(index, "IDProof", e.target.value)} className=" text-sm appearance-none w-full h-12 sm:h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white">
+                            <option value="">Select ID Proof</option>
+                            <option value="Aadhaarcard">Aadhaar Card</option>
+                            <option value="PANCard">PAN Card</option>
+                            <option value="Passport">Passport</option>
+                          </select>
+
+                          <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" />
+                        </div>
+
+                      </div>
+                    </div>
+
+                    {/* ID Number */}
+                    <div>
+                      <label className="text-xs font-medium text-slate-600 block mb-2">
+                        ID Number
                       </label>
 
                       <div className="relative">
                         <input
-                          ref={el => dateRef.current[index] = el}
-                          type="date"
-                          name='dob'
-                          value={passenger.dob}
-                          onChange={(e) => handleChange(index, "dob", e.target.value)}
-                          className={`hide-date-icon appearance-none w-full h-14 px-4 pr-12 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition ${errors[index]?.dob ? "border-red-500" : "border-slate-200"}`}
+                          name='IDNumber'
+                          value={passenger.IDNumber}
+                          onChange={(e) => handleChange(index, "IDNumber", e.target.value)}
+                          type="text"
+                          placeholder="1234 5678 9012"
+                          className=" text-sm w-full h-12 sm:h-14 px-4 pr-12 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
                         />
 
-                        <FiCalendar
-                          onClick={() => openCalendar(index)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-lg text-slate-400 cursor-pointer"
-                        />
-                      </div>
-                      {
-                        errors[index]?.dob && (
-                          <p className="text-red-500 text-xs mt-1">{errors[index].dob}</p>
-                        )
-                      }
-                    </div>
-
-                    {/* Gender */}
-                    <div>
-                      <label className="text-xs font-medium text-slate-600 block mb-2">
-                        Gender
-                      </label>
-
-                      <div className="relative">
-                        <select
-                          name="gender"
-                          value={passenger.gender}
-                          onChange={(e) => handleChange(index, "gender", e.target.value)}
-                          className={`text-sm appearance-none w-full h-14 px-4 rounded-xl border outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white ${errors[index]?.gender ? "border-red-500" : "border-slate-200"
-                            }`}
-                        >
-                          <option value="">Select Gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-
-                        <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" />
-                      </div>
-                      {
-                        errors[index]?.gender && (
-                          <p className="text-red-500 text-xs mt-1">{errors[index].gender}</p>
-                        )
-                      }
-                    </div>
-                  </div>
-
-                  {/* Nationality + ID Proof */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                    {/* Nationality */}
-                    <div>
-                      <label className="text-xs font-medium text-slate-600 block mb-2">
-                        Nationality
-                      </label>
-
-                      <div className="relative">
-                        <select name='nationality' value={passenger.nationality} onChange={(e) => handleChange(index, "nationality", e.target.value)} className={`text-sm appearance-none w-full h-14 px-4 rounded-xl border  outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white  "border-slate-200"`}>
-                          <option value="">Select Nationality</option>
-                          <option value="indian">Indian</option>
-                          <option value="american">American</option>
-                          <option value="canadian">Canadian</option>
-                        </select>
-
-                        <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" />
-                      </div>
-
-                    </div>
-
-                    {/* ID Proof */}
-                    <div>
-                      <label className="text-xs font-medium text-slate-600 block mb-2">
-                        ID Proof
-                      </label>
-
-                      <div className="relative">
-                        <select name='IDProof' value={passenger.IDProof} onChange={(e) => handleChange(index, "IDProof", e.target.value)} className=" text-sm appearance-none w-full h-14 px-4 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition bg-white">
-                          <option value="">Select ID Proof</option>
-                          <option value="Aadhaarcard">Aadhaar Card</option>
-                          <option value="PANCard">PAN Card</option>
-                          <option value="Passport">Passport</option>
-                        </select>
-
-                        <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" />
+                        <LiaIdCardSolid className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-2xl" />
                       </div>
 
                     </div>
                   </div>
-
-                  {/* ID Number */}
-                  <div>
-                    <label className="text-xs font-medium text-slate-600 block mb-2">
-                      ID Number
-                    </label>
-
-                    <div className="relative">
-                      <input
-                        name='IDNumber'
-                        value={passenger.IDNumber}
-                        onChange={(e) => handleChange(index, "IDNumber", e.target.value)}
-                        type="text"
-                        placeholder="1234 5678 9012"
-                        className=" text-sm w-full h-14 px-4 pr-12 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
-                      />
-
-                      <LiaIdCardSolid className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-2xl" />
-                    </div>
-
-                  </div>
-                </div>
-              }
+                }
+              </div>
             </div>
 
 

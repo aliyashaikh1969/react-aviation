@@ -16,7 +16,7 @@ export const FlightCard = ({ flight, nextStep }) => {
         nextStep()
     }
 
-    const firstFlight = flight?.flights?.[0]  // ✅ ek baar lo, baar baar map mat karo
+    const firstFlight = flight?.flights?.[0]
 
     const flightDuration = firstFlight?.duration
 
@@ -25,14 +25,14 @@ export const FlightCard = ({ flight, nextStep }) => {
 
 
     return (
-        <div className="bg-white text-black p-2 rounded-xl shadow-md flex justify-between md:items-center md:flex-row flex-col">
+        <div className="bg-white text-black p-2 rounded-xl shadow-md flex justify-between lg:items-center lg:flex-row flex-col">
 
             <div className='px-3 flex-1'>
-                <div className='flex px-2 py-5 md:items-center border-b md:flex-row flex-col overflow-hidden'>
+                <div className='flex px-2 py-5 lg:items-center border-b lg:flex-row flex-col overflow-hidden'>
 
-                    <div className='flex items-center flex-1  -translate-x-8'>
-                        <div className='h-20 '>
-                            <img src={firstFlight?.airline_logo} className='w-[100%] h-[100%] object-cover' alt="" />
+                    <div className='flex items-center gap-3 w-[220px] shrink-0'>
+                        <div className='w-16 h-16 '>
+                            <img src={firstFlight?.airline_logo} className='w-[100%] h-[100%] object-contain' alt="" />
                         </div>
                         <div>
                             <p className="font-bold text-sm">{firstFlight?.airline}</p>
@@ -52,7 +52,7 @@ export const FlightCard = ({ flight, nextStep }) => {
                             <div className='flex flex-col items-center'>
                                 <div className="flex items-center gap-2  text-xs pb-3 px-5 border-b-2 border-gray-400">
                                     <FiClock className="text-gray-500" />
-                                    <span className=' text-gray-500 font-semibold '>{hours}:{minutes}</span>
+                                    <span className=' text-gray-500 font-semibold '>{hours}h:{minutes}m</span>
                                 </div>
                                 <span className='text-xs text-gray-500 font-semibold pt-3 px-5'>{flight?.type == "One way" ? "Non-stop" : flight?.type}</span>
                             </div>
@@ -82,7 +82,7 @@ export const FlightCard = ({ flight, nextStep }) => {
                 </div>
             </div>
 
-            <div className="px-10   text-center flex justify-between md:flex-col">
+            <div className="px-10   text-center flex justify-between lg:flex-col">
                 <div>
                     <h2 className="text-xl font-bold text-black">₹{flight.price}</h2>
                     <p className='text-xs font-semibold'>per person</p>
