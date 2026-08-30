@@ -1,5 +1,3 @@
-// SearchFlights.jsx — Fully Responsive Version
-
 import { useEffect, useRef, useState } from 'react'
 import { GiCommercialAirplane } from "react-icons/gi"
 import { PiIslandThin } from "react-icons/pi"
@@ -12,6 +10,7 @@ import { IoIosArrowForward } from "react-icons/io"
 import { useNavigate } from 'react-router-dom'
 import { useFlight } from '../../context/FlightContext'
 import toast from 'react-hot-toast'
+import { getIATACode } from '../../services/flightService'
 
 export const SearchFlights = ({ onSearch, update = false }) => {
   const dateRef = useRef(null)
@@ -19,6 +18,7 @@ export const SearchFlights = ({ onSearch, update = false }) => {
   const { flightData, setFlightData } = useFlight()
   const [formData, setFormData] = useState(flightData)
   const today = new Date().toISOString().split("T")[0];
+
 
 
   useEffect(() => {
@@ -46,14 +46,24 @@ export const SearchFlights = ({ onSearch, update = false }) => {
     if (!formData.from || !formData.to || !formData.date) {
       return toast.error("Please fill all required fields")
     }
-    setFlightData(formData)
+    setFlightData({
+      ...formData,
+      from: getIATACode(formData.from),  
+      to: getIATACode(formData.to),      
+    })
     navigate('/booking')
   }
 
   const updateData = () => {
-    setFlightData(formData)
-    onSearch?.()
+    setFlightData({
+      ...formData,
+      from: getIATACode(formData.from),  
+      to: getIATACode(formData.to),      
+    })
+    onSearch?.()  //
   }
+
+
 
   return (
     <div className="w-full">
@@ -96,7 +106,7 @@ export const SearchFlights = ({ onSearch, update = false }) => {
                 type="text"
                 value={formData.from}
                 onChange={handleChange}
-                placeholder="City or airport"
+                placeholder="City or IATA code (e.g. Delhi or DEL)"
                 className="flex-1 min-w-0 text-sm font-bold outline-none text-black placeholder:font-normal placeholder:text-gray-400"
               />
               {/* ✅ Airport code — sirf lg pe dikhao */}
@@ -127,7 +137,7 @@ export const SearchFlights = ({ onSearch, update = false }) => {
               className="flex items-center gap-2 text-[#06448a] text-xs font-medium p-2 rounded-full border border-gray-200 hover:bg-gray-50"
             >
               <LiaExchangeAltSolid className="text-base" />
-            
+
             </button>
           </div>
 

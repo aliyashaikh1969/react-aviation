@@ -1,9 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext,useContext, useEffect, useState,} from "react";
 
 const FlightContext = createContext();
 
@@ -15,6 +10,7 @@ const initialFlightData = {
   returnDate: "",
   travellers: 1,
   tripType: "oneway",
+  paymentMethod:"",
 };
 
 export const FlightProvider = ({

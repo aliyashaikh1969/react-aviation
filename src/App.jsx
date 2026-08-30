@@ -16,7 +16,8 @@ import { Protected } from './context/Protected'
 
 function App() {
 
-	// VITE_API_KEY = pg_VFAc44c58xnRaSMubDk_0_M2WyrLz9nG
+	// pg_VFAc44c58xnRaSMubDk_0_M2WyrLz9nG
+	// VITE_API_KEY = myapikey
 
 	// useEffect(() => {
 

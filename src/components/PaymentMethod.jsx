@@ -14,7 +14,8 @@ import { UpiQRCode } from "../Pages/Flights/UpiQrCode";
 import toast from "react-hot-toast";
 
 const PaymentMethod = ({ nextStep }) => {
-  const { selectedFlight, selectedSeats, flightData } = useFlight();
+  const { selectedFlight, selectedSeats, flightData, setFlightData } = useFlight();
+const [upiPayMode, setUpiPayMode] = useState("qr")
 
   const seatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
   const TAXES = 1125;
@@ -77,21 +78,22 @@ const PaymentMethod = ({ nextStep }) => {
     }
 
     if (selectedMethod === "upi") {
-      if (!upiId.includes("@"))
-        return "Valid UPI ID enter karo — example@upi"
+      if (upiId && !upiId.includes("@"))
+        return "Enter a Valid UPI ID — example@upi"
     }
 
     if (selectedMethod === "bank") {
       if (!selectedBank)
-        return "Bank select karo"
+        return "Please Select Bank"
     }
 
     if (selectedMethod === "wallet") {
       if (!selectedWallet)
-        return "Wallet select karo"
+        return "Please Select Wallet"
     }
 
-    return null  // koi error nahi
+
+    return null;
   }
 
   const handlePayment = async (e) => {
@@ -106,6 +108,10 @@ const PaymentMethod = ({ nextStep }) => {
     setIsProcessing(true)
 
     await new Promise(resolve => setTimeout(resolve, 2500))
+
+    setFlightData(prev => ({
+      ...prev, paymentMethod: selectedMethod
+    }))
 
     // Success
     setIsProcessing(false)
@@ -319,7 +325,8 @@ const PaymentMethod = ({ nextStep }) => {
                 {/* UPI ID input */}
                 <div className="w-full">
                   <label className="text-sm font-medium text-slate-600 block mb-2">
-                    UPI ID enter karo
+                   Enter UPI ID
+                   <span>(optional - or scan QR)</span>
                   </label>
                   <input
                     type="text"

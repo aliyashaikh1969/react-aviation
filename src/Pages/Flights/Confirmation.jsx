@@ -6,17 +6,22 @@ import { useNavigate } from 'react-router-dom';
 import { usePassenger } from '../../context/PassengerContext';
 import { useScrollToTop } from "../../hooks/useScrollToTop";
 import QRCode from "react-qr-code";
-
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { FaArrowRight } from 'react-icons/fa';
 import { IoAirplane } from 'react-icons/io5';
 import { FlightDetails } from '../../components/FlightDetails';
 
+import { saveBooking } from "../../firebase/bookingFunctions"
+import { useAuth } from "../../context/AuthContext"
+
 
 
 export const Confirmation = () => {
   useScrollToTop();
+  const { user } = useAuth()
+  const [bookingSaved, setBookingSaved] = useState(false)
+
 
   const [showTicket, setShowTicket] = useState(false)
 
@@ -42,6 +47,53 @@ export const Confirmation = () => {
   const minutes = String(flightDuration % 60).padStart(2, "0");
 
 
+
+
+
+  useEffect(() => {
+    const save = async () => {
+      if (!user || bookingSaved || !selectedFlight) return
+
+      try {
+        await saveBooking(user.uid, {
+          pnr,
+          flight: {
+            airline: firstFlight?.airline,
+            flightNumber: firstFlight?.flight_number,
+            airplane: firstFlight?.airplane,
+            airlineLogo: selectedFlight?.airline_logo,
+            from: firstFlight?.departure_airport?.id,
+            fromName: firstFlight?.departure_airport?.name,
+            to: firstFlight?.arrival_airport?.id,
+            toName: firstFlight?.arrival_airport?.name,
+            departureTime: firstFlight?.departure_airport?.time,
+            arrivalTime: firstFlight?.arrival_airport?.time,
+            duration: selectedFlight?.total_duration,
+            type: selectedFlight?.type,
+          },
+          passengers: passengers?.map((p, i) => ({
+            ...p,
+            seat: selectedSeats[i]?.seatNo ?? "--",
+            seatPrice: selectedSeats[i]?.price ?? 0,
+          })),
+          seats: selectedSeats.map(s => s.seatNo),
+          fare: {
+            baseFare: selectedFlight?.price,
+            seatTotal,
+            taxes: TAXES * flightData.travellers,
+            grandTotal,
+          },
+          tripType: flightData.tripType,
+          travellers: flightData.travellers,
+          status: "confirmed",
+        })
+        setBookingSaved(true)
+      } catch (err) {
+        console.error("Save error:", err)
+      }
+    }
+    save()
+  }, [])
 
 
   const [pnr] = useState(
@@ -109,12 +161,30 @@ export const Confirmation = () => {
 
   }
 
-
-
   const resetPage = () => {
     navigate("/myTrips")
     resetFlightData()
   }
+
+  const getPaymentLabel = (method) => {
+    const labels = {
+      card: "Credit / Debit Card",
+      upi: "UPI",
+      bank: "Net Banking",
+      wallet: "Wallet",
+    }
+    return labels[method] ?? "Online Payment"
+  }
+
+  const getDayName = (dateStr)=>{
+
+    if(!dateStr) return ""
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('en-In',{weekday:'short'})    
+  }
+
+  const departureDay = getDayName(firstFlight?.departure_airport?.time?.split(" ")[0])
+  const arivalDay = getDayName(firstFlight?.arrival_airport?.time?.split(" ")[0])
 
   return (
     <div className="px-4 sm:px-8 lg:px-16 pt-2 py-4">
@@ -196,7 +266,7 @@ export const Confirmation = () => {
         {/* Main Grid */}
         <div className="grid lg:grid-cols-[1fr_350px] gap-6 mt-6">
 
-          <FlightDetails/>
+          <FlightDetails />
           {/* Right Sidebar */}
           <div className="space-y-6">
 
@@ -297,9 +367,25 @@ export const Confirmation = () => {
             </div>
           </div>
         </div>
+
+        <div className="flex flex-col md:flex-row gap-4 mt-6">
+          <button
+            onClick={handleDownload}
+            className="flex-1 h-16 rounded-2xl border-2 border-blue-600 text-blue-700 font-semibold text-lg hover:bg-blue-50 transition-all flex items-center justify-center gap-3"
+          >
+            <FiDownload className="text-xl" />
+            Download Ticket
+          </button>
+
+          <button
+            onClick={resetPage}
+            className="flex-1 h-16 rounded-2xl bg-[#0A2A6B] hover:bg-[#081f52] transition-all text-white font-semibold text-lg shadow-lg shadow-blue-100 flex items-center justify-center gap-3"
+          >
+            Go to My Trips
+            <FiArrowRight className="text-xl" />
+          </button>
+        </div>
       </div>
-
-
 
       {/* ticket  */}
       <div ref={ticketRef} className="fixed bg-white"
@@ -350,7 +436,7 @@ export const Confirmation = () => {
             <p className="text-4xl font-semibold text-[#0A2A6B]">{firstFlight?.departure_airport?.id}</p>
             <p className="text-xs text-gray-500 mt-1">{firstFlight?.departure_airport?.name}</p>
             <p className="font-semibold mt-3">{firstFlight?.departure_airport?.time?.split(" ")[1]}</p>
-            <p className="text-xs text-gray-500">Wed, {firstFlight?.departure_airport?.time?.split(" ")[0]}</p>
+            <p className="text-xs text-gray-500">{departureDay}, {firstFlight?.departure_airport?.time?.split(" ")[0]}</p>
           </div>
           <div className="flex flex-col items-center flex-1 px-6">
             <p className="text-xs text-gray-500 mb-2">{hours}h {minutes}m</p>  {/* ✅ Fix 5 */}
@@ -369,7 +455,7 @@ export const Confirmation = () => {
             <p className="text-4xl font-semibold text-[#0A2A6B]">{firstFlight?.arrival_airport?.id}</p>
             <p className="text-xs text-gray-500 mt-1">{firstFlight?.arrival_airport?.name}</p>
             <p className="font-semibold mt-3">{firstFlight?.arrival_airport?.time?.split(" ")[1]}</p>
-            <p className="text-xs text-gray-500">Wed, {firstFlight?.arrival_airport?.time?.split(" ")[0]}</p>
+            <p className="text-xs text-gray-500">{arivalDay}, {firstFlight?.arrival_airport?.time?.split(" ")[0]}</p>
           </div>
         </div>
 
@@ -447,9 +533,9 @@ export const Confirmation = () => {
               </div>
             </div>
             <div className="text-xs text-gray-500 space-y-1">
-              <div className="flex justify-between py-1"><span>Payment Method</span><span>Credit Card</span></div>
+              <div className="flex justify-between py-1"><span>Payment Method</span><span>{getPaymentLabel(flightData.paymentMethod)}</span></div>
               <div className="flex justify-between py-1"><span>Booking Date</span><span>{bookingDate}</span></div>
-              <div className="flex justify-between py-1"><span>Cancellation</span><span>Non-refundable</span></div>
+              <div className="flex justify-between py-1"><span>Cancellation</span><span> {flightData.tripType === "round" ? "Partially refundable": "Non-refundable"}</span></div>
               <div className="flex justify-between py-1"><span>Meal</span><span>Not included</span></div>
               <div className="flex justify-between py-1"><span>Status</span><span className="text-green-700 font-semibold">✓ Confirmed</span></div>
             </div>
@@ -514,7 +600,7 @@ export const Confirmation = () => {
         {/* Footer */}
         <div className="bg-[#0A2A6B] p-4 flex justify-between items-center">
           <p className="text-[#a8bcd8] text-xs">
-            E-ticket · {passengers?.[0]?.email} · Booking ID: {pnr}
+            E-ticket · {passengers?.[0]?.email ?? user?.email} · Booking ID: {pnr}
           </p>
           <p className="text-[#a8bcd8] text-xs">
             SkyAero · skyAero.com · support@skyAero.com

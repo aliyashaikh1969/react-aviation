@@ -1,29 +1,7 @@
 import React, { useState } from "react";
-
-import {
-  FiMail,
-  FiLock,
-  FiUser,
-  FiShield,
-  FiCalendar,
-  FiHeadphones,
-  FiTag,
-  FiEyeOff,
-  FiEye,
-} from "react-icons/fi";
-
-import {
-  FcGoogle,
-} from "react-icons/fc";
-
-import {
-  FaApple,
-  FaPlane,
-  FaFacebookF,
-  FaInstagram,
-  FaYoutube,
-  FaXTwitter,
-} from "react-icons/fa6";
+import { FiMail, FiLock, FiUser, FiShield, FiCalendar, FiHeadphones, FiTag, FiEyeOff, FiEye, } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
+import { FaApple, FaPlane, FaFacebookF, FaInstagram, FaYoutube, FaXTwitter, } from "react-icons/fa6";
 import { Features } from "../components/Features/Features";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -33,93 +11,103 @@ const AuthPage = () => {
 
 
   const [activeTab, setActiveTab] = useState("login");
-  const { authData, setAuthData } = useAuth()
+  const { login, signUp, googleLogin, forgotPassword } = useAuth()
+  
+  const [loading, setLoading] = useState(false)  // ✅ Ye add karo
 
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    remember: false,
+  })
 
   const navigate = useNavigate()
 
   const handleChange = (e) => {
-
-    const { name, value, type, checked } = e.target;
-    console.log(name, value, checked, type)
-    setAuthData({
-      ...authData, [name]: type === "checkbox" ? checked : value
-    })
+    const { name, value, type, checked } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }))
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
 
-    if (activeTab === "signup") {
+    try {
+      if (activeTab === "signup") {
 
-      // Empty fields check
+        // Validation
+        if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+          return toast.error("Please fill all fields")
+        }
+        if (formData.password !== formData.confirmPassword) {
+          return toast.error("Passwords do not match")
+        }
+        if (formData.password.length < 6) {
+          return toast.error("Password min 6 characters ka hona chahiye")
+        }
 
-      if (
-        !authData.name ||
-        !authData.email ||
-        !authData.password ||
-        !authData.confirmPassword
-      ) {
-        alert("Please fill all fields");
-        return;
+        await signUp(formData.name, formData.email, formData.password)
+        toast.success("Account created! Welcome to SkyBook ✈️")
+
+      } else {
+
+        // Login
+        if (!formData.email || !formData.password) {
+          return toast.error("Please fill all fields")
+        }
+
+        await login(formData.email, formData.password)
+        toast.success("Welcome back! ✈️")
       }
 
-      // Password match check
-
-      if (authData.password !== authData.confirmPassword) {
-        toast.error("Passwords do not match");
-        return;
-      }
-
-      // Save user
-
-      const userData = {
-        name: authData.name,
-        email: authData.email,
-        password: authData.password,
-        remember: authData.remember,
-        isLoggedIn: true,
-      };
-
-      localStorage.setItem("user", JSON.stringify(userData));
-
-      setAuthData(userData);
-
-      toast.success("Login Successful");
       navigate("/")
 
-    } else {
-
-      // LOGIN
-
-      const savedUser =
-        JSON.parse(localStorage.getItem("user"));
-
-      if (!savedUser) {
-        toast.error("user not found")
-
-        return;
+    } catch (err) {
+      // ✅ Firebase error codes — real messages
+      const errors = {
+        "auth/user-not-found": "Account not fined — signup first",
+        "auth/wrong-password": "Wrong Password ",
+        "auth/email-already-in-use": "Email already registered — login",
+        "auth/weak-password": " use strong Password",
+        "auth/invalid-email": "enter a Valid email enter",
+        "auth/invalid-credential": "Wrong Email or password",
+        "auth/too-many-requests": "many attempts — wait ",
+        "auth/network-request-failed": "check Internet connection",
       }
+      toast.error(errors[err.code] ?? "something is wrong — try Again later")
 
-      if (
-        authData.email === savedUser.email &&
-        authData.password === savedUser.password
-      ) {
-
-        setAuthData({
-          ...savedUser,
-          isLoggedIn: true,
-        });
-
-        toast.success("Login Successful");
-        navigate('/')
-      } else {
-        toast.error("Invalid Email or Password");
-      }
+    } finally {
+      setLoading(false)
     }
-  };
+  }
 
+
+const handleGoogle = async () => {
+  try {
+    await googleLogin()
+    toast.success("login successful! ✈️")
+    navigate("/")
+  } catch (err) {
+    toast.error("login failed — try Again")
+  }
+}
+
+
+const handleForgotPassword = async () => {
+  if (!formData.email) return toast.error("enter email first")
+  try {
+    await forgotPassword(formData.email)
+    toast.success("Password reset email send.")
+  } catch (err) {
+    toast.error("Email not found")
+  }
+}
 
   return (
     <div className="min-h-screen bg-[#F5F7FB]">
@@ -291,7 +279,7 @@ const AuthPage = () => {
                     <input
                       name="name"
                       type="text"
-                      value={authData.name}
+                      value={formData.name}
                       onChange={handleChange}
                       placeholder="Enter your full name"
                       className="w-full h-14 rounded-2xl border border-slate-200 bg-white pl-12 pr-4 outline-none focus:border-[#0A58FF]"
@@ -313,7 +301,7 @@ const AuthPage = () => {
                   <input
                     name="email"
                     type="email"
-                    value={authData.email}
+                    value={formData.email}
                     onChange={handleChange}
                     placeholder="Enter your email"
                     className="w-full h-14 rounded-2xl border border-slate-200 bg-white pl-12 pr-4 outline-none focus:border-[#0A58FF]"
@@ -330,7 +318,7 @@ const AuthPage = () => {
                   </label>
 
                   {activeTab === "login" && (
-                    <button className="text-sm text-[#0A58FF] font-medium hover:underline">
+                    <button onClick={()=>handleForgotPassword()} className="text-sm text-[#0A58FF] font-medium hover:underline">
                       Forgot Password?
                     </button>
                   )}
@@ -341,7 +329,7 @@ const AuthPage = () => {
 
                   <input
                     name="password"
-                    value={authData.password}
+                    value={formData.password}
                     onChange={handleChange}
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
@@ -367,7 +355,7 @@ const AuthPage = () => {
 
                     <input
                       name="confirmPassword"
-                      value={authData.confirmPassword}
+                      value={formData.confirmPassword}
                       onChange={handleChange}
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
@@ -386,7 +374,7 @@ const AuthPage = () => {
               <div className="flex items-center justify-between mt-6">
 
                 <label className="flex items-center gap-3 text-slate-600 text-sm">
-                  <input type="checkbox" className="w-4 h-4" name="remember" checked={authData.remember} onChange={handleChange} />
+                  <input type="checkbox" className="w-4 h-4" name="remember" checked={formData.remember} onChange={handleChange} />
 
                   Remember Me
                 </label>
@@ -421,13 +409,13 @@ const AuthPage = () => {
 
               <div className="grid sm:grid-cols-2 gap-4">
 
-                <button className="h-14 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-3 font-medium">
+                <button onClick={handleGoogle} className="h-14 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-3 font-medium">
                   <FcGoogle className="text-2xl" />
 
                   Continue with Google
                 </button>
 
-                <button className="h-14 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-3 font-medium">
+                <button disabled className="h-14 rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-3 font-medium">
                   <FaApple className="text-xl" />
 
                   Continue with Apple

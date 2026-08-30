@@ -79,6 +79,8 @@ export const Filters = ({ filters, setFilters, flights = [] }) => {
 
     setSearchAirline("")
   }
+
+  console.log(flights)
   return (
     <div className=' bg-white p-3 rounded-xl shadow-md '>
       <div>
