@@ -4,9 +4,9 @@ import './index.css'
 import App from './App.jsx'
 
 import { BrowserRouter } from 'react-router-dom'
-import { FlightProvider } from './context/FlightContext.jsx'
-import { AuthProvider } from './context/AuthContext.jsx'
-import { PassengerProvider } from './context/PassengerContext.jsx'
+import { FlightProvider } from './context/FlightProvider'
+import { AuthProvider } from './context/AuthProvider'
+import { PassengerProvider } from './context/PassengerProvider'
 
 import { Toaster } from 'react-hot-toast'
 

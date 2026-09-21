@@ -1,96 +1,38 @@
-
-import './App.css'
 import { Route, Routes } from 'react-router-dom'
-import { FlightsDetails } from './Pages/Flights/FlightsDetails'
-import { NotFound } from './Pages/NotFound'
-import { MainPage } from './MainPage'
-import { Contact } from './Pages/Contact/Contact'
-import { Deals } from './Pages/Deals/Deals'
-import { MyTrips } from './Pages/MyTrips/MyTrips'
-import Layout from './components/Layout'
-import { BookingFlow } from './Pages/BookingFlow'
-import AuthPage from './Pages/AuthPage'
-import { useEffect } from 'react'
-import { Protected } from './context/Protected'
-
+import { ROUTES } from './constants/routes'
+import Layout from './components/layout/Layout'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { HomePage } from './pages/HomePage'
+import { BookingPage } from './pages/booking/BookingPage'
+import { FlightDetailsPage } from './pages/FlightDetailsPage'
+import { MyTripsPage } from './pages/MyTripsPage'
+import { DealsPage } from './pages/DealsPage'
+import { ContactPage } from './pages/ContactPage'
+import AuthPage from './pages/AuthPage'
+import { NotFoundPage } from './pages/NotFoundPage'
 
 function App() {
-
-	// pg_VFAc44c58xnRaSMubDk_0_M2WyrLz9nG
-	// VITE_API_KEY = myapikey
-
-	// useEffect(() => {
-
-	// 	const fetchData = async () => {
-	// 		try {
-	//             // debugger
-	// 			const response = await axios.post(
-	// 				"https://ignav.com/api/playground/fares/one-way",
-	// 				{
-	// 					origin: "DEL",
-	// 					destination: "BOM",
-	// 					departure_date: "2026-05-20",
-	// 				},
-	// 				{
-	// 	// 					headers: {
-	//   "X-Api-Key": import.meta.env.VITE_API_KEY,
-	//   "X-Playground-Token": import.meta.env.VITE_API_KEY,
-// }
-// 				}
-// 			);
-// 				debugger
-// 			console.log("response", response);
-
-// 			console.log("result", response.data);
-
-// 		} catch (error) {
-
-// 			console.log("error", error);
-
-// 			// Full axios error response
-// 			if (error.response) {
-// 				console.log("Error Data:", error.response.data);
-// 				console.log("Error Status:", error.response.status);
-// 			}
-// 		}
-// 	};
-
-// 	fetchData();
-
-// }, []);
-
-return (
-	< div className=''>
-		<Routes>
-
-			<Route path="/" element={<Layout />}>
-				<Route index element={<MainPage />} />
-
-				{/* <Route path="flight/:id" element={<FlightsDetails />} /> */}
-
-				<Route path="/booking" element={
-					// <Protected>
-					<BookingFlow />
-					// </Protected>
-				}
-				/>
-				<Route path="/myTrips" element={
-					<Protected>
-						<MyTrips />
-					</Protected>
-				} />
-				<Route path="deals" element={<Deals />} />
-				<Route path="contact" element={<Contact />} />
-				<Route path="AuthPage" element={<AuthPage />} />
-
-			</Route>
-			<Route path='*' element={<NotFound />} />
-
-		</Routes>
-
-
-	</ div>
-)
+  return (
+    <Routes>
+      <Route path={ROUTES.home} element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route path={ROUTES.booking} element={<BookingPage />} />
+        <Route path={ROUTES.flightDetails} element={<FlightDetailsPage />} />
+        <Route
+          path={ROUTES.myTrips}
+          element={
+            <ProtectedRoute>
+              <MyTripsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path={ROUTES.deals} element={<DealsPage />} />
+        <Route path={ROUTES.contact} element={<ContactPage />} />
+        <Route path={ROUTES.login} element={<AuthPage />} />
+      </Route>
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  )
 }
 
 export default App

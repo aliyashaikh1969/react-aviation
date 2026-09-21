@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { SearchFlights } from '../SearchFlights/SearchFlights';
-import { SearchSummary } from '../SearchSummary';
+import { useState } from 'react'
+import { SearchFlights } from './SearchFlights';
+import { SearchSummary } from './SearchSummary';
 
 export const SearchModify = ({ allowModify = true }) => {
     const [edit, setEdit] = useState(false);

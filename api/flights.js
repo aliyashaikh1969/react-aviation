@@ -1,49 +1,58 @@
-// api/flights.js
+// Serverless proxy for flight search (Vercel function; also served by `npm run dev`).
+// Keeps SERPAPI_KEY on the server so it is never shipped to the browser.
+
+const IATA_CODE = /^[A-Za-z]{3}$/
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
 export default async function handler(req, res) {
-
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-
-  if (req.method === 'OPTIONS') return res.status(200).end()
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
-
-  const { from, to, date, returnDate, travellers, tripType } = req.body
-
-  if (!from || !to || !date) {
-    return res.status(400).json({ error: 'from, to, date required hai' })
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST')
+    return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  const apiKey = process.env.SERPAPI_KEY
+  if (!apiKey) {
+    return res.status(500).json({ error: 'Flight search is not configured (SERPAPI_KEY is missing)' })
+  }
+
+  const { from, to, date, returnDate, travellers, tripType } = req.body ?? {}
+
+  if (!IATA_CODE.test(from ?? '') || !IATA_CODE.test(to ?? '') || !ISO_DATE.test(date ?? '')) {
+    return res.status(400).json({ error: 'from, to (3-letter airport codes) and date (YYYY-MM-DD) are required' })
+  }
+
+  const isRoundTrip = tripType === 'round' && ISO_DATE.test(returnDate ?? '')
+  const adults = Math.min(9, Math.max(1, parseInt(travellers, 10) || 1))
+
   const params = new URLSearchParams({
-    engine: "google_flights",
+    engine: 'google_flights',
     departure_id: from.toUpperCase(),
     arrival_id: to.toUpperCase(),
     outbound_date: date,
-    adults: String(travellers ?? 1),
-    currency: "INR",
-    hl: "en",
-    api_key: process.env.SERPAPI_KEY,  // ✅ Server side — safe!
+    type: isRoundTrip ? '1' : '2',
+    adults: String(adults),
+    currency: 'INR',
+    hl: 'en',
+    api_key: apiKey,
   })
-
-  // Round trip ke liye
-  if (tripType === "round" && returnDate) {
-    params.set("return_date", returnDate)
-    params.set("type", "1")
-  } else {
-    params.set("type", "2")
-  }
+  if (isRoundTrip) params.set('return_date', returnDate)
 
   try {
-    const response = await fetch(`https://serpapi.com/search?${params}`)
-    const data = await response.json()
+    const upstream = await fetch(`https://serpapi.com/search.json?${params}`)
+    const data = await upstream.json()
+
+    // "no flights for this query" is an empty result, not a failure
+    if (data.error && !/hasn't returned any results|no results/i.test(data.error)) {
+      console.error('SerpApi error:', data.error)
+      return res.status(502).json({ error: 'Flight search is temporarily unavailable' })
+    }
 
     return res.status(200).json({
       best_flights: data.best_flights ?? [],
       other_flights: data.other_flights ?? [],
-      price_insights: data.price_insights ?? null,
     })
   } catch (error) {
-    return res.status(500).json({ error: error.message })
+    console.error('Flight search failed:', error)
+    return res.status(502).json({ error: 'Flight search is temporarily unavailable' })
   }
 }
