@@ -1,5 +1,14 @@
 // Shared formatting helpers. Flight times from the API look like "2026-12-01 11:50".
 
+// Today's LOCAL calendar date as YYYY-MM-DD. Deliberately not `new Date().toISOString()`,
+// which is UTC-based and is a day off from the user's actual "today" for part of the day in
+// most timezones (e.g. it rolls over at 5:30am IST or 7/8pm US local time, not midnight).
+export const todayIso = () => {
+  const now = new Date()
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+  return local.toISOString().split('T')[0]
+}
+
 export const inr = (amount) => `₹${(amount ?? 0).toLocaleString('en-IN')}`
 
 // 75 -> "1h 15m"

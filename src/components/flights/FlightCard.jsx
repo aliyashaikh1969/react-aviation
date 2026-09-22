@@ -39,10 +39,14 @@ export const FlightCard = ({ flight, onSelect }) => {
     <div className="bg-white text-black rounded-2xl shadow-sm hover:shadow-lg transition-shadow border border-gray-100 flex flex-col lg:flex-row overflow-hidden">
 
       <div className="flex-1 p-5 min-w-0">
-        <div className="flex flex-col md:flex-row md:items-center gap-5 pb-4 border-b border-dashed border-gray-200">
+        {/* lg:, matching the card's own lg:flex-row split below: at md (768px) the desktop
+            filter sidebar is already showing, so the results column here is only ~390px wide
+            even though the viewport itself is "desktop" width — switching to a horizontal
+            layout at md clips the arrival time/city against this card's own overflow-hidden. */}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-5 pb-4 border-b border-dashed border-gray-200">
 
           {/* Airline */}
-          <div className="flex items-center gap-3 md:w-[200px] shrink-0">
+          <div className="flex items-center gap-3 lg:w-[200px] shrink-0">
             <div className="w-14 h-14 rounded-xl bg-gray-50 p-1.5 shrink-0">
               <img
                 src={flight?.airline_logo ?? first?.airline_logo}
@@ -107,9 +111,9 @@ export const FlightCard = ({ flight, onSelect }) => {
         <div className="flex flex-col items-center gap-1.5">
           <button
             onClick={selectFlight}
-            className="bg-[#031e3d] hover:bg-[#052a5a] transition-colors text-white font-medium px-9 py-2.5 rounded-xl cursor-pointer"
+            className="bg-[#031e3d] hover:bg-[#052a5a] transition-colors text-white font-medium px-9 py-2.5 rounded-xl cursor-pointer whitespace-nowrap"
           >
-            Select
+            Select Flight
           </button>
           <button
             onClick={viewDetails}

@@ -1,22 +1,6 @@
 import { useMemo, useState } from 'react'
 import { FiSearch } from 'react-icons/fi'
-import { getPriceBounds } from '../../utils/flight'
-
-const getTimeSlot = (flight) => {
-  const time = flight.flights?.[0]?.departure_airport?.time
-  const hour = time ? parseInt(time.split(" ")[1].split(":")[0]) : 0
-  if (hour < 6) return "earlymorning"
-  if (hour < 12) return "morning"
-  if (hour < 18) return "afternoon"
-  return "night"
-}
-
-const TIME_SLOTS = [
-  { id: "earlymorning", label: "Early morning", range: "00:00 – 06:00" },
-  { id: "morning", label: "Morning", range: "06:00 – 12:00" },
-  { id: "afternoon", label: "Afternoon", range: "12:00 – 18:00" },
-  { id: "night", label: "Night", range: "18:00 – 24:00" },
-]
+import { getPriceBounds, getTimeSlot, summarizeFlight, TIME_SLOTS } from '../../utils/flight'
 
 const toggle = (list, value) =>
   list.includes(value) ? list.filter(v => v !== value) : [...list, value]
@@ -51,6 +35,25 @@ const CheckRow = ({ id, checked, onChange, label, hint, count }) => (
   </li>
 )
 
+// A reusable "N time-of-day checkboxes" block, used for both departure and arrival.
+const TimeSlotSection = ({ title, idPrefix, flights, timeOf, selected, onToggle }) => (
+  <Section title={title}>
+    <ul className="flex flex-col gap-0.5">
+      {TIME_SLOTS.map(slot => (
+        <CheckRow
+          key={slot.id}
+          id={`${idPrefix}-${slot.id}`}
+          label={slot.label}
+          hint={slot.range}
+          count={flights.filter(f => getTimeSlot(timeOf(f)) === slot.id).length}
+          checked={selected.includes(slot.id)}
+          onChange={() => onToggle(slot.id)}
+        />
+      ))}
+    </ul>
+  </Section>
+)
+
 export const FlightFilters = ({ filters, setFilters, flights = [] }) => {
   const [searchAirline, setSearchAirline] = useState("")
 
@@ -72,13 +75,13 @@ export const FlightFilters = ({ filters, setFilters, flights = [] }) => {
   ]
 
   const activeCount =
-    filters.stops.length + filters.airlines.length + filters.departure.length +
+    filters.stops.length + filters.airlines.length + filters.departure.length + filters.arrival.length +
     (filters.price < maxPrice ? 1 : 0)
 
   const update = (key, value) => setFilters(prev => ({ ...prev, [key]: value }))
 
   const clearAll = () => {
-    setFilters({ price: maxPrice, stops: [], airlines: [], departure: [] })
+    setFilters({ price: maxPrice, stops: [], airlines: [], departure: [], arrival: [] })
     setSearchAirline("")
   }
 
@@ -138,21 +141,23 @@ export const FlightFilters = ({ filters, setFilters, flights = [] }) => {
         </ul>
       </Section>
 
-      <Section title="Departure time">
-        <ul className="flex flex-col gap-0.5">
-          {TIME_SLOTS.map(slot => (
-            <CheckRow
-              key={slot.id}
-              id={`slot-${slot.id}`}
-              label={slot.label}
-              hint={slot.range}
-              count={flights.filter(f => getTimeSlot(f) === slot.id).length}
-              checked={filters.departure.includes(slot.id)}
-              onChange={() => update("departure", toggle(filters.departure, slot.id))}
-            />
-          ))}
-        </ul>
-      </Section>
+      <TimeSlotSection
+        title="Departure time"
+        idPrefix="departure-slot"
+        flights={flights}
+        timeOf={(f) => summarizeFlight(f).first?.departure_airport?.time}
+        selected={filters.departure}
+        onToggle={(id) => update("departure", toggle(filters.departure, id))}
+      />
+
+      <TimeSlotSection
+        title="Arrival time"
+        idPrefix="arrival-slot"
+        flights={flights}
+        timeOf={(f) => summarizeFlight(f).last?.arrival_airport?.time}
+        selected={filters.arrival}
+        onToggle={(id) => update("arrival", toggle(filters.arrival, id))}
+      />
 
       <Section title="Airlines" last>
         <div className="relative mb-2">

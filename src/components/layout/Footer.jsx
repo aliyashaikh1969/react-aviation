@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import apple from '../../assets/apple.png'
-import logo from '../../assets/aviation-logo.png'
-import google from '../../assets/google.png'
+import apple from '../../assets/apple.webp'
+import logo from '../../assets/aviation-logo.webp'
+import google from '../../assets/google.webp'
 import { FiFacebook, FiTwitter, FiInstagram, FiYoutube } from "react-icons/fi";
 import { ROUTES } from '../../constants/routes'
 

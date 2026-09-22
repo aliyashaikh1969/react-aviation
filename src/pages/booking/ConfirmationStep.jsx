@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { FiCheck, FiCalendar, FiDownload, FiArrowRight, FiHeadphones, FiShield, FiClock } from "react-icons/fi";
+import { FiCheck, FiCalendar, FiDownload, FiArrowRight, FiHeadphones, FiShield, FiClock, FiAlertTriangle } from "react-icons/fi";
 import { BsAirplaneFill } from "react-icons/bs";
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -89,9 +89,11 @@ export const ConfirmationStep = () => {
     }
   }
 
-  const goToMyTrips = () => {
-    navigate(ROUTES.myTrips)
+  // Guests can complete checkout, but nothing is saved without an account — send them
+  // to log in instead of My Trips, where they'd otherwise find nothing.
+  const finishBooking = () => {
     resetBooking()
+    navigate(user ? ROUTES.myTrips : ROUTES.login)
   }
 
   return (
@@ -111,9 +113,20 @@ export const ConfirmationStep = () => {
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-green-700">Booking confirmed!</h1>
                 <p className="text-slate-600 mt-2 leading-7">
-                  Thank you for booking with SkyAero. Your e-ticket is ready to download below,
-                  and you can find it any time in My Trips.
+                  Thank you for booking with SkyAero. Your e-ticket is ready to download below
+                  {user ? ", and you can find it any time in My Trips." : "."}
                 </p>
+
+                {!user && (
+                  <div className="mt-4 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 text-sm text-amber-800">
+                    <FiAlertTriangle className="shrink-0 mt-0.5" />
+                    <span>
+                      You're not logged in, so this booking won't be saved to an account.{" "}
+                      <Link to={ROUTES.login} className="font-semibold underline">Log in or sign up</Link>{" "}
+                      to keep a copy in My Trips next time.
+                    </span>
+                  </div>
+                )}
 
                 <div className="flex flex-wrap gap-x-10 gap-y-4 mt-5">
                   <div>
@@ -207,10 +220,10 @@ export const ConfirmationStep = () => {
           </button>
 
           <button
-            onClick={goToMyTrips}
+            onClick={finishBooking}
             className="flex-1 h-14 rounded-2xl bg-[#0A2A6B] hover:bg-[#081f52] transition-all text-white font-semibold text-base shadow-lg shadow-blue-100 flex items-center justify-center gap-3 cursor-pointer"
           >
-            Go to My Trips
+            {user ? "Go to My Trips" : "Log in to save this trip"}
             <FiArrowRight className="text-xl" />
           </button>
         </div>

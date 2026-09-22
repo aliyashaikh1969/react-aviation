@@ -33,6 +33,28 @@ The browser calls our own `/api/flights` endpoint, which adds `SERPAPI_KEY` on t
 - **Local:** `yarn dev` serves `/api/flights` using the key from `.env`.
 - **Vercel:** add the same variables under Project Settings, Environment Variables. `vercel.json` also rewrites all routes to `index.html` so deep links such as `/my-trips` work on refresh.
 
+## Firestore security rules
+
+`saveBooking`/`getUserBookings`/`cancelBooking` (in `src/services/bookingService.js`) trust
+Firestore's security rules to stop one signed-in user from reading, cancelling or editing
+another user's bookings — the client code itself has no such check. `firestore.rules` in this
+repo enforces that: a booking can only be read or cancelled by the `userId` it was created
+with, and cancelling can only ever flip `status` to `"cancelled"`, nothing else.
+
+**This file only takes effect once you deploy it** — copy it into the Firebase console
+(Firestore Database → Rules) or run:
+
+```bash
+npm install -g firebase-tools   # once
+firebase login
+firebase use <your-project-id>
+firebase deploy --only firestore:rules
+```
+
+If your project is still on the default "test mode" rules (`allow read, write: if true;`),
+every signed-in — or even anonymous — visitor can read and modify every booking until you
+deploy this file.
+
 ## Project structure
 
 ```
@@ -72,3 +94,8 @@ src/
 
 - Payment is a simulation: no money moves and no card data leaves the browser.
 - The newsletter, deal-alert and contact forms validate input but do not store it yet.
+- Checkout doesn't require login. A guest can complete a booking, but it isn't saved anywhere —
+  the confirmation page tells them so and links to login instead of My Trips.
+- Login/signup errors are deliberately vague about *why* a sign-in failed (wrong email vs. wrong
+  password look identical) so the page can't be used to check which emails have an account.
+  "Forgot password" always reports success too, for the same reason.

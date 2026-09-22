@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import HeroImg from '../../assets/heroimg.png'
+import HeroImg from '../../assets/heroimg.webp'
 import { SearchFlights } from '../search/SearchFlights';
 import { useFlight } from '../../hooks/useFlight';
 

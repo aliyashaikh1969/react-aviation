@@ -1,5 +1,6 @@
 import { collection, addDoc, getDocs, query, where, serverTimestamp, doc, updateDoc } from "firebase/firestore"
 import { db } from "./firebase"
+import { todayIso } from "../utils/format"
 
 const BOOKINGS = "bookings"
 
@@ -28,8 +29,7 @@ export const getUserBookings = async (userId) => {
   const snapshot = await getDocs(query(collection(db, BOOKINGS), where("userId", "==", userId)))
   const bookings = snapshot.docs.map(document => ({ id: document.id, ...document.data() }))
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const today = todayIso()
 
   return bookings
     .map(booking => {
@@ -38,7 +38,11 @@ export const getUserBookings = async (userId) => {
       const departureDate = booking.flight?.departureTime?.split(" ")[0]
       if (!departureDate) return booking
 
-      return { ...booking, status: new Date(departureDate) >= today ? 'upcoming' : 'completed' }
+      // Plain string comparison of two YYYY-MM-DD values — deliberately not two Date objects.
+      // `new Date(departureDate)` parses a date-only string as UTC midnight, while `today`
+      // would be local midnight; comparing those two instants misclassifies a same-day
+      // flight as "completed" for the whole day in any timezone behind UTC (e.g. the US).
+      return { ...booking, status: departureDate >= today ? 'upcoming' : 'completed' }
     })
     .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0))
 }

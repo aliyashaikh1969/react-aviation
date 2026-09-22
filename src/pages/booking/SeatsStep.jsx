@@ -2,7 +2,7 @@ import { SearchSummary } from '../../components/search/SearchSummary'
 import { PiArmchairFill } from "react-icons/pi";
 import { IoIosExit } from "react-icons/io";
 import { FaArrowRight, FaAngleRight } from "react-icons/fa";
-import airplane from '../../assets/airplaneleft.png'
+import airplane from '../../assets/airplaneleft.webp'
 import { FaArrowLeft } from "react-icons/fa6";
 import { WhyChooseUs } from '../../components/common/WhyChooseUs';
 import { useFlight } from '../../hooks/useFlight';

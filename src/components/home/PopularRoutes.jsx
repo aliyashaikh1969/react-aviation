@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom'
 import { GiCommercialAirplane } from 'react-icons/gi';
 import { IoIosAirplane } from "react-icons/io";
 import { FaIndianRupeeSign } from "react-icons/fa6";
-import eiffelTowerImg from "../../assets/eiffel-tower.png"
-import maldivesImg from "../../assets/maldives.png"
-import baliImg from "../../assets/bali.png"
+import eiffelTowerImg from "../../assets/eiffel-tower.webp"
+import maldivesImg from "../../assets/maldives.webp"
+import baliImg from "../../assets/bali.webp"
 import { ROUTES } from '../../constants/routes'
 
 // placeholder routes and fares (static demo data)

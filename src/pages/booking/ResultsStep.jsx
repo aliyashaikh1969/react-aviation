@@ -9,10 +9,10 @@ import { useScrollToTop } from "../../hooks/useScrollToTop"
 import { FaFilter } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
 import { searchFlights } from "../../services/flightService"
-import { getPriceBounds } from "../../utils/flight"
+import { getPriceBounds, getTimeSlot, summarizeFlight } from "../../utils/flight"
 import { EmptyState } from "../../components/ui/EmptyState"
 
-const DEFAULT_FILTERS = { price: 15000, stops: [], airlines: [], departure: [] }
+const DEFAULT_FILTERS = { price: 15000, stops: [], airlines: [], departure: [], arrival: [] }
 
 const SORTS = [
     { key: "recommended", label: "Recommended" },
@@ -65,7 +65,9 @@ export const ResultsStep = ({ nextStep }) => {
                 setFilters({ ...DEFAULT_FILTERS, price: getPriceBounds(results).max })
             } catch (err) {
                 console.error("Flight search failed:", err)
-                setError("We couldn't load flights. Please try again.")
+                setError(err.isNetworkError
+                    ? "You appear to be offline. Check your connection and try again."
+                    : "We couldn't load flights. Please try again.")
             } finally {
                 setLoading(false)
             }
@@ -83,24 +85,21 @@ export const ResultsStep = ({ nextStep }) => {
 
     const filteredFlights = useMemo(() => {
         const matches = allFlights.filter(flight => {
-            const firstFlight = flight.flights?.[0]
+            const { first, last, stops: stopsCount } = summarizeFlight(flight)
 
             const priceMatch = flight.price <= filters.price
 
-            const stopsCount = flight.flights?.length - 1
             const stopsMatch = filters.stops.length === 0 || filters.stops.includes(Math.min(stopsCount, 2))
 
-            const airlineMatch = filters.airlines.length === 0 || filters.airlines.includes(firstFlight?.airline)
+            const airlineMatch = filters.airlines.length === 0 || filters.airlines.includes(first?.airline)
 
-            const depTime = firstFlight?.departure_airport?.time
-            const hour = depTime ? parseInt(depTime.split(" ")[1].split(":")[0]) : 0
-            const timeSlot =
-                hour < 6 ? "earlymorning" :
-                    hour < 12 ? "morning" :
-                        hour < 18 ? "afternoon" : "night"
-            const departureMatch = filters.departure.length === 0 || filters.departure.includes(timeSlot)
+            const departureMatch = filters.departure.length === 0 ||
+                filters.departure.includes(getTimeSlot(first?.departure_airport?.time))
 
-            return priceMatch && stopsMatch && departureMatch && airlineMatch
+            const arrivalMatch = filters.arrival.length === 0 ||
+                filters.arrival.includes(getTimeSlot(last?.arrival_airport?.time))
+
+            return priceMatch && stopsMatch && departureMatch && arrivalMatch && airlineMatch
         })
 
         const sorted = [...matches]

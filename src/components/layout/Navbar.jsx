@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import logo from "../../assets/aviation-logo.png";
+import logo from "../../assets/aviation-logo.webp";
 import { GrLanguage } from "react-icons/gr";
 import { IoMenuOutline } from "react-icons/io5";
 import { IoIosClose } from "react-icons/io";
@@ -77,7 +77,7 @@ export const Navbar = () => {
     ${isActive ? "bg-white text-[#031e3d]" : "hover:bg-white hover:text-[#031e3d]"}`;
 
   return (
-    <nav className="bg-[#031e3d]/95 backdrop-blur text-white w-full sticky top-0 z-50 shadow-lg">
+    <nav className="bg-[#031e3d]/95 text-white w-full sticky top-0 z-50 shadow-lg">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between px-5 md:px-14 h-20">
 
         {/* LOGO */}

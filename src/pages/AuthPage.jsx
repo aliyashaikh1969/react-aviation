@@ -13,17 +13,24 @@ const perks = [
   { icon: FiShield, title: "Safe & secure", text: "Your data is protected with us." },
 ];
 
+// user-not-found and wrong-password intentionally share one message: telling them apart
+// would let someone probe which emails have an account (account enumeration).
 const authErrors = {
-  "auth/user-not-found": "No account found with this email. Please sign up first.",
-  "auth/wrong-password": "Incorrect password.",
+  "auth/user-not-found": "Incorrect email or password.",
+  "auth/wrong-password": "Incorrect email or password.",
+  "auth/invalid-credential": "Incorrect email or password.",
+  "auth/user-disabled": "This account has been disabled. Please contact support.",
   "auth/email-already-in-use": "This email is already registered. Please log in.",
   "auth/weak-password": "Please choose a stronger password.",
   "auth/invalid-email": "Please enter a valid email address.",
-  "auth/invalid-credential": "Incorrect email or password.",
   "auth/too-many-requests": "Too many attempts. Please wait a moment and try again.",
   "auth/network-request-failed": "Network error. Please check your connection.",
   "auth/popup-closed-by-user": "The sign-in window was closed.",
+  "auth/cancelled-popup-request": "Only one sign-in window can be open at a time.",
+  "auth/popup-blocked": "Your browser blocked the sign-in window. Please allow pop-ups and try again.",
 }
+
+const RESET_EMAIL_SENT_MESSAGE = "If an account exists for that email, we've sent a reset link."
 
 const inputClass =
   "w-full h-14 rounded-2xl border border-slate-200 bg-white pl-12 pr-4 outline-none focus:border-[#0A58FF] focus:ring-4 focus:ring-blue-100 transition"
@@ -67,7 +74,7 @@ const AuthPage = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    remember: false,
+    remember: true,
   })
 
   const navigate = useNavigate()
@@ -97,10 +104,10 @@ const AuthPage = () => {
     setLoading(true)
     try {
       if (isLogin) {
-        await login(formData.email, formData.password)
+        await login(formData.email, formData.password, formData.remember)
         toast.success("Welcome back! ✈️")
       } else {
-        await signUp(formData.name.trim(), formData.email, formData.password)
+        await signUp(formData.name.trim(), formData.email, formData.password, formData.remember)
         toast.success("Account created! Welcome to SkyAero ✈️")
       }
       navigate(redirectTo, { replace: true })
@@ -115,7 +122,7 @@ const AuthPage = () => {
     if (loading) return
     setLoading(true)
     try {
-      await googleLogin()
+      await googleLogin(formData.remember)
       toast.success("Logged in successfully! ✈️")
       navigate(redirectTo, { replace: true })
     } catch (err) {
@@ -125,13 +132,24 @@ const AuthPage = () => {
     }
   }
 
+  const [resetting, setResetting] = useState(false)
   const handleForgotPassword = async () => {
+    if (resetting) return
     if (!formData.email) return toast.error("Enter your email first")
+
+    setResetting(true)
     try {
       await forgotPassword(formData.email)
-      toast.success("Password reset email sent. Check your inbox.")
+      toast.success(RESET_EMAIL_SENT_MESSAGE)
     } catch (err) {
-      toast.error(authErrors[err.code] ?? "Couldn't send the reset email.")
+      // Don't reveal whether the address has an account — show the same message either way.
+      if (err.code === "auth/user-not-found") {
+        toast.success(RESET_EMAIL_SENT_MESSAGE)
+      } else {
+        toast.error(authErrors[err.code] ?? "Couldn't send the reset email. Please try again.")
+      }
+    } finally {
+      setResetting(false)
     }
   }
 
@@ -250,9 +268,10 @@ const AuthPage = () => {
                       <button
                         type="button"
                         onClick={handleForgotPassword}
-                        className="text-sm text-[#0A58FF] font-medium hover:underline cursor-pointer"
+                        disabled={resetting}
+                        className="text-sm text-[#0A58FF] font-medium hover:underline disabled:opacity-60 disabled:no-underline disabled:cursor-not-allowed cursor-pointer"
                       >
-                        Forgot password?
+                        {resetting ? "Sending…" : "Forgot password?"}
                       </button>
                     )}
                   >
@@ -294,6 +313,7 @@ const AuthPage = () => {
                       placeholder="Re-enter your password"
                       className={`${inputClass} pr-12 ${formData.confirmPassword && formData.confirmPassword !== formData.password ? "border-red-400" : ""}`}
                     />
+                    {eyeToggle}
                   </Field>
                 )}
               </div>
