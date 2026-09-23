@@ -18,11 +18,11 @@ export const FlightPath = ({ duration, label, tone = 'blue', children }) => (
     </p>
 
     <div className="flex items-center w-full gap-2">
-      <span className="w-2 h-2 rounded-full border-2 border-[#0A2A6B] shrink-0" />
+      <span className="w-2 h-2 rounded-full border-2 border-navy shrink-0" />
       <div className="flex-1 border-t-2 border-dashed border-slate-300" />
-      <BsAirplaneFill className="text-[#0A2A6B] rotate-90 shrink-0" />
+      <BsAirplaneFill className="text-navy rotate-90 shrink-0" />
       <div className="flex-1 border-t-2 border-dashed border-slate-300" />
-      <span className="w-2 h-2 rounded-full bg-[#0A2A6B] shrink-0" />
+      <span className="w-2 h-2 rounded-full bg-navy shrink-0" />
     </div>
 
     {label && (

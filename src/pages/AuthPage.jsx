@@ -3,9 +3,10 @@ import { FiMail, FiLock, FiUser, FiShield, FiCalendar, FiTag, FiEyeOff, FiEye } 
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa6";
 import { useAuth } from "../hooks/useAuth";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { ROUTES } from '../constants/routes'
+import { PageLoader } from '../components/ui/PageLoader'
 
 const perks = [
   { icon: FiTag, title: "Best flight deals", text: "Get access to exclusive offers and discounts." },
@@ -13,8 +14,8 @@ const perks = [
   { icon: FiShield, title: "Safe & secure", text: "Your data is protected with us." },
 ];
 
-// user-not-found and wrong-password intentionally share one message: telling them apart
-// would let someone probe which emails have an account (account enumeration).
+// user-not-found and wrong-password share one message so we don't give away
+// which part was wrong
 const authErrors = {
   "auth/user-not-found": "Incorrect email or password.",
   "auth/wrong-password": "Incorrect email or password.",
@@ -66,8 +67,9 @@ const strengthMeta = [
 
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState("login");
-  const { login, signUp, googleLogin, forgotPassword } = useAuth()
+  const { user, loading: authLoading, login, signUp, googleLogin, forgotPassword } = useAuth()
   const [loading, setLoading] = useState(false)
+  const [resetting, setResetting] = useState(false)
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -80,6 +82,10 @@ const AuthPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const redirectTo = location.state?.from?.pathname ?? ROUTES.home
+
+  // already signed in -- nothing to do on a login/signup page
+  if (authLoading) return <PageLoader />
+  if (user) return <Navigate to={redirectTo} replace />
   const isLogin = activeTab === "login"
 
   const handleChange = (e) => {
@@ -123,7 +129,7 @@ const AuthPage = () => {
     setLoading(true)
     try {
       await googleLogin(formData.remember)
-      toast.success("Logged in successfully! ✈️")
+      toast.success("Welcome back! ✈️")
       navigate(redirectTo, { replace: true })
     } catch (err) {
       toast.error(authErrors[err.code] ?? "Login failed. Please try again.")
@@ -132,7 +138,6 @@ const AuthPage = () => {
     }
   }
 
-  const [resetting, setResetting] = useState(false)
   const handleForgotPassword = async () => {
     if (resetting) return
     if (!formData.email) return toast.error("Enter your email first")
@@ -142,7 +147,7 @@ const AuthPage = () => {
       await forgotPassword(formData.email)
       toast.success(RESET_EMAIL_SENT_MESSAGE)
     } catch (err) {
-      // Don't reveal whether the address has an account — show the same message either way.
+      // show the same message either way, whether or not the email has an account
       if (err.code === "auth/user-not-found") {
         toast.success(RESET_EMAIL_SENT_MESSAGE)
       } else {
@@ -225,7 +230,7 @@ const AuthPage = () => {
             <form onSubmit={handleSubmit} className="max-w-xl mx-auto pt-8" noValidate>
 
               <div className="text-center">
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#0A2A6B]">
+                <h2 className="text-2xl sm:text-3xl font-bold text-navy">
                   {isLogin ? "Login to your account" : "Create your account"}
                 </h2>
                 <p className="text-slate-500 mt-2">

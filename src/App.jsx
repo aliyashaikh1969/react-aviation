@@ -6,9 +6,7 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { PageLoader } from './components/ui/PageLoader'
 import { HomePage } from './pages/HomePage'
 
-// Route-level code splitting: Home ships in the main bundle since it's the near-universal
-// landing page, everything else loads on demand so a visitor who only ever searches from
-// Home never pays for My Trips, Auth, Deals, Contact or the booking flow's code.
+// Home loads right away, the rest is loaded on demand (code splitting)
 const BookingPage = lazy(() => import('./pages/booking/BookingPage').then(m => ({ default: m.BookingPage })))
 const FlightDetailsPage = lazy(() => import('./pages/FlightDetailsPage').then(m => ({ default: m.FlightDetailsPage })))
 const MyTripsPage = lazy(() => import('./pages/MyTripsPage').then(m => ({ default: m.MyTripsPage })))
@@ -49,3 +47,4 @@ function App() {
 }
 
 export default App
+

@@ -3,8 +3,8 @@ import { useLocation } from 'react-router-dom'
 import { useFlight } from '../../hooks/useFlight'
 import { Stepper } from '../../components/booking/Stepper'
 
-// Split per step: a session that never gets past searching results never has to load the
-// seat map, passenger form, payment form or e-ticket/PDF code.
+// Each booking step is loaded on demand, so a visitor who never gets past step 1
+// doesn't have to download the code for seats, payment, etc.
 const ResultsStep = lazy(() => import('./ResultsStep').then(m => ({ default: m.ResultsStep })))
 const SeatsStep = lazy(() => import('./SeatsStep').then(m => ({ default: m.SeatsStep })))
 const SummaryStep = lazy(() => import('./SummaryStep').then(m => ({ default: m.SummaryStep })))
@@ -13,14 +13,14 @@ const ConfirmationStep = lazy(() => import('./ConfirmationStep').then(m => ({ de
 
 const StepLoader = () => (
     <div className="min-h-[50vh] flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-[#0A2A6B] border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-4 border-navy border-t-transparent rounded-full" />
     </div>
 )
 
 export const BookingPage = () => {
     const location = useLocation();
     const { selectedFlight } = useFlight();
-    // arriving from the flight details page with a flight already chosen skips straight to seats
+    // coming from the flight details page, a flight is already picked, so skip to seats
     const [step, setStep] = useState(() =>
         location.state?.step === 2 && selectedFlight ? 2 : 1
     );

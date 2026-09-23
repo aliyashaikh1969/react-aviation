@@ -49,10 +49,11 @@ export const ContactPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-5">
 
           <ContactSection />
+          
 
           {/* FAQ */}
           <div className="mt-14 bg-white rounded-3xl border border-slate-200 p-5 sm:p-8">
-            <h2 className="text-3xl font-bold text-[#0A2A6B] mb-6">Frequently asked questions</h2>
+            <h2 className="text-3xl font-bold text-navy mb-6">Frequently asked questions</h2>
 
             <div className="grid md:grid-cols-2 gap-4 items-start">
               {faqs.map((faq, index) => {
@@ -65,7 +66,7 @@ export const ContactPage = () => {
                       aria-expanded={open}
                       className="w-full min-h-16 hover:bg-slate-50 transition-colors px-5 py-3 flex items-center justify-between gap-3 text-left cursor-pointer"
                     >
-                      <span className="font-medium text-[#0A2A6B]">{faq.q}</span>
+                      <span className="font-medium text-navy">{faq.q}</span>
                       <FiChevronDown className={`text-slate-500 text-lg shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
                     </button>
                     {open && <p className="px-5 pb-4 text-sm text-slate-600 leading-6">{faq.a}</p>}
@@ -78,7 +79,7 @@ export const ContactPage = () => {
           {/* Offices */}
           <div className="mt-16">
             <div className="text-center">
-              <h2 className="text-3xl font-bold text-[#0A2A6B]">Our offices</h2>
+              <h2 className="text-3xl font-bold text-navy">Our offices</h2>
               <p className="text-slate-500 mt-2 text-lg">We have a global presence to assist you better.</p>
             </div>
 
@@ -91,7 +92,7 @@ export const ContactPage = () => {
                   <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center text-2xl">
                     <FiHome />
                   </div>
-                  <h3 className="text-xl font-bold text-[#0A2A6B] mt-5">{office.country}</h3>
+                  <h3 className="text-xl font-bold text-navy mt-5">{office.country}</h3>
                   <p className="text-slate-500 mt-2">{office.city}</p>
                   <a
                     href={`tel:${office.phone.replace(/[^\d+]/g, "")}`}

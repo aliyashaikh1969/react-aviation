@@ -26,13 +26,13 @@ export const Newsletter = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter email address"
               aria-label="Email address"
-              className="w-full pl-11 pr-4 py-3 rounded-xl bg-white outline-none focus:ring-2 focus:ring-[#031e3d]/40"
+              className="w-full pl-11 pr-4 py-3 rounded-xl bg-white outline-none focus:ring-2 focus:ring-navy/40"
             />
           </div>
 
           <button
             type="submit"
-            className="px-7 py-3 rounded-xl bg-[#031e3d] hover:bg-[#052a54] transition-colors text-white font-medium cursor-pointer"
+            className="px-7 py-3 rounded-xl bg-navy hover:bg-[#052a54] transition-colors text-white font-medium cursor-pointer"
           >
             Subscribe
           </button>

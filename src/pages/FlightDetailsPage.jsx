@@ -41,10 +41,16 @@ const LegCard = ({ leg, index, total }) => {
       <div className="flex items-center justify-between gap-3 p-4 sm:p-5 border-b border-slate-100 bg-slate-50/60 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-11 h-11 rounded-xl bg-white border border-slate-100 p-1.5 shrink-0">
-            <img src={leg.airline_logo} alt="" className="w-full h-full object-contain" />
+            <img
+              src={leg.airline_logo}
+              onError={(e) => { e.currentTarget.style.display = "none" }}
+              loading="lazy"
+              alt=""
+              className="w-full h-full object-contain"
+            />
           </div>
           <div className="min-w-0">
-            <p className="font-bold text-[#0A2A6B] truncate">{leg.airline}</p>
+            <p className="font-bold text-navy truncate">{leg.airline}</p>
             <p className="text-xs text-slate-500">
               {leg.flight_number}{leg.airplane ? ` · ${leg.airplane}` : ''}
             </p>
@@ -84,7 +90,7 @@ const LegCard = ({ leg, index, total }) => {
                 const Icon = extensionIcon(text)
                 return (
                   <span key={text} className="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5">
-                    <Icon className="text-[#0A2A6B] shrink-0" /> {text}
+                    <Icon className="text-navy shrink-0" /> {text}
                   </span>
                 )
               })}
@@ -129,7 +135,7 @@ export const FlightDetailsPage = () => {
           title="No flight selected"
           text='Search for flights and choose "Flight details" on a result to see it here.'
           action={
-            <Link to={ROUTES.home} className="mt-3 bg-[#0A2A6B] hover:bg-[#081f52] text-white px-7 py-3 rounded-2xl font-medium transition-colors">
+            <Link to={ROUTES.home} className="mt-3 bg-navy hover:bg-navy-dark text-white px-7 py-3 rounded-2xl font-medium transition-colors">
               Search flights
             </Link>
           }
@@ -200,11 +206,11 @@ export const FlightDetailsPage = () => {
           </section>
 
           <section className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
-            <h2 className="text-lg font-bold text-[#0A2A6B] mb-4">Baggage & inclusions</h2>
+            <h2 className="text-lg font-bold text-navy mb-4">Baggage & inclusions</h2>
             <div className="grid sm:grid-cols-3 gap-4">
               {INCLUSIONS.map(({ icon: Icon, title, text }) => (
                 <div key={title} className="flex items-center gap-3 bg-slate-50 rounded-2xl p-4">
-                  <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-[#0A2A6B] shadow-sm shrink-0">
+                  <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-navy shadow-sm shrink-0">
                     <Icon />
                   </div>
                   <div>
@@ -218,7 +224,7 @@ export const FlightDetailsPage = () => {
 
           {carbon?.this_flight && (
             <section className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
-              <h2 className="text-lg font-bold text-[#0A2A6B] mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-navy mb-4 flex items-center gap-2">
                 <FiWind className="text-green-600" /> Carbon emissions
               </h2>
               <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
@@ -247,17 +253,23 @@ export const FlightDetailsPage = () => {
         <aside className="lg:sticky lg:top-24 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
           <div className="flex items-center gap-3 pb-5 border-b border-dashed border-slate-200">
             <div className="w-12 h-12 rounded-xl bg-slate-50 p-1.5 shrink-0">
-              <img src={flight.airline_logo ?? first?.airline_logo} alt="" className="w-full h-full object-contain" />
+              <img
+                src={flight.airline_logo ?? first?.airline_logo}
+                onError={(e) => { e.currentTarget.style.display = "none" }}
+                loading="lazy"
+                alt=""
+                className="w-full h-full object-contain"
+              />
             </div>
             <div className="min-w-0">
-              <p className="font-bold text-[#0A2A6B] truncate">{first?.airline}</p>
+              <p className="font-bold text-navy truncate">{first?.airline}</p>
               <p className="text-xs text-slate-500 truncate">{legs.map(leg => leg.flight_number).join(' · ')}</p>
             </div>
           </div>
 
           <div className="py-5">
             <p className="text-xs text-slate-500 uppercase tracking-wider">Fare per person</p>
-            <p className="text-4xl font-bold text-[#0A2A6B] mt-1">{inr(flight.price)}</p>
+            <p className="text-4xl font-bold text-navy mt-1">{inr(flight.price)}</p>
           </div>
 
           <div className="space-y-2.5 text-sm pb-5 border-b border-slate-100">
@@ -269,7 +281,7 @@ export const FlightDetailsPage = () => {
               <span>Taxes & fees × {travellers}</span>
               <span className="font-medium">{inr(taxes)}</span>
             </div>
-            <div className="flex justify-between pt-2 font-bold text-[#0A2A6B]">
+            <div className="flex justify-between pt-2 font-bold text-navy">
               <span>Estimated total</span>
               <span>{inr(baseFare + taxes)}</span>
             </div>
@@ -278,7 +290,7 @@ export const FlightDetailsPage = () => {
 
           <button
             onClick={selectFlight}
-            className="mt-5 w-full bg-[#0A2A6B] hover:bg-[#081f52] text-white font-semibold py-3.5 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            className="mt-5 w-full bg-navy hover:bg-navy-dark text-white font-semibold py-3.5 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             Select this flight <FiArrowRight />
           </button>

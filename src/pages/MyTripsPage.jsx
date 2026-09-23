@@ -21,27 +21,36 @@ export const MyTripsPage = () => {
 
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [retryKey, setRetryKey] = useState(0)
   const [activeTab, setActiveTab] = useState('all')
   const [cancellingId, setCancellingId] = useState(null)
   const [confirmCancelId, setConfirmCancelId] = useState(null)
   const [openTicketId, setOpenTicketId] = useState(null)
   const [printBooking, setPrintBooking] = useState(null)
   const printRef = useRef(null)
+  const [printTicketBooking, setPrintTicketBooking] = useState(null)
 
   useEffect(() => {
     const fetchBookings = async () => {
       if (!user) return
+      setLoading(true)
+      setError(null)
       try {
         setBookings(await getUserBookings(user.uid))
       } catch (err) {
         console.error('Fetch error:', err)
-        toast.error("Couldn't load your trips. Please refresh.")
+        const message = err?.code === 'permission-denied' || err?.code === 'unauthenticated'
+          ? 'Your session has expired. Please log in again to see your trips.'
+          : "Couldn't load your trips. Please try again."
+        setError(message)
+        toast.error(message)
       } finally {
         setLoading(false)
       }
     }
     fetchBookings()
-  }, [user])
+  }, [user, retryKey])
 
   // Download renders an off-screen copy of the ticket, so it works even when the ticket is collapsed
   useEffect(() => {
@@ -61,6 +70,18 @@ export const MyTripsPage = () => {
     }
     run()
   }, [printBooking])
+
+  // print just one ticket, not the whole page — see the hidden print-only block below
+  useEffect(() => {
+    const clearPrintTarget = () => setPrintTicketBooking(null)
+    window.addEventListener('afterprint', clearPrintTarget)
+    return () => window.removeEventListener('afterprint', clearPrintTarget)
+  }, [])
+
+  const handlePrintTicket = (booking) => {
+    setPrintTicketBooking(booking)
+    requestAnimationFrame(() => window.print())
+  }
 
   const handleCancel = async (bookingId) => {
     setCancellingId(bookingId)
@@ -98,22 +119,24 @@ export const MyTripsPage = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] text-[#1E293B]">
+    <div className="min-h-screen bg-[#F5F7FA] text-[#1E293B] print:bg-white">
 
-      <PageHero overlap title="My Trips" subtitle="Manage all your bookings in one place." />
+      <div className="print:hidden">
+        <PageHero overlap title="My Trips" subtitle="Manage all your bookings in one place." />
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-6 -mt-14 pb-16 relative">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 -mt-14 pb-16 relative print:hidden">
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
           {stats.map(stat => (
-            <div key={stat.label} className="bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-4">
-              <div className="w-11 h-11 rounded-xl bg-[#0A2647]/5 text-[#0A2647] flex items-center justify-center shrink-0">
+            <div key={stat.label} className="bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-navy/5 text-navy flex items-center justify-center shrink-0">
                 {stat.icon}
               </div>
               <div className="min-w-0">
                 <p className="text-gray-500 text-xs">{stat.label}</p>
-                <p className="text-xl md:text-2xl font-bold text-[#0A2647] truncate">
+                <p className="text-lg font-bold text-navy truncate">
                   {loading ? '–' : stat.value}
                 </p>
               </div>
@@ -129,8 +152,8 @@ export const MyTripsPage = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`px-5 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer
                 ${activeTab === tab.key
-                  ? 'bg-[#0A2647] text-white shadow-lg shadow-[#0A2647]/20'
-                  : 'bg-white text-[#0A2647] border border-gray-200 hover:bg-gray-50'}`}
+                  ? 'bg-navy text-white shadow-lg shadow-navy/20'
+                  : 'bg-white text-navy border border-gray-200 hover:bg-gray-50'}`}
             >
               {tab.label}
               <span className={`text-xs px-2 py-0.5 rounded-full ${activeTab === tab.key ? 'bg-white/20' : 'bg-gray-100'}`}>
@@ -145,6 +168,20 @@ export const MyTripsPage = () => {
           <div className="grid gap-6">
             <TripSkeleton /><TripSkeleton />
           </div>
+        ) : error ? (
+          <EmptyState
+            className="py-16 md:py-20"
+            title="Something went wrong"
+            text={error}
+            action={
+              <button
+                onClick={() => setRetryKey(k => k + 1)}
+                className="mt-2 bg-navy hover:bg-navy-dark text-white px-6 py-2.5 rounded-xl text-sm font-medium cursor-pointer"
+              >
+                Try again
+              </button>
+            }
+          />
         ) : visibleBookings.length > 0 ? (
           <div className="grid gap-6">
             {visibleBookings.map(booking => (
@@ -155,6 +192,7 @@ export const MyTripsPage = () => {
                 onToggleTicket={() => setOpenTicketId(openTicketId === booking.id ? null : booking.id)}
                 onDownload={() => setPrintBooking(booking)}
                 downloadDisabled={!!printBooking}
+                onPrint={() => handlePrintTicket(booking)}
                 confirmingCancel={confirmCancelId === booking.id}
                 cancelling={cancellingId === booking.id}
                 onAskCancel={() => setConfirmCancelId(booking.id)}
@@ -173,7 +211,7 @@ export const MyTripsPage = () => {
             action={activeTab === 'all' && (
               <button
                 onClick={() => navigate(ROUTES.home)}
-                className="mt-3 bg-[#0A2647] hover:bg-[#144272] text-white px-7 py-3 rounded-2xl transition-colors font-medium cursor-pointer"
+                className="mt-3 bg-navy hover:bg-navy-dark text-white px-7 py-3 rounded-2xl transition-colors font-medium cursor-pointer"
               >
                 Search flights
               </button>
@@ -186,6 +224,13 @@ export const MyTripsPage = () => {
       {printBooking && (
         <div style={{ position: 'fixed', left: -10000, top: 0 }} aria-hidden="true">
           <TripTicket booking={printBooking} innerRef={printRef} width={760} />
+        </div>
+      )}
+
+      {/* Hidden on screen, shown only when printing — see handlePrintTicket */}
+      {printTicketBooking && (
+        <div className="hidden print:block">
+          <TripTicket booking={printTicketBooking} />
         </div>
       )}
     </div>

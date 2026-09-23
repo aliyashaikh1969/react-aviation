@@ -41,6 +41,15 @@ another user's bookings — the client code itself has no such check. `firestore
 repo enforces that: a booking can only be read or cancelled by the `userId` it was created
 with, and cancelling can only ever flip `status` to `"cancelled"`, nothing else.
 
+**On pricing:** this app has no payment gateway and no server-side record of a flight's
+"real" price — `fare` is computed entirely on the client (`src/hooks/useFare.js`) and saved
+as-is. `firestore.rules` rejects a booking whose fare doesn't add up (`grandTotal` must equal
+`baseFare + seatTotal + taxes - discount`, nothing negative, discount capped at the largest
+promo code), which stops the simplest tampering, but it cannot confirm the numbers match the
+flight SerpApi actually quoted — Firestore has no way to see that. A production build that
+takes real payments would need a payment webhook or Cloud Function to write the authoritative
+charged amount, instead of trusting whatever the client submits.
+
 **This file only takes effect once you deploy it** — copy it into the Firebase console
 (Firestore Database → Rules) or run:
 

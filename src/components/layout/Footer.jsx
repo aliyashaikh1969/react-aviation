@@ -46,14 +46,18 @@ const linkClass = "block text-blue-100/80 hover:text-white hover:translate-x-0.5
 
 export const Footer = () => {
   return (
-    <footer className="bg-[#031e3d] text-white pt-12 sm:pt-16">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-5 grid-cols-2 gap-x-6 gap-y-10 pb-12 border-b border-white/10">
+    <footer className="bg-navy text-white pt-12 sm:pt-16 print:hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+
+        {/* One column on phones, two from tablet up, five on desktop. Only "Download our
+            app" spans both columns in the tablet layout (as the last row) — every other
+            item is a single column, so there's never a half-empty row at any width. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-x-6 gap-y-10 pb-12 border-b border-white/10">
 
           {/* Brand */}
-          <div className="col-span-2 lg:col-span-1">
+          <div>
             <Link to={ROUTES.home} aria-label="SkyAero home">
-              <img src={logo} alt="SkyAero" className="w-32 h-auto" />
+              <img src={logo} alt="SkyAero" loading="lazy" className="w-32 h-auto" />
             </Link>
 
             <p className="text-blue-100/80 text-sm leading-7 mt-5 max-w-[260px]">
@@ -66,7 +70,7 @@ export const Footer = () => {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="w-10 h-10 rounded-full border border-white/15 hover:bg-white hover:text-[#031e3d] transition-colors flex items-center justify-center"
+                  className="w-10 h-10 rounded-full border border-white/15 hover:bg-white hover:text-navy transition-colors flex items-center justify-center shrink-0"
                 >
                   <Icon className="text-lg" />
                 </a>
@@ -93,11 +97,11 @@ export const Footer = () => {
           ))}
 
           {/* Apps */}
-          <div className="col-span-2 lg:col-span-1">
+          <div className="sm:col-span-2 lg:col-span-1">
             <h3 className="text-base font-semibold mb-5 tracking-wide">Download our app</h3>
-            <div className="flex flex-row lg:flex-col gap-3">
-              <img className="w-[140px]" src={google} alt="Get it on Google Play" />
-              <img className="w-[140px]" src={apple} alt="Download on the App Store" />
+            <div className="flex flex-row flex-wrap lg:flex-col gap-3">
+              <img className="w-[140px]" src={google} alt="Get it on Google Play" loading="lazy" />
+              <img className="w-[140px]" src={apple} alt="Download on the App Store" loading="lazy" />
             </div>
           </div>
         </div>

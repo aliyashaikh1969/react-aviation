@@ -18,14 +18,14 @@ export const SeatDetails = ({ prevStep }) => {
             <MdAirlineSeatReclineNormal className="text-blue-700 text-xl sm:text-2xl" />
           </div>
           <div>
-            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-[#0A2A6B]">Selected Seats</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-navy">Selected Seats</p>
             <p className="text-xs sm:text-sm text-slate-500">Your selected seats for this flight</p>
           </div>
         </div>
 
         <button
           onClick={prevStep}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 border border-[#0A2A6B] text-[#0A2A6B] font-semibold px-4 py-2 rounded-lg hover:bg-blue-50 transition cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 border border-navy text-navy font-semibold px-4 py-2 rounded-lg hover:bg-blue-50 transition cursor-pointer"
         >
           <TbEdit /> Change seats
         </button>
@@ -62,8 +62,8 @@ export const SeatDetails = ({ prevStep }) => {
         </div>
 
         <div className="mt-4 bg-blue-50 rounded-xl p-4 flex justify-between items-center">
-          <span className="font-medium text-[#0A2A6B]">Total seat charges</span>
-          <span className="text-[#0A2A6B] font-bold text-lg">{inr(seatTotal)}</span>
+          <span className="font-medium text-navy">Total seat charges</span>
+          <span className="text-navy font-bold text-lg">{inr(seatTotal)}</span>
         </div>
       </div>
     </div>

@@ -3,17 +3,36 @@ rules_version = '2';
 // Deploy with: firebase deploy --only firestore:rules
 // (see README.md "Firestore security rules" for why this file matters).
 service cloud.firestore {
+
+  // The client computes `fare` itself (see src/hooks/useFare.js) and there's no payment
+  // gateway or backend that recomputes it -- so this is the only server-side check that a
+  // submitted fare wasn't tampered with before being saved. It can only confirm the numbers
+  // are internally consistent (arithmetic checks out, nothing is negative or absurd); it has
+  // no way to confirm they match the flight's real price, since that lives in a live SerpApi
+  // response that Firestore never sees. A real payment integration would need a payment
+  // webhook or Cloud Function to write the authoritative amount instead of trusting the client.
+  function isPlausibleFare(fare) {
+    return fare.baseFare is number && fare.baseFare > 0
+      && fare.seatTotal is number && fare.seatTotal >= 0
+      && fare.taxes is number && fare.taxes > 0
+      && fare.discount is number && fare.discount >= 0 && fare.discount <= 1000
+      && fare.grandTotal is number && fare.grandTotal > 0
+      && fare.grandTotal == fare.baseFare + fare.seatTotal + fare.taxes - fare.discount;
+  }
+
   match /databases/{database}/documents {
 
     match /bookings/{bookingId} {
       // A user may only ever see their own bookings.
       allow read: if request.auth != null && request.auth.uid == resource.data.userId;
 
-      // A user may only create a booking stamped with their own uid.
+      // A user may only create a booking stamped with their own uid, with a fare that at
+      // least adds up (see isPlausibleFare above).
       allow create: if request.auth != null
         && request.auth.uid == request.resource.data.userId
         && request.resource.data.userId is string
-        && request.resource.data.keys().hasAll(['userId', 'pnr', 'flight', 'fare']);
+        && request.resource.data.keys().hasAll(['userId', 'pnr', 'flight', 'fare'])
+        && isPlausibleFare(request.resource.data.fare);
 
       // The app only ever needs to cancel a booking: allow changing `status` to
       // "cancelled" on your own booking, and nothing else (no rewriting fare, seats, etc.

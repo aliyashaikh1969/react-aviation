@@ -24,13 +24,15 @@ const MAX_TRAVELLERS = 9
 const Field = ({ label, className = "", children, onClick, error }) => (
   <div
     onClick={onClick}
-    className={`flex-1 min-w-0 px-4 py-3 transition-colors ${error ? "bg-red-50/60" : "hover:bg-slate-50"} ${className}`}
+    className={`flex-1 min-w-0 px-4 py-3 transition-colors focus-within:bg-blue-50 ${error ? "bg-red-50/60" : "hover:bg-slate-50"} ${className}`}
   >
     <p className="text-[11px] tracking-wider text-gray-500 font-semibold mb-1.5">{label}</p>
     <div className="flex items-center gap-2.5">{children}</div>
   </div>
 )
 
+// the input itself has no visible border to put a focus ring on, so the focus state is
+// shown on the Field wrapper instead (see focus-within:bg-blue-50 above)
 const inputClass =
   "flex-1 min-w-0 bg-transparent text-sm font-bold outline-none text-black placeholder:font-normal placeholder:text-gray-400"
 
@@ -83,8 +85,7 @@ export const SearchFlights = ({ onSearch, update = false }) => {
     setTravellersOpen(true)
   }
 
-  // Close the travellers dropdown on outside click, Escape, or scroll (its position is
-  // computed once on open, so it would otherwise drift out of place while scrolling).
+  // close the travellers dropdown on outside click, Escape, or scroll
   useEffect(() => {
     if (!travellersOpen) return
     const onClick = (e) => {
@@ -187,7 +188,7 @@ export const SearchFlights = ({ onSearch, update = false }) => {
             onClick={() => selectTripType(type)}
             className={`py-2 px-3 sm:px-4 flex items-center gap-1.5 text-[13px] sm:text-sm rounded-full whitespace-nowrap transition-colors cursor-pointer
               ${tripType === type
-                ? "bg-white text-[#031e3d] font-semibold shadow"
+                ? "bg-white text-navy font-semibold shadow"
                 : "text-white/90 hover:bg-white/20"}`}
           >
             <Icon className="text-base shrink-0 hidden min-[400px]:block" />
@@ -290,9 +291,8 @@ export const SearchFlights = ({ onSearch, update = false }) => {
             )}
           </div>
 
-          {/* PASSENGERS — dropdown. Rendered through a portal (see below) so the panel
-              isn't clipped by this card's `overflow-hidden`, which it would otherwise be
-              since it needs to extend below the card. */}
+          {/* Passengers dropdown. Rendered through a portal so it isn't clipped by
+              this card's overflow-hidden. */}
           <div ref={travellersRef} className="relative lg:flex-none lg:w-[190px]">
             <button
               type="button"
@@ -327,7 +327,7 @@ export const SearchFlights = ({ onSearch, update = false }) => {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-[#0A2647]">Travellers</p>
+                  <p className="font-semibold text-navy">Travellers</p>
                   <p className="text-xs text-gray-400">Economy class</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -362,7 +362,7 @@ export const SearchFlights = ({ onSearch, update = false }) => {
               <button
                 type="button"
                 onClick={() => setTravellersOpen(false)}
-                className="w-full mt-4 bg-[#031e3d] hover:bg-[#052a5a] transition-colors text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer"
+                className="w-full mt-4 bg-navy hover:bg-navy-dark transition-colors text-white text-sm font-semibold py-2.5 rounded-xl cursor-pointer"
               >
                 Done
               </button>
@@ -375,7 +375,7 @@ export const SearchFlights = ({ onSearch, update = false }) => {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full lg:w-auto flex items-center justify-center gap-2 bg-[#031e3d] hover:bg-[#052a5a] disabled:opacity-70 disabled:cursor-not-allowed transition-colors px-7 py-3.5 rounded-xl text-white text-sm font-semibold whitespace-nowrap cursor-pointer"
+              className="w-full lg:w-auto flex items-center justify-center gap-2 bg-navy hover:bg-navy-dark disabled:opacity-70 disabled:cursor-not-allowed transition-colors px-7 py-3.5 rounded-xl text-white text-sm font-semibold whitespace-nowrap cursor-pointer"
             >
               {submitting ? (
                 <>

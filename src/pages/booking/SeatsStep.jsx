@@ -1,12 +1,13 @@
 import { SearchSummary } from '../../components/search/SearchSummary'
 import { PiArmchairFill } from "react-icons/pi";
 import { IoIosExit } from "react-icons/io";
+import { BsAirplaneFill } from "react-icons/bs";
 import { FaArrowRight, FaAngleRight } from "react-icons/fa";
 import airplane from '../../assets/airplaneleft.webp'
 import { FaArrowLeft } from "react-icons/fa6";
 import { WhyChooseUs } from '../../components/common/WhyChooseUs';
 import { useFlight } from '../../hooks/useFlight';
-import { seatLayoutData } from '../../data/seatLayout';
+import { seatLayoutData, TOTAL_SEAT_COUNT, OCCUPIED_SEAT_NUMBERS, isPremiumSeat, PREMIUM_PRICE_THRESHOLD } from '../../data/seatLayout';
 import toast from "react-hot-toast";
 import { FiHeadphones } from 'react-icons/fi';
 import { useScrollToTop } from "../../hooks/useScrollToTop"
@@ -18,14 +19,13 @@ import { FlightPath } from '../../components/flights/FlightPath'
 import { ROUTES } from '../../constants/routes'
 
 const seatAlpha = ["F", "E", "D", null, "C", "B", "A"]
-const TOTAL_SEATS = 108;
-const OCCUPIED_SEATS = ["8A", "8B", "9A", "9B", "9C", "10A", "10B", "10C", "11A", "11B"];
 
 const SeatIcon = ({ state }) => (
 	<span className={`w-8 h-8 rounded-lg border-2 flex items-center justify-center shrink-0
 		${state === "selected" ? "bg-green-500 border-green-500 text-white"
 			: state === "occupied" ? "bg-gray-200 border-gray-300 text-gray-400"
-				: "bg-white border-blue-500 text-blue-500"}`}>
+				: state === "premium" ? "bg-amber-50 border-amber-400 text-amber-600"
+					: "bg-white border-blue-500 text-blue-500"}`}>
 		<PiArmchairFill className='text-xl' />
 	</span>
 )
@@ -34,28 +34,43 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 
 	useScrollToTop();
 
-	const { selectedFlight, selectedSeats, setSelectedSeats } = useFlight()
+	const { selectedFlight, selectedReturnFlight, selectedSeats, setSelectedSeats, searchData } = useFlight()
 	const { travellers, baseFare, seatTotal, taxes, grandTotal } = useFare()
+	const isRoundTrip = searchData.tripType === "round"
 
 	const { legs, first: firstLeg, last: lastLeg, stops } = summarizeFlight(selectedFlight)
 	const departure = splitDateTime(firstLeg?.departure_airport?.time)
 	const arrival = splitDateTime(lastLeg?.arrival_airport?.time)
 
-	const availableSeats = TOTAL_SEATS - selectedSeats.length - OCCUPIED_SEATS.length
+	const returnSummary = summarizeFlight(selectedReturnFlight)
+	const returnDeparture = splitDateTime(returnSummary.first?.departure_airport?.time)
+	const returnArrival = splitDateTime(returnSummary.last?.arrival_airport?.time)
+
+	const availableSeats = TOTAL_SEAT_COUNT - selectedSeats.length - OCCUPIED_SEAT_NUMBERS.length
 	const seatsLeft = travellers - selectedSeats.length
 
 	const handleSeatSelect = (seat) => {
-		if (OCCUPIED_SEATS.includes(seat.seatNo)) return;
+		if (seat.booked) return;
 
 		const alreadySelected = selectedSeats.some(s => s.seatNo === seat.seatNo)
 
 		if (alreadySelected) {
 			setSelectedSeats(selectedSeats.filter((item) => item.seatNo !== seat.seatNo));
-		} else {
-			// keep only the most recent picks, one seat per traveller
-			const updatedSeats = [...selectedSeats, seat]
-			setSelectedSeats(updatedSeats.slice(-travellers));
+			return;
 		}
+
+		// block picking more seats than there are travellers, instead of silently swapping one out
+		if (selectedSeats.length >= travellers) {
+			toast.error(
+				travellers === 1
+					? "You can only select 1 seat. Deselect it first to choose another."
+					: `You can only select ${travellers} seats. Deselect one first.`
+			);
+			return;
+		}
+
+		setSelectedSeats([...selectedSeats, seat]);
+		toast.success(`Seat ${seat.seatNo} selected`);
 	};
 
 	const handleNextStep = () => {
@@ -68,8 +83,11 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 	return (
 		<div className="bg-[#F5F7FA]">
 			<div className='max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-16 pt-6'>
-				<h2 className='md:text-2xl text-xl text-[#031e3d] font-bold'>Choose your seats</h2>
-				<p className='text-slate-600 py-2 text-sm'>Select your preferred seats and enjoy your journey.</p>
+				<h2 className='md:text-2xl text-xl text-navy font-bold'>Choose your seats</h2>
+				<p className='text-slate-600 py-2 text-sm'>
+					Select your preferred seats and enjoy your journey.
+					{isRoundTrip && " Your selection applies to both your outbound and return flights."}
+				</p>
 				<SearchSummary />
 			</div>
 
@@ -81,7 +99,7 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 						<div>
 							<p className='text-xs text-slate-500 font-semibold uppercase tracking-wide'>Select seats</p>
 							<div className='flex flex-wrap items-center gap-x-4 gap-y-1 mt-1'>
-								<div className='flex items-center gap-3 font-bold text-[#031e3d]'>
+								<div className='flex items-center gap-3 font-bold text-navy'>
 									<span>{firstLeg?.departure_airport?.id}</span>
 									<FaArrowRight className='text-slate-400' />
 									<span>{lastLeg?.arrival_airport?.id}</span>
@@ -97,6 +115,7 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 					{/* Legend */}
 					<div className='flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-600'>
 						<div className='flex items-center gap-2'><SeatIcon />Available</div>
+						<div className='flex items-center gap-2'><SeatIcon state="premium" />Premium</div>
 						<div className='flex items-center gap-2'><SeatIcon state="selected" />Selected</div>
 						<div className='flex items-center gap-2'><SeatIcon state="occupied" />Occupied</div>
 						<div className='flex items-center gap-2'><span className='text-red-500 text-xs font-bold'>EXIT</span>Emergency exit</div>
@@ -148,7 +167,8 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 														);
 													}
 
-													const isOccupied = OCCUPIED_SEATS.includes(seat.seatNo);
+													const isOccupied = seat.booked;
+													const isPremium = isPremiumSeat(seat);
 
 													const isSelected =
 														selectedSeats.some(
@@ -163,19 +183,22 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 															onClick={() =>
 																handleSeatSelect(seat)
 															}
-															aria-label={`Seat ${seat.seatNo}, ${seat.type}, ${inr(seat.price)}${isOccupied ? ", occupied" : ""}`}
+															aria-label={`Seat ${seat.seatNo}, ${seat.type}${isPremium ? ", premium" : ""}, ${inr(seat.price)}${isOccupied ? ", occupied" : ""}`}
 															aria-pressed={isSelected}
 															disabled={isOccupied} className={`z-10 relative group w-8 h-8 rounded-lg border-2 flex items-center justify-center transition-all duration-200
 																${isOccupied ? "bg-gray-200 border-gray-300 cursor-not-allowed" : isSelected
 																	? "bg-green-500 border-green-500 text-white"
-																	: "bg-white border-blue-500 text-blue-500 hover:bg-blue-50"
+																	: isPremium
+																		? "bg-amber-50 border-amber-400 text-amber-600 hover:bg-amber-100"
+																		: "bg-white border-blue-500 text-blue-500 hover:bg-blue-50"
 																}`}>
 
 															<PiArmchairFill className="text-2xl rotate-90 " />
-															<div className=" absolute -top-14 left-1/2 -translate-x-1/2 hidden group-hover:flex gap-2 items-center bg-black text-white text-[10px] px-2 py-1 rounded-md z-100">
+															<div className=" absolute -top-14 left-1/2 -translate-x-1/2 hidden group-hover:flex gap-2 items-center bg-black text-white text-[10px] px-2 py-1 rounded-md z-100 whitespace-nowrap">
 																<span>Seat:{seat.seatNo} </span>
 																<span>₹{seat.price}</span>
 																<span>{seat.type}</span>
+																{isPremium && <span className="text-amber-300">Premium</span>}
 
 															</div>
 
@@ -194,7 +217,7 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 					</div>
 
 					{/* Selection bar */}
-					<div className='bg-blue-50 text-[#031e3d] rounded-xl flex items-center justify-between gap-3 p-3 flex-wrap'>
+					<div className='bg-blue-50 text-navy rounded-xl flex items-center justify-between gap-3 p-3 flex-wrap'>
 						<p className='text-sm'>
 							Selected ({selectedSeats.length}/{travellers}):{" "}
 							<span className='text-green-600 font-semibold'>
@@ -213,13 +236,13 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 					<div className='flex items-center justify-between pt-4 gap-3'>
 						<button
 							onClick={prevStep}
-							className='text-[#031e3d] gap-3 flex items-center border-2 border-slate-200 hover:bg-slate-50 rounded-xl px-4 py-3 cursor-pointer'
+							className='text-navy gap-3 flex items-center border-2 border-slate-200 hover:bg-slate-50 rounded-xl px-4 py-3 cursor-pointer'
 						>
 							<FaArrowLeft />Back
 						</button>
 						<button
 							onClick={handleNextStep}
-							className='flex items-center gap-4 bg-[#031e3d] hover:bg-[#052a5a] transition-colors px-5 py-3 rounded-xl text-white text-sm font-medium cursor-pointer'
+							className='flex items-center gap-4 bg-navy hover:bg-navy-dark transition-colors px-5 py-3 rounded-xl text-white text-sm font-medium cursor-pointer'
 						>
 							Continue to summary <FaAngleRight />
 						</button>
@@ -230,16 +253,24 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 				<div className='w-full xl:w-[30%] flex flex-col gap-5 xl:sticky xl:top-24 self-start'>
 
 					<div className='bg-white rounded-2xl shadow-sm border border-slate-100 p-5'>
-						<p className='text-xl font-bold text-[#031e3d] mb-4'>Booking summary</p>
+						<p className='text-xl font-bold text-navy mb-4'>Booking summary</p>
 
+						{isRoundTrip && (
+							<div className='flex items-center gap-2 mb-3'>
+								<span className='w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center shrink-0'>
+									<BsAirplaneFill className='text-blue-600 text-[10px]' />
+								</span>
+								<p className='text-xs font-semibold text-slate-500 uppercase tracking-wide'>Outbound</p>
+							</div>
+						)}
 						<div className='flex items-center justify-between text-sm pb-4'>
 							<span className='text-slate-500'>Airline</span>
 							<span className='font-semibold'>{firstLeg?.airline}</span>
 						</div>
 
-						<div className='flex items-center justify-between gap-3 pb-4 border-b'>
+						<div className={`flex items-center justify-between gap-3 pb-4 ${isRoundTrip ? "" : "border-b"}`}>
 							<div>
-								<p className='text-2xl font-bold text-[#031e3d]'>{firstLeg?.departure_airport?.id}</p>
+								<p className='text-2xl font-bold text-navy'>{firstLeg?.departure_airport?.id}</p>
 								<p className='text-sm text-gray-800 font-medium'>{departure.time}</p>
 								<p className='text-xs text-gray-500'>{departure.date}</p>
 							</div>
@@ -247,11 +278,41 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 							<FlightPath duration={selectedFlight?.total_duration} {...getStopsBadge(stops)} />
 
 							<div className='text-right'>
-								<p className='text-2xl font-bold text-[#031e3d]'>{lastLeg?.arrival_airport?.id}</p>
+								<p className='text-2xl font-bold text-navy'>{lastLeg?.arrival_airport?.id}</p>
 								<p className='text-sm text-gray-800 font-medium'>{arrival.time}</p>
 								<p className='text-xs text-gray-500'>{arrival.date}</p>
 							</div>
 						</div>
+
+						{isRoundTrip && (
+							<>
+								<div className='flex items-center gap-2 mb-3 pt-3 mt-1 border-t border-dashed border-slate-200'>
+									<span className='w-6 h-6 rounded-full bg-amber-50 flex items-center justify-center shrink-0'>
+										<BsAirplaneFill className='text-amber-600 text-[10px] -rotate-[135deg]' />
+									</span>
+									<p className='text-xs font-semibold text-slate-500 uppercase tracking-wide'>Return</p>
+								</div>
+								<div className='flex items-center justify-between text-sm pb-4'>
+									<span className='text-slate-500'>Airline</span>
+									<span className='font-semibold'>{returnSummary.first?.airline}</span>
+								</div>
+								<div className='flex items-center justify-between gap-3 pb-4 border-b'>
+									<div>
+										<p className='text-2xl font-bold text-navy'>{returnSummary.first?.departure_airport?.id}</p>
+										<p className='text-sm text-gray-800 font-medium'>{returnDeparture.time}</p>
+										<p className='text-xs text-gray-500'>{returnDeparture.date}</p>
+									</div>
+
+									<FlightPath duration={selectedReturnFlight?.total_duration} {...getStopsBadge(returnSummary.stops)} />
+
+									<div className='text-right'>
+										<p className='text-2xl font-bold text-navy'>{returnSummary.last?.arrival_airport?.id}</p>
+										<p className='text-sm text-gray-800 font-medium'>{returnArrival.time}</p>
+										<p className='text-xs text-gray-500'>{returnArrival.date}</p>
+									</div>
+								</div>
+							</>
+						)}
 
 						<div className='flex items-center justify-between py-3 border-b text-sm'>
 							<p className='text-slate-500'>Passengers</p>
@@ -287,10 +348,14 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 					</div>
 
 					<div className='bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col gap-3'>
-						<p className='text-xl font-bold text-[#031e3d]'>Seat legend</p>
+						<p className='text-xl font-bold text-navy'>Seat legend</p>
 						<div className='flex items-center justify-between text-sm'>
 							<div className='flex items-center gap-3'><SeatIcon /><p>Available</p></div>
 							<span className='text-gray-500'>{availableSeats}</span>
+						</div>
+						<div className='flex items-center justify-between text-sm'>
+							<div className='flex items-center gap-3'><SeatIcon state="premium" /><p>Premium</p></div>
+							<span className='text-gray-500'>{inr(PREMIUM_PRICE_THRESHOLD)}+</span>
 						</div>
 						<div className='flex items-center justify-between text-sm'>
 							<div className='flex items-center gap-3'><SeatIcon state="selected" /><p>Selected</p></div>
@@ -298,7 +363,7 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 						</div>
 						<div className='flex items-center justify-between text-sm'>
 							<div className='flex items-center gap-3'><SeatIcon state="occupied" /><p>Occupied</p></div>
-							<span className='text-gray-500'>{OCCUPIED_SEATS.length}</span>
+							<span className='text-gray-500'>{OCCUPIED_SEAT_NUMBERS.length}</span>
 						</div>
 						<div className='flex items-center justify-between text-sm'>
 							<div className='flex items-center gap-3'>
@@ -310,11 +375,11 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 					</div>
 
 					<div className='bg-white rounded-2xl shadow-sm border border-slate-100 p-5'>
-						<p className='text-xl font-bold text-[#031e3d]'>Need help?</p>
+						<p className='text-xl font-bold text-navy'>Need help?</p>
 						<p className='text-sm text-slate-600 mt-1'>Our customer support is available 24/7 to assist you.</p>
 						<Link
 							to={ROUTES.contact}
-							className='mt-4 inline-flex items-center gap-2 border border-[#031e3d] text-[#031e3d] hover:bg-[#031e3d] hover:text-white transition-colors px-5 py-2.5 rounded-xl text-sm font-medium'
+							className='mt-4 inline-flex items-center gap-2 border border-navy text-navy hover:bg-navy hover:text-white transition-colors px-5 py-2.5 rounded-xl text-sm font-medium'
 						>
 							<FiHeadphones />
 							Contact support

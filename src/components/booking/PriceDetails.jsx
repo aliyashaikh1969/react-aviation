@@ -1,10 +1,15 @@
-import { FiCreditCard, FiLock } from "react-icons/fi";
+import { useState } from "react"
+import { FiCreditCard, FiLock, FiTag, FiX } from "react-icons/fi";
+import toast from "react-hot-toast";
 import { useFare } from '../../hooks/useFare'
+import { useFlight } from '../../hooks/useFlight'
 import { inr } from '../../utils/format'
-import { TAX_BREAKDOWN } from '../../constants/fare'
+import { PROMO_CODES, TAX_BREAKDOWN } from '../../constants/fare'
 
 export const PriceDetails = () => {
-  const { travellers, baseFare, seatTotal, grandTotal } = useFare()
+  const { travellers, baseFare, seatTotal, discount, promo, grandTotal } = useFare()
+  const { promoCode, setPromoCode } = useFlight()
+  const [promoInput, setPromoInput] = useState("")
 
   const rows = [
     { label: `Base fare × ${travellers}`, value: baseFare },
@@ -14,6 +19,23 @@ export const PriceDetails = () => {
     { label: "Seat charges", value: seatTotal },
   ]
 
+  const applyPromo = () => {
+    const code = promoInput.trim().toUpperCase()
+    if (!code) return toast.error("Enter a promo code")
+    // Object.hasOwn (not just `PROMO_CODES[code]`) so a code like "__proto__" or
+    // "constructor" can't accidentally look up an inherited Object.prototype property
+    // and be treated as valid.
+    if (!Object.hasOwn(PROMO_CODES, code)) return toast.error("Invalid or expired promo code")
+    setPromoCode(code)
+    setPromoInput("")
+    toast.success(`Promo applied: ${PROMO_CODES[code].label}`)
+  }
+
+  const removePromo = () => {
+    setPromoCode(null)
+    toast("Promo code removed", { icon: "🗑️" })
+  }
+
   return (
     <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200 p-4 sm:p-5 lg:p-6 shadow-sm w-full">
 
@@ -22,7 +44,7 @@ export const PriceDetails = () => {
           <FiCreditCard className="text-blue-700 text-lg sm:text-xl" />
         </div>
         <div>
-          <h2 className="text-lg sm:text-xl font-bold text-[#0A2A6B]">Price Details</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-navy">Price Details</h2>
           <p className="text-xs sm:text-sm text-slate-500">Review your fare breakdown</p>
         </div>
       </div>
@@ -34,6 +56,52 @@ export const PriceDetails = () => {
             <span className="font-semibold whitespace-nowrap">{inr(row.value)}</span>
           </div>
         ))}
+        {discount > 0 && (
+          <div className="flex justify-between items-center gap-3 text-sm">
+            <span className="text-green-600 flex items-center gap-1.5">
+              <FiTag className="shrink-0" /> Discount ({promoCode})
+            </span>
+            <span className="font-semibold whitespace-nowrap text-green-600">-{inr(discount)}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Promo code */}
+      <div className="mt-4">
+        {promoCode ? (
+          <div className="flex items-center justify-between gap-3 bg-green-50 border border-green-200 rounded-xl px-3.5 py-2.5">
+            <p className="text-xs text-green-700 font-medium truncate">
+              <FiTag className="inline mr-1.5 -mt-0.5" />
+              {promo?.label ?? promoCode} applied
+            </p>
+            <button
+              type="button"
+              onClick={removePromo}
+              className="text-green-700 hover:text-red-600 shrink-0 cursor-pointer"
+              aria-label="Remove promo code"
+            >
+              <FiX />
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={promoInput}
+              onChange={(e) => setPromoInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), applyPromo())}
+              placeholder="Have a promo code?"
+              className="flex-1 min-w-0 h-11 px-3.5 rounded-xl border border-slate-200 text-sm uppercase placeholder:normal-case outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition"
+            />
+            <button
+              type="button"
+              onClick={applyPromo}
+              className="h-11 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-navy text-sm font-semibold transition-colors cursor-pointer shrink-0"
+            >
+              Apply
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="border-t border-dashed border-slate-200 my-5" />

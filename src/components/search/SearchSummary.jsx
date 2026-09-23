@@ -59,7 +59,7 @@ export const SearchSummary = ({ onModify, showModifyButton = false }) => {
             <button
               type="button"
               onClick={onModify}
-              className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#031e3d] hover:bg-[#052a5a] transition-colors px-6 py-3 rounded-xl text-white text-sm font-medium cursor-pointer"
+              className="w-full md:w-auto flex items-center justify-center gap-2 bg-navy hover:bg-navy-dark transition-colors px-6 py-3 rounded-xl text-white text-sm font-medium cursor-pointer"
             >
               <PiPencilSimpleLineLight />
               Modify Search

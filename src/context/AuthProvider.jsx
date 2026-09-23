@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react"
+import { createContext, useCallback, useEffect, useMemo, useState } from "react"
 import {
   onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword,
   signInWithPopup, updateProfile, sendPasswordResetEmail,
   setPersistence, browserLocalPersistence, browserSessionPersistence,
 } from "firebase/auth"
 import { auth, googleProvider } from "../services/firebase"
-import { AuthContext } from "./AuthContext"
 
-// "Remember me" (default on, to match how the app behaved before this was wired up):
-// checked -> session survives closing the browser; unchecked -> logged out when the tab closes.
+// eslint-disable-next-line react-refresh/only-export-components -- context and provider live together on purpose
+export const AuthContext = createContext(null)
+
+// remember me checked -> stay logged in after closing the browser, unchecked -> logged out
 const applyPersistence = (remember) =>
   setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence)
 
@@ -24,7 +25,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(false)
       },
       (error) => {
-        // Don't leave every protected page spinning forever if the persisted session can't be read.
         console.error("Auth state error:", error)
         setUser(null)
         setLoading(false)
@@ -33,39 +33,43 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe()
   }, [])
 
-  const signUp = async (name, email, password, remember = true) => {
+  // None of these close over any render-scoped value (just stable setters + module-level
+  // Firebase singletons), so they can stay stable across every render.
+  const signUp = useCallback(async (name, email, password, remember = true) => {
     await applyPersistence(remember)
     const result = await createUserWithEmailAndPassword(auth, email, password)
     await updateProfile(result.user, { displayName: name })
-    // updateProfile mutates the signed-in user in place; re-read it instead of
-    // hand-building a plain object, which would drop its prototype methods.
     setUser(auth.currentUser)
     return result.user
-  }
+  }, [])
 
-  const login = async (email, password, remember = true) => {
+  const login = useCallback(async (email, password, remember = true) => {
     await applyPersistence(remember)
     const result = await signInWithEmailAndPassword(auth, email, password)
     return result.user
-  }
+  }, [])
 
-  const googleLogin = async (remember = true) => {
+  const googleLogin = useCallback(async (remember = true) => {
     await applyPersistence(remember)
     const result = await signInWithPopup(auth, googleProvider)
     return result.user
-  }
+  }, [])
 
-  const forgotPassword = (email) => sendPasswordResetEmail(auth, email)
+  const forgotPassword = useCallback((email) => sendPasswordResetEmail(auth, email), [])
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await signOut(auth)
     setUser(null)
-  }
+  }, [])
+
+  // Memoized so consumers only re-render when the auth state itself actually changes.
+  const value = useMemo(
+    () => ({ user, loading, signUp, login, googleLogin, forgotPassword, logout, isLoggedIn: !!user }),
+    [user, loading, signUp, login, googleLogin, forgotPassword, logout]
+  )
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, signUp, login, googleLogin, forgotPassword, logout, isLoggedIn: !!user }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )

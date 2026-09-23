@@ -24,7 +24,7 @@ const CheckRow = ({ id, checked, onChange, label, hint, count }) => (
         id={id}
         checked={checked}
         onChange={onChange}
-        className="w-4 h-4 accent-[#031e3d] cursor-pointer"
+        className="w-4 h-4 accent-navy cursor-pointer"
       />
       <span className="flex-1 min-w-0">
         <span className="text-gray-700 block truncate">{label}</span>
@@ -89,10 +89,10 @@ export const FlightFilters = ({ filters, setFilters, flights = [] }) => {
     <div className="bg-white px-4 rounded-2xl shadow-sm border border-gray-100">
 
       <div className="flex items-center justify-between py-4 border-b border-gray-100">
-        <p className="font-bold text-lg text-[#031e3d]">
+        <p className="font-bold text-lg text-navy">
           Filters
           {activeCount > 0 && (
-            <span className="ml-2 text-xs font-semibold bg-[#031e3d] text-white rounded-full px-2 py-0.5 align-middle">
+            <span className="ml-2 text-xs font-semibold bg-navy text-white rounded-full px-2 py-0.5 align-middle">
               {activeCount}
             </span>
           )}
@@ -107,7 +107,7 @@ export const FlightFilters = ({ filters, setFilters, flights = [] }) => {
       </div>
 
       <Section title="Price range">
-        <p className="text-[#031e3d] font-bold mb-2">
+        <p className="text-navy font-bold mb-2">
           Up to ₹{Math.min(filters.price, maxPrice).toLocaleString('en-IN')}
         </p>
         <input
@@ -118,7 +118,7 @@ export const FlightFilters = ({ filters, setFilters, flights = [] }) => {
           max={maxPrice}
           step={500}
           aria-label="Maximum price"
-          className="w-full h-1.5 accent-[#031e3d] cursor-pointer"
+          className="w-full h-1.5 accent-navy cursor-pointer"
         />
         <div className="flex items-center justify-between text-gray-500 text-xs mt-1">
           <span>₹{minPrice.toLocaleString('en-IN')}</span>
@@ -168,7 +168,7 @@ export const FlightFilters = ({ filters, setFilters, flights = [] }) => {
             onChange={(e) => setSearchAirline(e.target.value)}
             placeholder="Search airlines"
             aria-label="Search airlines"
-            className="text-sm text-gray-700 border border-gray-200 w-full rounded-lg py-2 pl-9 pr-3 outline-none focus:border-[#031e3d]"
+            className="text-sm text-gray-700 border border-gray-200 w-full rounded-lg py-2 pl-9 pr-3 outline-none focus:border-navy"
           />
         </div>
         <ul className="flex flex-col gap-0.5 max-h-56 overflow-y-auto">

@@ -8,7 +8,8 @@ export const Hero = () => {
 
 	useEffect(() => {
 		resetBooking();
-	}, [resetBooking])
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- only run this once, on mount
+	}, [])
 
 	return (
 		<section
@@ -16,7 +17,7 @@ export const Hero = () => {
 			style={{ backgroundImage: `url(${HeroImg})` }}
 		>
 			{/* readability overlay */}
-			<div className="absolute inset-0 bg-gradient-to-r from-[#031e3d]/70 via-[#031e3d]/30 to-transparent" />
+			<div className="absolute inset-0 bg-gradient-to-r from-navy/70 via-navy/30 to-transparent" />
 
 			<div className="relative max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-16 py-8 md:py-12">
 				<p className="text-[#56B6C6] text-sm font-medium tracking-wide uppercase">Your Journey, Our Priority</p>

@@ -21,6 +21,8 @@ createRoot(document.getElementById('root')).render(
             <Toaster
               position="top-right"
               reverseOrder={false}
+              containerClassName="print:hidden"
+              containerStyle={{ top: 96 }}
               toastOptions={{
                 duration: 3000,
                 style: {

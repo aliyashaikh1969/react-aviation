@@ -13,7 +13,7 @@ export const AirportPoint = ({ code, name, dateTime, align = 'left', emphasis = 
   if (emphasis === 'code') {
     return (
       <div className={`min-w-0 ${widthCap} ${rightAligned ? 'text-right' : ''}`}>
-        <p className="text-3xl font-bold text-[#0A2647] leading-none">{code}</p>
+        <p className="text-3xl font-bold text-navy leading-none">{code}</p>
         <p className={`${nameClass} mt-1.5`} title={name}>{name}</p>
         <p className="font-semibold text-lg mt-3 leading-none">{time}</p>
         <p className="text-xs text-gray-400 mt-1">{formatDate(date)}</p>
@@ -23,7 +23,7 @@ export const AirportPoint = ({ code, name, dateTime, align = 'left', emphasis = 
 
   return (
     <div className={`min-w-0 ${rightAligned ? 'md:text-right' : ''}`}>
-      <p className="text-2xl sm:text-3xl font-bold text-[#0A2A6B] leading-none">{time}</p>
+      <p className="text-2xl sm:text-3xl font-bold text-navy leading-none">{time}</p>
       <p className="text-xs text-slate-500 mt-1.5">{formatDate(date, { weekday: true })}</p>
       <p className="text-base sm:text-lg font-semibold text-slate-800 mt-3">{code}</p>
       <p className={nameClass} title={name}>{name}</p>

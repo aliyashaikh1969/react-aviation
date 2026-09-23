@@ -20,7 +20,7 @@ export const FeatureHighlights = () => {
 							<Icon />
 						</div>
 						<div>
-							<h3 className="text-base font-bold text-[#0A2A6B]">{title}</h3>
+							<h3 className="text-base font-bold text-navy">{title}</h3>
 							<p className="text-sm text-slate-500 mt-1 leading-6">{text}</p>
 						</div>
 					</div>

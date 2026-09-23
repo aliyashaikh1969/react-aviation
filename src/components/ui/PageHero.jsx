@@ -4,7 +4,7 @@ import { BsAirplaneFill } from 'react-icons/bs'
 // `overlap` leaves room for a card row that overlaps the banner (see MyTripsPage).
 export const PageHero = ({ title, subtitle, eyebrow, topSlot, children, overlap = false, maxWidth = 'max-w-7xl' }) => (
   <div
-    className={`relative overflow-hidden bg-gradient-to-br from-[#0A2647] via-[#0d305a] to-[#144272] text-white px-4 sm:px-8 lg:px-16
+    className={`relative overflow-hidden bg-gradient-to-br from-navy via-[#0d305a] to-navy-dark text-white px-4 sm:px-8 lg:px-16
       ${overlap ? 'pt-14 pb-24' : 'py-14'}`}
   >
     <BsAirplaneFill className="absolute -right-10 -top-6 text-white/5 rotate-45" size={260} aria-hidden="true" />

@@ -1,6 +1,7 @@
-// src/components/UpiQRCode.jsx — alag component banao
 import { useEffect, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
 
+// Fake UPI QR code, drawn on a canvas — there's no real payment gateway here.
 export const UpiQrCode = ({ amount }) => {
   const canvasRef = useRef(null)
   const [seconds, setSeconds] = useState(299)
@@ -8,57 +9,55 @@ export const UpiQrCode = ({ amount }) => {
 
   const UPI_ID = "skybook@okaxis"
 
-useEffect(() => {
-  const canvas = canvasRef.current
-  if (!canvas) return  // ✅ canvas exist karta hai check karo
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
 
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return     // ✅ context check karo
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
-  const size = 180
-  const mod = 18
-  const cell = Math.floor(size / mod)
+    const size = 180
+    const mod = 18
+    const cell = Math.floor(size / mod)
 
-  ctx.fillStyle = '#ffffff'
-  ctx.fillRect(0, 0, size, size)
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, size, size)
 
-
- const pattern = []
-  for (let r = 0; r < mod; r++) {
-    pattern[r] = []           // ✅ har row pehle initialize karo
-    for (let c = 0; c < mod; c++) {
-      const seed = (r * 17 + c * 13 + r * c * 7) % 3
-      pattern[r][c] = seed < 2
-    }
-  }
-
-  // ✅ Bounds check ke saath corners
-  [[0,0],[0,mod-7],[mod-7,0]].forEach(([br, bc]) => {
-    for (let r = 0; r < 7; r++) {
-      for (let c = 0; c < 7; c++) {
-        const row = br + r
-        const col = bc + c
-        if (row < mod && col < mod) {  // ✅ Array boundary check
-          pattern[row][col] = (
-            r === 0 || r === 6 ||
-            c === 0 || c === 6 ||
-            (r >= 2 && r <= 4 && c >= 2 && c <= 4)
-          )
-        }
+    // random-ish pattern, just to look like a QR code
+    const pattern = []
+    for (let r = 0; r < mod; r++) {
+      pattern[r] = []
+      for (let c = 0; c < mod; c++) {
+        const seed = (r * 17 + c * 13 + r * c * 7) % 3
+        pattern[r][c] = seed < 2
       }
     }
-  })
 
-  ctx.fillStyle = '#0A2A6B'
-  for (let r = 0; r < mod; r++)
-    for (let c = 0; c < mod; c++)
-      if (pattern[r][c])
-        ctx.fillRect(c * cell + 2, r * cell + 2, cell - 1, cell - 1)
+    // draw the 3 corner squares every real QR code has
+    ;[[0, 0], [0, mod - 7], [mod - 7, 0]].forEach(([br, bc]) => {
+      for (let r = 0; r < 7; r++) {
+        for (let c = 0; c < 7; c++) {
+          const row = br + r
+          const col = bc + c
+          if (row < mod && col < mod) {
+            pattern[row][col] = (
+              r === 0 || r === 6 ||
+              c === 0 || c === 6 ||
+              (r >= 2 && r <= 4 && c >= 2 && c <= 4)
+            )
+          }
+        }
+      }
+    })
 
-}, [])
+    ctx.fillStyle = '#031e3d' // matches the app's navy (see tailwind.config.js)
+    for (let r = 0; r < mod; r++)
+      for (let c = 0; c < mod; c++)
+        if (pattern[r][c])
+          ctx.fillRect(c * cell + 2, r * cell + 2, cell - 1, cell - 1)
+  }, [])
 
-
-  // Countdown timer
+  // countdown timer
   useEffect(() => {
     if (seconds <= 0) return
     const timer = setTimeout(() => setSeconds(s => s - 1), 1000)
@@ -71,10 +70,15 @@ useEffect(() => {
     return `${m}:${sec}`
   }
 
-  const copyUpi = () => {
-    navigator.clipboard?.writeText(UPI_ID)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
+  const copyUpi = async () => {
+    if (!navigator.clipboard) return toast.error(`Couldn't copy automatically — the UPI ID is ${UPI_ID}`)
+    try {
+      await navigator.clipboard.writeText(UPI_ID)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      toast.error(`Couldn't copy automatically — the UPI ID is ${UPI_ID}`)
+    }
   }
 
   return (
@@ -88,7 +92,7 @@ useEffect(() => {
       {/* Amount */}
       <div className="bg-slate-50 rounded-xl px-6 py-2 text-center w-full">
         <p className="text-xs text-slate-500">Total amount</p>
-        <p className="text-xl font-medium text-[#0A2A6B]">
+        <p className="text-xl font-medium text-navy">
           ₹{amount.toLocaleString('en-IN')}
         </p>
       </div>

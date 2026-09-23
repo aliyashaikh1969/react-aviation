@@ -12,15 +12,13 @@ export const summarizeFlight = (flight) => {
   }
 }
 
-// Badge text and colour for a stop count: "Non-stop" (green), "1 stop" / "2 stops" (orange).
+// Badge text and color for a stop count: "Non-stop" (green), "1 stop" / "2 stops" (orange).
 export const getStopsBadge = (stops) => ({
   label: stops === 0 ? 'Non-stop' : `${stops} stop${stops > 1 ? 's' : ''}`,
   tone: stops === 0 ? 'green' : 'orange',
 })
 
-// Departure/arrival time-of-day buckets, shared by the filter checkboxes (FlightFilters)
-// and the actual filtering predicate (ResultsStep) so there's one definition of each slot's
-// boundaries instead of two that could quietly drift apart.
+// Time-of-day buckets used by the filter checkboxes and the filtering logic.
 export const TIME_SLOTS = [
   { id: "earlymorning", label: "Early morning", range: "00:00 – 06:00" },
   { id: "morning", label: "Morning", range: "06:00 – 12:00" },

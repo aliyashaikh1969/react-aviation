@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { IoBagHandleOutline } from "react-icons/io5"
 import { GiMeal } from "react-icons/gi"
 import { PiSeatBold } from "react-icons/pi"
@@ -14,14 +15,13 @@ const AMENITIES = [
   { Icon: PiSeatBold, text: "Standard seat" },
 ]
 
-export const FlightCard = ({ flight, onSelect }) => {
-  const { setSelectedFlight, setDetailFlight } = useFlight()
+// `onSelect` is called with the flight the traveller picked — the caller decides what that
+// means (book it as a one-way/outbound flight, book it as the return leg, etc).
+// Memoized: Results can list dozens of these, and re-rendering all of them every time a
+// filter or sort option changes (while their own `flight` prop hasn't) is wasted work.
+export const FlightCard = memo(function FlightCard({ flight, onSelect, selectLabel = "Select Flight" }) {
+  const { setDetailFlight } = useFlight()
   const navigate = useNavigate()
-
-  const selectFlight = () => {
-    setSelectedFlight(flight)
-    onSelect()
-  }
 
   const viewDetails = () => {
     setDetailFlight(flight)
@@ -39,10 +39,7 @@ export const FlightCard = ({ flight, onSelect }) => {
     <div className="bg-white text-black rounded-2xl shadow-sm hover:shadow-lg transition-shadow border border-gray-100 flex flex-col lg:flex-row overflow-hidden">
 
       <div className="flex-1 p-5 min-w-0">
-        {/* lg:, matching the card's own lg:flex-row split below: at md (768px) the desktop
-            filter sidebar is already showing, so the results column here is only ~390px wide
-            even though the viewport itself is "desktop" width — switching to a horizontal
-            layout at md clips the arrival time/city against this card's own overflow-hidden. */}
+        {/* lg: not md:, because the filter sidebar makes this column too narrow at md */}
         <div className="flex flex-col lg:flex-row lg:items-center gap-5 pb-4 border-b border-dashed border-gray-200">
 
           {/* Airline */}
@@ -50,6 +47,8 @@ export const FlightCard = ({ flight, onSelect }) => {
             <div className="w-14 h-14 rounded-xl bg-gray-50 p-1.5 shrink-0">
               <img
                 src={flight?.airline_logo ?? first?.airline_logo}
+                onError={(e) => { e.currentTarget.style.display = "none" }}
+                loading="lazy"
                 className="w-full h-full object-contain"
                 alt=""
               />
@@ -104,16 +103,16 @@ export const FlightCard = ({ flight, onSelect }) => {
       {/* Price + select */}
       <div className="lg:w-[210px] shrink-0 bg-slate-50 border-t-2 lg:border-t-0 lg:border-l-2 border-dashed border-gray-200 p-5 flex flex-row lg:flex-col items-center justify-between lg:justify-center gap-3 text-center">
         <div>
-          <h2 className="text-2xl font-bold text-[#031e3d]">{inr(flight.price)}</h2>
+          <h2 className="text-2xl font-bold text-navy">{inr(flight.price)}</h2>
           <p className="text-xs text-gray-500">per person</p>
         </div>
 
         <div className="flex flex-col items-center gap-1.5">
           <button
-            onClick={selectFlight}
-            className="bg-[#031e3d] hover:bg-[#052a5a] transition-colors text-white font-medium px-9 py-2.5 rounded-xl cursor-pointer whitespace-nowrap"
+            onClick={() => onSelect(flight)}
+            className="bg-navy hover:bg-navy-dark transition-colors text-white font-medium px-9 py-2.5 rounded-xl cursor-pointer whitespace-nowrap"
           >
-            Select Flight
+            {selectLabel}
           </button>
           <button
             onClick={viewDetails}
@@ -128,4 +127,4 @@ export const FlightCard = ({ flight, onSelect }) => {
       </div>
     </div>
   )
-}
+})

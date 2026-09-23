@@ -27,6 +27,11 @@ const CITY_TO_IATA = {
   "bhubaneswar": "BBI",
   "ranchi": "IXR",
   "thiruvananthapuram": "TRV", "trivandrum": "TRV",
+  "dubai": "DXB",
+  "singapore": "SIN",
+  "bangkok": "BKK",
+  "kuala lumpur": "KUL",
+  "maldives": "MLE",
 }
 
 // one entry per airport, for the search autocomplete
@@ -45,5 +50,9 @@ export const getIataCode = (input) => {
   if (!input) return ""
   const lower = input.toLowerCase().trim()
   if (input.length === 3 && input === input.toUpperCase()) return input
-  return CITY_TO_IATA[lower] ?? input.slice(0, 3).toUpperCase()
+  // Object.hasOwn (not just `CITY_TO_IATA[lower]`) so typing something like "__proto__"
+  // can't accidentally look up an inherited Object.prototype value instead of falling
+  // through to the plain-text fallback below.
+  if (Object.hasOwn(CITY_TO_IATA, lower)) return CITY_TO_IATA[lower]
+  return input.slice(0, 3).toUpperCase()
 }

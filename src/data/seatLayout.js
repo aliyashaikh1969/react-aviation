@@ -453,14 +453,14 @@ export const seatLayoutData = [
       seatNo: "9C",
       type: "aisle",
       price: 299,
-      booked: false
+      booked: true
     },
 
     {
       seatNo: "10C",
       type: "aisle",
       price: 299,
-      booked: false
+      booked: true
     },
      {
       seatNo: "11C",
@@ -570,27 +570,27 @@ export const seatLayoutData = [
       seatNo: "8B",
       type: "middle",
       price: 699,
-      booked: false
+      booked: true
     },
 
     {
       seatNo: "9B",
       type: "middle",
       price: 199,
-      booked: false
+      booked: true
     },
 
     {
       seatNo: "10B",
       type: "middle",
       price: 199,
-      booked: false
+      booked: true
     },
     {
       seatNo: "11B",
       type: "middle",
       price: 699,
-      booked: false
+      booked: true
     },
 
     {
@@ -692,27 +692,27 @@ export const seatLayoutData = [
       seatNo: "8A",
       type: "window",
       price: 999,
-      booked: false
+      booked: true
     },
 
     {
       seatNo: "9A",
       type: "window",
       price: 499,
-      booked: false
+      booked: true
     },
 
     {
       seatNo: "10A",
       type: "window",
       price: 499,
-      booked: false
+      booked: true
     },
      {
       seatNo: "11A",
       type: "window",
       price: 999,
-      booked: false
+      booked: true
     },
 
     {
@@ -760,3 +760,16 @@ export const seatLayoutData = [
 
   ]
 ];
+
+// Flat list of the real seats (skips the empty spacer cells and the "EXIT" marker).
+// Only used to derive the two exports below -- nothing outside this file needs the raw list.
+const ALL_SEATS = seatLayoutData.flat().filter((cell) => cell && cell !== "EXIT")
+
+export const TOTAL_SEAT_COUNT = ALL_SEATS.length
+
+// Seat numbers that are already booked by other passengers.
+export const OCCUPIED_SEAT_NUMBERS = ALL_SEATS.filter((seat) => seat.booked).map((seat) => seat.seatNo)
+
+// Seats above this price are shown as "Premium" on the seat map.
+export const PREMIUM_PRICE_THRESHOLD = 700
+export const isPremiumSeat = (seat) => (seat?.price ?? 0) >= PREMIUM_PRICE_THRESHOLD

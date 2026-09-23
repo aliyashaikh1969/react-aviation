@@ -1,11 +1,4 @@
 import { useContext } from 'react'
-import { AuthContext } from '../context/AuthContext'
+import { AuthContext } from '../context/AuthProvider'
 
-export const useAuth = () => {
-  const ctx = useContext(AuthContext)
-  if (!ctx) {
-    // Fails clearly at the call site instead of a cryptic "Cannot destructure ... of null" later.
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return ctx
-}
+export const useAuth = () => useContext(AuthContext)

@@ -1,16 +1,11 @@
-// Serverless proxy for flight search (Vercel function; also served by `npm run dev`).
-// Keeps SERPAPI_KEY on the server so it is never shipped to the browser, and normalizes
-// SerpApi's raw response into a shape the UI can trust before it ever reaches a component.
+// Serverless function for flight search (also served by `npm run dev`).
+// Keeps SERPAPI_KEY on the server so it never reaches the browser, and cleans up
+// SerpApi's response so the UI doesn't have to guard against missing fields everywhere.
 
 const IATA_CODE = /^[A-Za-z]{3}$/
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 
 // --- Response normalization -------------------------------------------------------------
-// SerpApi's shape isn't contractually guaranteed field-by-field, and our components read
-// deeply nested paths (flights[].departure_airport.id, etc.) all over the app without
-// re-checking each one. Normalizing once here — right at the boundary with the third-party
-// API — means every field a component reads is guaranteed to exist with a safe default,
-// instead of each of a dozen components needing its own defensive fallback.
 const normalizeAirport = (airport) => ({
   id: airport?.id || '—',
   name: airport?.name || '',
@@ -30,8 +25,7 @@ const normalizeLeg = (leg) => ({
   extensions: Array.isArray(leg?.extensions) ? leg.extensions : [],
 })
 
-// One result with no usable legs can't be rendered as a flight card at all; normalizeResults
-// drops it rather than let a blank/broken card reach the UI.
+// drop any result with no usable legs instead of rendering a broken flight card
 const normalizeFlight = (flight, index, source) => {
   const legs = Array.isArray(flight?.flights) ? flight.flights.map(normalizeLeg) : []
   if (legs.length === 0) return null
@@ -40,8 +34,7 @@ const normalizeFlight = (flight, index, source) => {
 
   return {
     ...flight,
-    // Components use booking_token as a React list key; SerpApi doesn't formally guarantee
-    // it's present or unique, so fall back to something stable and unique per result.
+    // used as the React list key, so make sure it's always there and unique
     booking_token: flight?.booking_token || `${source}-${index}-${legs[0].flight_number}-${legs[0].departure_airport.time}`,
     flights: legs,
     layovers: Array.isArray(flight?.layovers) ? flight.layovers : [],
@@ -56,6 +49,37 @@ const normalizeResults = (list, source) =>
   (Array.isArray(list) ? list : [])
     .map((flight, index) => normalizeFlight(flight, index, source))
     .filter(Boolean)
+
+// A round trip is modeled as two independent one-way searches (there and back), rather than
+// Google Flights' own two-step "pick outbound, then fetch return options for it" flow — much
+// simpler, and it still gives a real, bookable outbound + return pair.
+const searchOneWay = async (from, to, date, adults, apiKey) => {
+  const params = new URLSearchParams({
+    engine: 'google_flights',
+    departure_id: from.toUpperCase(),
+    arrival_id: to.toUpperCase(),
+    outbound_date: date,
+    type: '2', // one-way
+    adults: String(adults),
+    currency: 'INR',
+    hl: 'en',
+    api_key: apiKey,
+  })
+
+  const upstream = await fetch(`https://serpapi.com/search.json?${params}`)
+  const data = await upstream.json()
+
+  // "no flights for this query" is an empty result, not a failure
+  if (data.error && !/hasn't returned any results|no results/i.test(data.error)) {
+    console.error('SerpApi error:', data.error)
+    throw new Error('upstream error')
+  }
+
+  return {
+    best_flights: normalizeResults(data.best_flights, 'best'),
+    other_flights: normalizeResults(data.other_flights, 'other'),
+  }
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -89,33 +113,17 @@ export default async function handler(req, res) {
 
   const adults = Math.min(9, Math.max(1, parseInt(travellers, 10) || 1))
 
-  const params = new URLSearchParams({
-    engine: 'google_flights',
-    departure_id: from.toUpperCase(),
-    arrival_id: to.toUpperCase(),
-    outbound_date: date,
-    type: isRoundTrip ? '1' : '2',
-    adults: String(adults),
-    currency: 'INR',
-    hl: 'en',
-    api_key: apiKey,
-  })
-  if (isRoundTrip) params.set('return_date', returnDate)
-
   try {
-    const upstream = await fetch(`https://serpapi.com/search.json?${params}`)
-    const data = await upstream.json()
-
-    // "no flights for this query" is an empty result, not a failure
-    if (data.error && !/hasn't returned any results|no results/i.test(data.error)) {
-      console.error('SerpApi error:', data.error)
-      return res.status(502).json({ error: 'Flight search is temporarily unavailable' })
+    if (isRoundTrip) {
+      const [outbound, returnLeg] = await Promise.all([
+        searchOneWay(from, to, date, adults, apiKey),
+        searchOneWay(to, from, returnDate, adults, apiKey),
+      ])
+      return res.status(200).json({ outbound, return: returnLeg })
     }
 
-    return res.status(200).json({
-      best_flights: normalizeResults(data.best_flights, 'best'),
-      other_flights: normalizeResults(data.other_flights, 'other'),
-    })
+    const oneWay = await searchOneWay(from, to, date, adults, apiKey)
+    return res.status(200).json(oneWay)
   } catch (error) {
     console.error('Flight search failed:', error)
     return res.status(502).json({ error: 'Flight search is temporarily unavailable' })

@@ -5,6 +5,7 @@ import { SeatDetails } from '../../components/booking/SeatDetails'
 import { WhyChooseUs } from '../../components/common/WhyChooseUs'
 import { FaArrowLeft } from "react-icons/fa6";
 import { usePassenger } from '../../hooks/usePassenger'
+import { useFlight } from '../../hooks/useFlight'
 import toast from 'react-hot-toast'
 import { useScrollToTop } from "../../hooks/useScrollToTop"
 import { useFare } from '../../hooks/useFare'
@@ -14,9 +15,23 @@ export const SummaryStep = ({ nextStep, prevStep }) => {
   useScrollToTop();
 
   const { validatePassengers, setOpenPassengers } = usePassenger()
+  const { selectedFlight, selectedReturnFlight, selectedSeats, searchData } = useFlight()
   const { grandTotal } = useFare()
+  const isRoundTrip = searchData.tripType === "round"
 
   const handleNextStep = () => {
+    // make sure a flight (both legs, for a round trip) and the right number of seats are picked before paying
+    if (!selectedFlight || (isRoundTrip && !selectedReturnFlight)) {
+      toast.error(isRoundTrip ? "Please select your outbound and return flights first" : "Please select a flight first")
+      prevStep(); prevStep()
+      return
+    }
+    if (selectedSeats.length !== searchData.travellers) {
+      toast.error(`Please select ${searchData.travellers} seat${searchData.travellers > 1 ? "s" : ""} before continuing`)
+      prevStep()
+      return
+    }
+
     const newErrors = validatePassengers()
     const errorIndexes = newErrors
       .map((err, i) => (Object.keys(err).length > 0 ? i : null))
@@ -33,7 +48,7 @@ export const SummaryStep = ({ nextStep, prevStep }) => {
   return (
     <div className="bg-[#F5F7FA]">
       <div className='max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-16 pt-6'>
-        <h2 className="text-xl md:text-2xl font-bold text-[#031e3d]">Booking Summary</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-navy">Booking Summary</h2>
         <p className="text-sm md:text-base text-gray-600 mt-1">
           Review your booking details before confirming your flight.
         </p>
@@ -45,8 +60,13 @@ export const SummaryStep = ({ nextStep, prevStep }) => {
           </div>
           <div className='xl:w-[60%] flex gap-5 flex-col'>
             <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6">
-              <FlightOverview />
+              <FlightOverview flight={selectedFlight} title={isRoundTrip ? "Outbound Flight" : "Flight Details"} />
             </div>
+            {isRoundTrip && (
+              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 sm:p-5 lg:p-6">
+                <FlightOverview flight={selectedReturnFlight} title="Return Flight" variant="return" />
+              </div>
+            )}
             <SeatDetails prevStep={prevStep} />
           </div>
         </div>
@@ -62,7 +82,7 @@ export const SummaryStep = ({ nextStep, prevStep }) => {
           </button>
           <button
             onClick={handleNextStep}
-            className="w-full sm:w-auto rounded-xl bg-[#0A2A6B] hover:bg-[#081f52] transition-colors text-white font-semibold text-sm shadow-lg py-3.5 px-8 cursor-pointer"
+            className="w-full sm:w-auto rounded-xl bg-navy hover:bg-navy-dark transition-colors text-white font-semibold text-sm shadow-lg py-3.5 px-8 cursor-pointer"
           >
             Confirm & pay {inr(grandTotal)}
           </button>

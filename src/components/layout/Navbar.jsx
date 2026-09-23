@@ -16,19 +16,23 @@ const navItems = [
   { name: "Contact", path: ROUTES.contact },
 ];
 
-const Avatar = ({ user, size = "w-9 h-9" }) =>
-  user?.photoURL ? (
+const Avatar = ({ user, size = "w-9 h-9" }) => {
+  const [photoFailed, setPhotoFailed] = useState(false)
+
+  return user?.photoURL && !photoFailed ? (
     <img
       src={user.photoURL}
       referrerPolicy="no-referrer"
+      onError={() => setPhotoFailed(true)}
       className={`${size} rounded-full object-cover`}
       alt=""
     />
   ) : (
-    <div className={`${size} rounded-full bg-white text-[#031e3d] flex items-center justify-center font-semibold`}>
+    <div className={`${size} rounded-full bg-white text-navy flex items-center justify-center font-semibold`}>
       {user?.displayName?.charAt(0).toUpperCase() ?? "U"}
     </div>
   );
+}
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -74,10 +78,10 @@ export const Navbar = () => {
 
   const loginLinkClass = ({ isActive }) =>
     `border border-white/30 px-5 py-2 rounded-xl text-sm font-medium transition-colors
-    ${isActive ? "bg-white text-[#031e3d]" : "hover:bg-white hover:text-[#031e3d]"}`;
+    ${isActive ? "bg-white text-navy" : "hover:bg-white hover:text-navy"}`;
 
   return (
-    <nav className="bg-[#031e3d]/95 text-white w-full sticky top-0 z-50 shadow-lg">
+    <nav className="bg-navy text-white w-full sticky top-0 z-50 shadow-lg print:hidden">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between px-5 md:px-14 h-20">
 
         {/* LOGO */}
@@ -130,7 +134,7 @@ export const Navbar = () => {
               {profileOpen && (
                 <div
                   role="menu"
-                  className="absolute right-0 mt-3 w-64 bg-white text-[#031e3d] rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
+                  className="absolute right-0 mt-3 w-64 bg-white text-navy rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
                 >
                   <div className="px-5 py-4 bg-slate-50 border-b border-slate-100">
                     <h3 className="font-semibold truncate">{user?.displayName ?? "User"}</h3>
@@ -180,7 +184,7 @@ export const Navbar = () => {
 
       {/* MOBILE MENU */}
       <div
-        className={`md:hidden fixed inset-0 bg-[#031e3d] transition-opacity duration-300
+        className={`md:hidden fixed inset-0 bg-navy transition-opacity duration-300
           ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         aria-hidden={!open}
       >
