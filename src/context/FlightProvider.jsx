@@ -38,6 +38,9 @@ export const FlightProvider = ({ children }) => {
   // only used for round trips — a round trip is booked as an outbound flight + a return flight
   const [selectedReturnFlight, setSelectedReturnFlightRaw] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  // only used for round trips -- outbound and return are different aircraft, so each leg
+  // gets its own independent seat selection instead of sharing one
+  const [selectedReturnSeats, setSelectedReturnSeats] = useState([]);
   const [promoCode, setPromoCode] = useState(null);
 
   // flight currently open on the details page (not yet chosen for booking)
@@ -48,33 +51,40 @@ export const FlightProvider = ({ children }) => {
     localStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(searchData));
   }, [searchData]);
 
-  // picking a new outbound flight clears any seats/return flight chosen against the old one.
-  // Only depends on searchData.tripType (for the toast wording), not all of searchData, so
-  // it doesn't get a new identity on every keystroke in the search form.
+  // picking a new outbound flight clears the outbound seats chosen against the old one, and
+  // (since it also clears the return flight) the return seats too. Only depends on
+  // searchData.tripType (for the toast wording), not all of searchData, so it doesn't get a
+  // new identity on every keystroke in the search form.
   const setSelectedFlight = useCallback((flight) => {
     setSelectedFlightRaw(flight);
     setSelectedReturnFlightRaw(null);
     setSelectedSeats([]);
+    setSelectedReturnSeats([]);
     if (flight) toast.success(searchData.tripType === "round" ? "Outbound flight selected" : "Flight selected");
   }, [searchData.tripType]);
 
+  // picking a new return flight only invalidates the return leg's own seats -- the outbound
+  // flight and its seats were already chosen independently and aren't affected.
   const setSelectedReturnFlight = useCallback((flight) => {
     setSelectedReturnFlightRaw(flight);
-    setSelectedSeats([]);
+    setSelectedReturnSeats([]);
     if (flight) toast.success("Return flight selected");
   }, []);
 
-  // if the traveller count goes down after seats were picked, drop the extra seats.
+  // if the traveller count goes down after seats were picked, drop the extra seats (both legs).
   // Reads only through the functional setState form, so this never needs to change identity.
   const setSearchData = useCallback((update) => {
     setSearchDataRaw((prev) => {
       const next = typeof update === "function" ? update(prev) : update
       if (next.travellers !== prev.travellers) {
-        setSelectedSeats((seats) => (seats.length > next.travellers ? seats.slice(0, next.travellers) : seats))
+        const trim = (seats) => (seats.length > next.travellers ? seats.slice(0, next.travellers) : seats)
+        setSelectedSeats(trim)
+        setSelectedReturnSeats(trim)
       }
-      // switching to one way makes a previously-picked return flight meaningless
+      // switching to one way makes a previously-picked return flight (and its seats) meaningless
       if (next.tripType !== "round" && prev.tripType === "round") {
         setSelectedReturnFlightRaw(null)
+        setSelectedReturnSeats([])
       }
       return next
     })
@@ -86,6 +96,7 @@ export const FlightProvider = ({ children }) => {
     setSelectedFlightRaw(null);
     setSelectedReturnFlightRaw(null);
     setSelectedSeats([]);
+    setSelectedReturnSeats([]);
     setPromoCode(null);
   }, []);
 
@@ -103,6 +114,8 @@ export const FlightProvider = ({ children }) => {
     setDetailFlight,
     selectedSeats,
     setSelectedSeats,
+    selectedReturnSeats,
+    setSelectedReturnSeats,
     promoCode,
     setPromoCode,
     resetBooking,
@@ -112,6 +125,7 @@ export const FlightProvider = ({ children }) => {
     selectedReturnFlight, setSelectedReturnFlight,
     detailFlight,
     selectedSeats,
+    selectedReturnSeats,
     promoCode,
     resetBooking,
   ]);

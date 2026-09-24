@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { SearchSummary } from '../../components/search/SearchSummary'
 import { PiArmchairFill } from "react-icons/pi";
 import { IoIosExit } from "react-icons/io";
 import { BsAirplaneFill } from "react-icons/bs";
+import { FiCheckCircle } from "react-icons/fi";
 import { FaArrowRight, FaAngleRight } from "react-icons/fa";
 import airplane from '../../assets/airplaneleft.webp'
 import { FaArrowLeft } from "react-icons/fa6";
@@ -34,9 +36,22 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 
 	useScrollToTop();
 
-	const { selectedFlight, selectedReturnFlight, selectedSeats, setSelectedSeats, searchData } = useFlight()
-	const { travellers, baseFare, seatTotal, taxes, grandTotal } = useFare()
+	const {
+		selectedFlight, selectedReturnFlight,
+		selectedSeats, setSelectedSeats,
+		selectedReturnSeats, setSelectedReturnSeats,
+		searchData,
+	} = useFlight()
+	const { travellers, baseFare, outboundSeatTotal, returnSeatTotal, seatTotal, taxes, grandTotal } = useFare()
 	const isRoundTrip = searchData.tripType === "round"
+
+	// Outbound and return are different aircraft, so each gets its own seat map and its own
+	// independent selection -- this tab picks which one is currently shown/edited.
+	const [seatTab, setSeatTab] = useState("outbound") // 'outbound' | 'return'
+	const onReturnTab = isRoundTrip && seatTab === "return"
+
+	const activeSeats = onReturnTab ? selectedReturnSeats : selectedSeats
+	const setActiveSeats = onReturnTab ? setSelectedReturnSeats : setSelectedSeats
 
 	const { legs, first: firstLeg, last: lastLeg, stops } = summarizeFlight(selectedFlight)
 	const departure = splitDateTime(firstLeg?.departure_airport?.time)
@@ -46,21 +61,25 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 	const returnDeparture = splitDateTime(returnSummary.first?.departure_airport?.time)
 	const returnArrival = splitDateTime(returnSummary.last?.arrival_airport?.time)
 
-	const availableSeats = TOTAL_SEAT_COUNT - selectedSeats.length - OCCUPIED_SEAT_NUMBERS.length
-	const seatsLeft = travellers - selectedSeats.length
+	// the flight/route shown above the seat map itself follows whichever tab is active
+	const activeSummary = onReturnTab ? returnSummary : { legs, first: firstLeg, last: lastLeg, stops }
+
+	const availableSeats = TOTAL_SEAT_COUNT - activeSeats.length - OCCUPIED_SEAT_NUMBERS.length
+	const outboundDone = selectedSeats.length === travellers
+	const returnDone = selectedReturnSeats.length === travellers
 
 	const handleSeatSelect = (seat) => {
 		if (seat.booked) return;
 
-		const alreadySelected = selectedSeats.some(s => s.seatNo === seat.seatNo)
+		const alreadySelected = activeSeats.some(s => s.seatNo === seat.seatNo)
 
 		if (alreadySelected) {
-			setSelectedSeats(selectedSeats.filter((item) => item.seatNo !== seat.seatNo));
+			setActiveSeats(activeSeats.filter((item) => item.seatNo !== seat.seatNo));
 			return;
 		}
 
 		// block picking more seats than there are travellers, instead of silently swapping one out
-		if (selectedSeats.length >= travellers) {
+		if (activeSeats.length >= travellers) {
 			toast.error(
 				travellers === 1
 					? "You can only select 1 seat. Deselect it first to choose another."
@@ -69,16 +88,28 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 			return;
 		}
 
-		setSelectedSeats([...selectedSeats, seat]);
+		setActiveSeats([...activeSeats, seat]);
 		toast.success(`Seat ${seat.seatNo} selected`);
 	};
 
 	const handleNextStep = () => {
-		if (selectedSeats.length === travellers) nextStep()
-		else toast.error(`Please select ${seatsLeft} more seat${seatsLeft > 1 ? "s" : ""}`)
+		if (!outboundDone) {
+			setSeatTab("outbound")
+			const remaining = travellers - selectedSeats.length
+			const leg = isRoundTrip ? "outbound " : ""
+			toast.error(`Please select ${remaining} more ${leg}seat${remaining > 1 ? "s" : ""}`)
+			return
+		}
+		if (isRoundTrip && !returnDone) {
+			setSeatTab("return")
+			const remaining = travellers - selectedReturnSeats.length
+			toast.error(`Please select ${remaining} more return seat${remaining > 1 ? "s" : ""}`)
+			return
+		}
+		nextStep()
 	}
 
-	const clearSeats = () => setSelectedSeats([])
+	const clearSeats = () => setActiveSeats([])
 
 	return (
 		<div className="bg-[#F5F7FA]">
@@ -86,7 +117,7 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 				<h2 className='md:text-2xl text-xl text-navy font-bold'>Choose your seats</h2>
 				<p className='text-slate-600 py-2 text-sm'>
 					Select your preferred seats and enjoy your journey.
-					{isRoundTrip && " Your selection applies to both your outbound and return flights."}
+					{isRoundTrip && " Outbound and return are different aircraft, so pick seats for each separately."}
 				</p>
 				<SearchSummary />
 			</div>
@@ -95,20 +126,46 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 
 				{/* Seat map */}
 				<div className="bg-white rounded-2xl shadow-sm border border-slate-100 w-full xl:w-[70%] flex flex-col p-4">
+
+					{isRoundTrip && (
+						<div className='flex flex-wrap items-center gap-2 pb-4'>
+							<button
+								type='button'
+								onClick={() => setSeatTab("outbound")}
+								className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors cursor-pointer
+									${!onReturnTab ? "bg-navy text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+							>
+								{outboundDone && <FiCheckCircle className={!onReturnTab ? "text-white" : "text-green-600"} />}
+								Outbound: {firstLeg?.departure_airport?.id} → {lastLeg?.arrival_airport?.id}
+								<span className={`text-xs font-normal ${!onReturnTab ? "text-white/70" : "text-slate-400"}`}>({selectedSeats.length}/{travellers})</span>
+							</button>
+							<button
+								type='button'
+								onClick={() => setSeatTab("return")}
+								className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors cursor-pointer
+									${onReturnTab ? "bg-navy text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+							>
+								{returnDone && <FiCheckCircle className={onReturnTab ? "text-white" : "text-green-600"} />}
+								Return: {returnSummary.first?.departure_airport?.id} → {returnSummary.last?.arrival_airport?.id}
+								<span className={`text-xs font-normal ${onReturnTab ? "text-white/70" : "text-slate-400"}`}>({selectedReturnSeats.length}/{travellers})</span>
+							</button>
+						</div>
+					)}
+
 					<div className='flex items-center justify-between gap-3 pb-4 flex-wrap'>
 						<div>
 							<p className='text-xs text-slate-500 font-semibold uppercase tracking-wide'>Select seats</p>
 							<div className='flex flex-wrap items-center gap-x-4 gap-y-1 mt-1'>
 								<div className='flex items-center gap-3 font-bold text-navy'>
-									<span>{firstLeg?.departure_airport?.id}</span>
+									<span>{activeSummary.first?.departure_airport?.id}</span>
 									<FaArrowRight className='text-slate-400' />
-									<span>{lastLeg?.arrival_airport?.id}</span>
+									<span>{activeSummary.last?.arrival_airport?.id}</span>
 								</div>
-								<span className='text-sm text-slate-500'>{legs.map(l => l.flight_number).join(" · ")}</span>
+								<span className='text-sm text-slate-500'>{activeSummary.legs.map(l => l.flight_number).join(" · ")}</span>
 							</div>
 						</div>
 						<span className='bg-blue-50 rounded-full px-3 py-1 font-semibold text-xs text-blue-700'>
-							{legs.map(l => l.airplane).filter(Boolean).join(", ")}
+							{activeSummary.legs.map(l => l.airplane).filter(Boolean).join(", ")}
 						</span>
 					</div>
 
@@ -171,7 +228,7 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 													const isPremium = isPremiumSeat(seat);
 
 													const isSelected =
-														selectedSeats.some(
+														activeSeats.some(
 															(s) =>
 																s.seatNo === seat.seatNo
 														);
@@ -219,15 +276,16 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 					{/* Selection bar */}
 					<div className='bg-blue-50 text-navy rounded-xl flex items-center justify-between gap-3 p-3 flex-wrap'>
 						<p className='text-sm'>
-							Selected ({selectedSeats.length}/{travellers}):{" "}
+							{isRoundTrip && <span className='font-semibold'>{onReturnTab ? "Return" : "Outbound"}: </span>}
+							Selected ({activeSeats.length}/{travellers}):{" "}
 							<span className='text-green-600 font-semibold'>
-								{selectedSeats.length > 0 ? selectedSeats.map((seat) => seat.seatNo).join(", ") : "--"}
+								{activeSeats.length > 0 ? activeSeats.map((seat) => seat.seatNo).join(", ") : "--"}
 							</span>
 						</p>
 						<button
 							className='text-xs text-red-600 hover:underline disabled:opacity-40 disabled:no-underline cursor-pointer'
 							onClick={clearSeats}
-							disabled={selectedSeats.length === 0}
+							disabled={activeSeats.length === 0}
 						>
 							Clear selection
 						</button>
@@ -318,12 +376,29 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 							<p className='text-slate-500'>Passengers</p>
 							<p className='font-semibold'>{travellers} Adult{travellers > 1 ? "s" : ""}</p>
 						</div>
-						<div className='flex items-center justify-between py-3 border-b text-sm'>
-							<p className='text-slate-500'>Seats</p>
-							<p className='font-semibold'>
-								{selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNo).join(", ") : "--"}
-							</p>
-						</div>
+						{isRoundTrip ? (
+							<>
+								<div className='flex items-center justify-between py-3 border-b text-sm'>
+									<p className='text-slate-500'>Outbound seats</p>
+									<p className='font-semibold'>
+										{selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNo).join(", ") : "--"}
+									</p>
+								</div>
+								<div className='flex items-center justify-between py-3 border-b text-sm'>
+									<p className='text-slate-500'>Return seats</p>
+									<p className='font-semibold'>
+										{selectedReturnSeats.length > 0 ? selectedReturnSeats.map(s => s.seatNo).join(", ") : "--"}
+									</p>
+								</div>
+							</>
+						) : (
+							<div className='flex items-center justify-between py-3 border-b text-sm'>
+								<p className='text-slate-500'>Seats</p>
+								<p className='font-semibold'>
+									{selectedSeats.length > 0 ? selectedSeats.map(s => s.seatNo).join(", ") : "--"}
+								</p>
+							</div>
+						)}
 
 						<div className='py-3 border-b space-y-2'>
 							<p className='font-semibold'>Fare details</p>
@@ -331,10 +406,23 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 								<span>Base fare × {travellers}</span>
 								<span>{inr(baseFare)}</span>
 							</div>
-							<div className='flex justify-between text-sm text-gray-500'>
-								<span>Seat charges</span>
-								<span>{inr(seatTotal)}</span>
-							</div>
+							{isRoundTrip ? (
+								<>
+									<div className='flex justify-between text-sm text-gray-500'>
+										<span>Outbound seat charges</span>
+										<span>{inr(outboundSeatTotal)}</span>
+									</div>
+									<div className='flex justify-between text-sm text-gray-500'>
+										<span>Return seat charges</span>
+										<span>{inr(returnSeatTotal)}</span>
+									</div>
+								</>
+							) : (
+								<div className='flex justify-between text-sm text-gray-500'>
+									<span>Seat charges</span>
+									<span>{inr(seatTotal)}</span>
+								</div>
+							)}
 							<div className="flex justify-between text-sm text-gray-500">
 								<span>Taxes & charges × {travellers}</span>
 								<span>{inr(taxes)}</span>
@@ -348,7 +436,10 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 					</div>
 
 					<div className='bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col gap-3'>
-						<p className='text-xl font-bold text-navy'>Seat legend</p>
+						<p className='text-xl font-bold text-navy'>
+							Seat legend
+							{isRoundTrip && <span className='text-xs font-normal text-slate-400'> ({onReturnTab ? "return" : "outbound"})</span>}
+						</p>
 						<div className='flex items-center justify-between text-sm'>
 							<div className='flex items-center gap-3'><SeatIcon /><p>Available</p></div>
 							<span className='text-gray-500'>{availableSeats}</span>
@@ -359,7 +450,7 @@ export const SeatsStep = ({ nextStep, prevStep }) => {
 						</div>
 						<div className='flex items-center justify-between text-sm'>
 							<div className='flex items-center gap-3'><SeatIcon state="selected" /><p>Selected</p></div>
-							<span className='text-gray-500'>{selectedSeats.length}</span>
+							<span className='text-gray-500'>{activeSeats.length}</span>
 						</div>
 						<div className='flex items-center justify-between text-sm'>
 							<div className='flex items-center gap-3'><SeatIcon state="occupied" /><p>Occupied</p></div>

@@ -18,15 +18,22 @@ export const PaymentStep = ({ nextStep, prevStep }) => {
   useScrollToTop();
 
   const [processing, setProcessing] = useState(false)
-  const { baseFare, seatTotal, taxes, discount, grandTotal } = useFare()
+  const { baseFare, outboundSeatTotal, returnSeatTotal, taxes, discount, grandTotal } = useFare()
   const { selectedFlight, selectedReturnFlight, searchData } = useFlight()
   const isRoundTrip = searchData.tripType === "round"
 
-  const fareRows = [
-    { label: "Base fare", value: baseFare },
-    { label: "Seat charges", value: seatTotal },
-    { label: "Taxes & fees", value: taxes },
-  ]
+  const fareRows = isRoundTrip
+    ? [
+      { label: "Base fare", value: baseFare },
+      { label: "Outbound seat charges", value: outboundSeatTotal },
+      { label: "Return seat charges", value: returnSeatTotal },
+      { label: "Taxes & fees", value: taxes },
+    ]
+    : [
+      { label: "Base fare", value: baseFare },
+      { label: "Seat charges", value: outboundSeatTotal },
+      { label: "Taxes & fees", value: taxes },
+    ]
 
   return (
     <div className="bg-[#F5F7FA]">

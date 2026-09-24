@@ -77,7 +77,7 @@ const TicketLeg = ({ flight }) => {
 // Full e-ticket. Pass `offscreen` (default true) to render it hidden off-screen just so it
 // can be captured as a PDF (see downloadElementAsPdf) — set it to false to show the ticket
 // on the page itself, e.g. on the confirmation page.
-export const ETicket = ({ innerRef, pnr, bookingDate, selectedFlight, selectedReturnFlight, passengers, selectedSeats, searchData, seatTotal, discount, grandTotal, userEmail, offscreen = true }) => {
+export const ETicket = ({ innerRef, pnr, bookingDate, selectedFlight, selectedReturnFlight, passengers, selectedSeats, selectedReturnSeats, searchData, seatTotal, discount, grandTotal, userEmail, offscreen = true }) => {
   const isRoundTrip = searchData.tripType === "round" && !!selectedReturnFlight
   const legCount = isRoundTrip ? 2 : 1
 
@@ -86,6 +86,8 @@ export const ETicket = ({ innerRef, pnr, bookingDate, selectedFlight, selectedRe
 
   const combinedBaseFare = ((selectedFlight?.price ?? 0) + (isRoundTrip ? selectedReturnFlight?.price ?? 0 : 0)) * (passengers?.length ?? 0)
   const combinedTaxes = TAXES_PER_PASSENGER * (passengers?.length ?? 0) * legCount
+  const outboundSeatTotal = selectedSeats.reduce((total, seat) => total + seat.price, 0)
+  const returnSeatTotal = isRoundTrip ? (selectedReturnSeats?.reduce((total, seat) => total + seat.price, 0) ?? 0) : 0
 
   return (
     <div
@@ -163,7 +165,8 @@ export const ETicket = ({ innerRef, pnr, bookingDate, selectedFlight, selectedRe
               <th className="text-left p-2">Date of Birth</th>
               <th className="text-left p-2">ID Proof</th>
               <th className="text-left p-2">Phone</th>
-              <th className="text-left p-2">Seat</th>
+              <th className="text-left p-2">{isRoundTrip ? "Outbound Seat" : "Seat"}</th>
+              {isRoundTrip && <th className="text-left p-2">Return Seat</th>}
             </tr>
           </thead>
           <tbody>
@@ -181,6 +184,13 @@ export const ETicket = ({ innerRef, pnr, bookingDate, selectedFlight, selectedRe
                     {selectedSeats[i]?.seatNo}
                   </span>
                 </td>
+                {isRoundTrip && (
+                  <td className="p-2">
+                    <span className="bg-amber-500 text-white text-xs px-2 py-1 rounded">
+                      {selectedReturnSeats?.[i]?.seatNo}
+                    </span>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -196,10 +206,23 @@ export const ETicket = ({ innerRef, pnr, bookingDate, selectedFlight, selectedRe
               <span>Base fare × {passengers?.length}{isRoundTrip ? " × 2 legs" : ""}</span>
               <span>₹{combinedBaseFare.toLocaleString('en-IN')}</span>
             </div>
-            <div className="flex justify-between text-xs text-gray-500 py-1">
-              <span>Seat charges</span>
-              <span>₹{seatTotal.toLocaleString('en-IN')}</span>
-            </div>
+            {isRoundTrip ? (
+              <>
+                <div className="flex justify-between text-xs text-gray-500 py-1">
+                  <span>Outbound seat charges</span>
+                  <span>₹{outboundSeatTotal.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between text-xs text-gray-500 py-1">
+                  <span>Return seat charges</span>
+                  <span>₹{returnSeatTotal.toLocaleString('en-IN')}</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-between text-xs text-gray-500 py-1">
+                <span>Seat charges</span>
+                <span>₹{seatTotal.toLocaleString('en-IN')}</span>
+              </div>
+            )}
             <div className="flex justify-between text-xs text-gray-500 py-1">
               <span>Taxes × {passengers?.length}{isRoundTrip ? " × 2 legs" : ""}</span>
               <span>₹{combinedTaxes.toLocaleString('en-IN')}</span>
@@ -238,7 +261,10 @@ export const ETicket = ({ innerRef, pnr, bookingDate, selectedFlight, selectedRe
         <div className="text-xs text-gray-600 space-y-1">
           
           <p><strong>Passengers:</strong> {passengers?.map(p => fullName(p)).join(", ")}</p>
-          <p><strong>Seats:</strong> {selectedSeats.map(s => s.seatNo).join(" · ")}</p>
+          <p><strong>{isRoundTrip ? "Outbound seats:" : "Seats:"}</strong> {selectedSeats.map(s => s.seatNo).join(" · ")}</p>
+          {isRoundTrip && (
+            <p><strong>Return seats:</strong> {selectedReturnSeats?.map(s => s.seatNo).join(" · ")}</p>
+          )}
           <p>
             <strong>{isRoundTrip ? "Outbound:" : "Flight:"}</strong> {first?.flight_number} · {first?.departure_airport?.id} → {first?.arrival_airport?.id}
           </p>
@@ -257,6 +283,7 @@ export const ETicket = ({ innerRef, pnr, bookingDate, selectedFlight, selectedRe
             returnFlightNo: isRoundTrip ? returnFirst?.flight_number : undefined,
             passengers: passengers?.map(p => fullName(p)).join(", "),
             seats: selectedSeats.map(s => s.seatNo).join(", "),
+            returnSeats: isRoundTrip ? selectedReturnSeats?.map(s => s.seatNo).join(", ") : undefined,
             from: first?.departure_airport?.id,
             to: first?.arrival_airport?.id,
           })}

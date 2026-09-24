@@ -7,16 +7,23 @@ import { inr } from '../../utils/format'
 import { PROMO_CODES, TAX_BREAKDOWN } from '../../constants/fare'
 
 export const PriceDetails = () => {
-  const { travellers, baseFare, seatTotal, discount, promo, grandTotal } = useFare()
+  const { travellers, isRoundTrip, legCount, baseFare, outboundSeatTotal, returnSeatTotal, discount, promo, grandTotal } = useFare()
   const { promoCode, setPromoCode } = useFlight()
   const [promoInput, setPromoInput] = useState("")
 
+  // legCount doubles each tax line for a round trip (two flights) -- without it these rows
+  // would under-count and no longer add up to the total actually charged (see useFare).
   const rows = [
     { label: `Base fare × ${travellers}`, value: baseFare },
-    { label: `Airport charges × ${travellers}`, value: TAX_BREAKDOWN.airport * travellers },
-    { label: `Passenger service fee × ${travellers}`, value: TAX_BREAKDOWN.service * travellers },
-    { label: `GST × ${travellers}`, value: TAX_BREAKDOWN.gst * travellers },
-    { label: "Seat charges", value: seatTotal },
+    { label: `Airport charges × ${travellers}${isRoundTrip ? " × 2 legs" : ""}`, value: TAX_BREAKDOWN.airport * travellers * legCount },
+    { label: `Passenger service fee × ${travellers}${isRoundTrip ? " × 2 legs" : ""}`, value: TAX_BREAKDOWN.service * travellers * legCount },
+    { label: `GST × ${travellers}${isRoundTrip ? " × 2 legs" : ""}`, value: TAX_BREAKDOWN.gst * travellers * legCount },
+    ...(isRoundTrip
+      ? [
+        { label: "Outbound seat charges", value: outboundSeatTotal },
+        { label: "Return seat charges", value: returnSeatTotal },
+      ]
+      : [{ label: "Seat charges", value: outboundSeatTotal }]),
   ]
 
   const applyPromo = () => {

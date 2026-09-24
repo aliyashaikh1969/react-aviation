@@ -12,6 +12,11 @@ export const TripTicket = ({ booking, innerRef, width }) => {
   const status = getTripStatus(booking.status)
   const [logoFailed, setLogoFailed] = useState(false)
 
+  // Derived from each passenger's own saved seatPrice/returnSeatPrice rather than stored
+  // separately, so this works for bookings saved before the split existed too (defaults to 0).
+  const outboundSeatTotal = passengers?.reduce((sum, p) => sum + (p.seatPrice ?? 0), 0) ?? 0
+  const returnSeatTotal = passengers?.reduce((sum, p) => sum + (p.returnSeatPrice ?? 0), 0) ?? 0
+
   return (
     <div
       ref={innerRef}
@@ -67,7 +72,12 @@ export const TripTicket = ({ booking, innerRef, width }) => {
                 <span className="text-gray-400 text-xs">{passenger.passengerType || "Adult"}</span>
                 <span className="text-gray-400 text-xs capitalize">{passenger.gender}</span>
               </div>
-              <span className="bg-navy text-white text-xs px-2.5 py-1 rounded-md font-medium">{passenger.seat ?? '--'}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="bg-navy text-white text-xs px-2.5 py-1 rounded-md font-medium">{passenger.seat ?? '--'}</span>
+                {isRoundTrip && (
+                  <span className="bg-amber-500 text-white text-xs px-2.5 py-1 rounded-md font-medium">{passenger.returnSeat ?? '--'}</span>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -81,7 +91,14 @@ export const TripTicket = ({ booking, innerRef, width }) => {
               <span>Base fare × {booking.travellers}{booking.tripType === "round" && booking.returnFlight ? " × 2 legs" : ""}</span>
               <span>{inr(fare?.baseFare)}</span>
             </div>
-            <div className="flex justify-between"><span>Seat charges</span><span>{inr(fare?.seatTotal)}</span></div>
+            {isRoundTrip ? (
+              <>
+                <div className="flex justify-between"><span>Outbound seat charges</span><span>{inr(outboundSeatTotal)}</span></div>
+                <div className="flex justify-between"><span>Return seat charges</span><span>{inr(returnSeatTotal)}</span></div>
+              </>
+            ) : (
+              <div className="flex justify-between"><span>Seat charges</span><span>{inr(fare?.seatTotal)}</span></div>
+            )}
             <div className="flex justify-between"><span>Taxes</span><span>{inr(fare?.taxes)}</span></div>
             {fare?.discount > 0 && (
               <div className="flex justify-between text-green-600"><span>Discount</span><span>-{inr(fare.discount)}</span></div>

@@ -19,7 +19,7 @@ export const ConfirmationStep = () => {
   useScrollToTop();
   const { user } = useAuth()
   const navigate = useNavigate();
-  const { selectedFlight, selectedReturnFlight, selectedSeats, searchData, resetBooking } = useFlight();
+  const { selectedFlight, selectedReturnFlight, selectedSeats, selectedReturnSeats, searchData, resetBooking } = useFlight();
   const { passengers } = usePassenger();
   const { baseFare, seatTotal, taxes, discount, grandTotal } = useFare()
   const { first } = summarizeFlight(selectedFlight)
@@ -82,8 +82,13 @@ export const ConfirmationStep = () => {
         ...passenger,
         seat: selectedSeats[i]?.seatNo ?? "--",
         seatPrice: selectedSeats[i]?.price ?? 0,
+        // outbound and return are independent seat picks -- null (not undefined, which
+        // Firestore rejects) for a one-way booking with no return leg at all.
+        returnSeat: isRoundTrip ? (selectedReturnSeats[i]?.seatNo ?? "--") : null,
+        returnSeatPrice: isRoundTrip ? (selectedReturnSeats[i]?.price ?? 0) : null,
       })),
       seats: selectedSeats.map(seat => seat.seatNo),
+      returnSeats: isRoundTrip ? selectedReturnSeats.map(seat => seat.seatNo) : null,
       // baseFare here is already the total for all travellers (and both legs, for a round
       // trip) -- see useFare -- not a single passenger's single-flight price
       fare: { baseFare, seatTotal, taxes, discount, grandTotal },
@@ -235,6 +240,7 @@ export const ConfirmationStep = () => {
                 selectedReturnFlight={selectedReturnFlight}
                 passengers={passengers}
                 selectedSeats={selectedSeats}
+                selectedReturnSeats={selectedReturnSeats}
                 searchData={searchData}
                 seatTotal={seatTotal}
                 discount={discount}

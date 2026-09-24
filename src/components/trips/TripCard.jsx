@@ -31,7 +31,12 @@ export const TripCard = ({
   const detailTiles = [
     { icon: <FaCalendarAlt />, label: 'Date', value: formatDate(splitDateTime(flight?.departureTime).date) },
     { icon: <FaClock />, label: 'Duration', value: formatDuration(flight?.duration) },
-    { icon: <FaTicketAlt />, label: 'Seats', value: booking.seats?.join(', ') || '--' },
+    ...(isRoundTrip
+      ? [
+        { icon: <FaTicketAlt />, label: 'Outbound Seats', value: booking.seats?.join(', ') || '--' },
+        { icon: <FaTicketAlt />, label: 'Return Seats', value: booking.returnSeats?.join(', ') || '--' },
+      ]
+      : [{ icon: <FaTicketAlt />, label: 'Seats', value: booking.seats?.join(', ') || '--' }]),
     {
       icon: <FaUserFriends />,
       label: 'Travellers',
@@ -119,7 +124,9 @@ export const TripCard = ({
                       {(passenger.firstName || passenger.name)?.charAt(0).toUpperCase()}
                     </span>
                     <span className="font-medium">{fullName(passenger) || passenger.name}</span>
-                    <span className="text-xs text-gray-400">· {passenger.seat ?? '--'}</span>
+                    <span className="text-xs text-gray-400">
+                      · {passenger.seat ?? '--'}{isRoundTrip && ` / ${passenger.returnSeat ?? '--'}`}
+                    </span>
                   </div>
                 ))}
               </div>

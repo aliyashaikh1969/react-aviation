@@ -15,7 +15,7 @@ export const SummaryStep = ({ nextStep, prevStep }) => {
   useScrollToTop();
 
   const { validatePassengers, setOpenPassengers } = usePassenger()
-  const { selectedFlight, selectedReturnFlight, selectedSeats, searchData } = useFlight()
+  const { selectedFlight, selectedReturnFlight, selectedSeats, selectedReturnSeats, searchData } = useFlight()
   const { grandTotal } = useFare()
   const isRoundTrip = searchData.tripType === "round"
 
@@ -27,7 +27,12 @@ export const SummaryStep = ({ nextStep, prevStep }) => {
       return
     }
     if (selectedSeats.length !== searchData.travellers) {
-      toast.error(`Please select ${searchData.travellers} seat${searchData.travellers > 1 ? "s" : ""} before continuing`)
+      toast.error(`Please select ${searchData.travellers} outbound seat${searchData.travellers > 1 ? "s" : ""} before continuing`)
+      prevStep()
+      return
+    }
+    if (isRoundTrip && selectedReturnSeats.length !== searchData.travellers) {
+      toast.error(`Please select ${searchData.travellers} return seat${searchData.travellers > 1 ? "s" : ""} before continuing`)
       prevStep()
       return
     }
