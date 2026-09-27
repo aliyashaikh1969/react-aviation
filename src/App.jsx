@@ -17,6 +17,8 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ defa
 
 function App() {
   return (
+
+    
     <Suspense fallback={<PageLoader />}>
       <Routes>
         <Route path={ROUTES.home} element={<Layout />}>

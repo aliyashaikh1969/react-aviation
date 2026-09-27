@@ -1,11 +1,8 @@
-import { useNavigate } from 'react-router-dom'
 import { FiArrowRight, FiMapPin, FiGlobe, FiCalendar, FiTag, FiPercent, FiClock, FiCopy } from "react-icons/fi";
 import toast from 'react-hot-toast'
-import { useFlight } from '../hooks/useFlight'
-import { getIataCode } from '../utils/airports'
+import { useBookRoute } from '../hooks/useBookRoute'
 import { useEmailSubscribe } from '../hooks/useEmailSubscribe'
 import { PageHero } from '../components/ui/PageHero'
-import { ROUTES } from '../constants/routes'
 import { inr, formatDate } from '../utils/format'
 
 // static sample fares; live prices are shown in the search results
@@ -132,21 +129,8 @@ const CouponFooter = ({ deal, onBook }) => {
 }
 
 export const DealsPage = () => {
-  const navigate = useNavigate()
-  const { setSearchData, initialSearchData } = useFlight()
+  const bookRoute = useBookRoute()
   const { email, setEmail, submit: subscribe } = useEmailSubscribe("You're on the list! Deals are on their way.")
-
-  // search a route for a date a week from today; it can be changed on the results page
-  const bookRoute = (from, to) => {
-    const date = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
-    setSearchData({
-      ...initialSearchData,
-      from: getIataCode(from),
-      to: getIataCode(to),
-      date,
-    })
-    navigate(ROUTES.booking)
-  }
 
   return (
     <div className="bg-[#F7F9FC]">

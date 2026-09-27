@@ -3,6 +3,76 @@
 Flight search and booking app built with React, Vite, Tailwind CSS and Firebase.
 Search flights, pick seats, pay (simulated), and manage bookings and e-tickets.
 
+## About
+
+SkyAero is a full flight-booking flow built as a portfolio project: search real flights
+(via SerpApi's Google Flights engine), pick seats, enter passenger details, pay through a
+mock checkout, and get back a real e-ticket with a PNR and a QR code — all backed by a real
+Firebase project for accounts and saved trips. It's built to work the way a real airline
+site does end to end, not just as a set of disconnected screens: the same fare that's shown
+on the seat map is the one saved to the booking and printed on the ticket, seats you pick
+for a round trip's outbound and return legs are tracked independently, and a search a guest
+runs without an account still completes and produces a valid ticket.
+
+## Demo
+
+A full run through the app — search, pick a flight, choose a seat, fill in passenger
+details, pay, and get back a real e-ticket:
+
+![Demo: searching, booking and getting an e-ticket on SkyAero](docs/demo.gif)
+
+*(recorded against the live deployment, so the flight data and fares are real)*
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Home page with flight search](docs/screenshots/01-home.png) | ![Search results with real flight data](docs/screenshots/02-search-results.png) |
+| Home — search form | Search results (live SerpApi data) |
+| ![Seat selection](docs/screenshots/03-seat-selection.png) | ![Booking summary with passenger details](docs/screenshots/04-booking-summary.png) |
+| Seat selection | Booking summary & passenger details |
+| ![Payment page](docs/screenshots/05-payment.png) | ![Booking confirmation with e-ticket](docs/screenshots/06-confirmation.png) |
+| Payment | Confirmation & e-ticket |
+
+## Features
+
+- **Flight search** — one-way and round-trip, with airport autocomplete, date validation,
+  and up to 9 travellers. A round trip is modeled as two independent one-way searches, so
+  outbound and return each get their own real results and their own flight picker.
+- **Filtering & sorting** — by price, stops, airline and departure/arrival time window;
+  cheapest/fastest/earliest sort options.
+- **Seat selection** — an interactive seat map with premium/standard/occupied/exit-row
+  states. For a round trip, outbound and return are different aircraft with independent
+  seat maps and selections (the same seat number can be picked on both).
+- **Passenger details** — one form per traveller, generated from the traveller count, with
+  full field validation (name, DOB, gender, nationality, ID proof, contact info).
+- **Live fare breakdown** — base fare, seat charges, taxes and promo-code discounts,
+  computed the same way on the seat map, the summary, the payment page and the final ticket.
+- **Mock payment** — card, UPI (with a generated QR code), net banking and wallet flows,
+  with card-number/expiry/CVV validation, a simulated processing state, and a realistic
+  decline/retry path (no real card data is ever sent anywhere).
+- **Booking confirmation & e-ticket** — a generated PNR, a downloadable/printable e-ticket
+  with a QR code, and full details for both legs of a round trip.
+- **My Trips** — signed-in users can view upcoming/past bookings, reopen an e-ticket,
+  download or print it, and cancel a booking.
+- **Accounts** — email/password and Google sign-in via Firebase Auth, with deliberately
+  vague auth error messages so the login page can't be used to enumerate registered emails.
+- **Deals page** — destination cards with copyable promo codes.
+- **Responsive, accessible UI** — usable from a 320px phone up to a large desktop, with
+  proper labels, focus states and keyboard navigation throughout.
+
+## Technologies used
+
+**Frontend** — React 19, Vite, React Router, Tailwind CSS, react-hot-toast, react-icons,
+react-qr-code.
+
+**Backend / data** — Firebase Authentication, Firebase Firestore (bookings), a Vercel
+serverless function (`api/flights.js`) that proxies SerpApi's Google Flights engine so the
+API key never reaches the browser.
+
+**Other** — jsPDF + html2canvas (e-ticket PDF export), ESLint, and Vercel for hosting and
+deployment.
+
 ## Getting started
 
 ```bash

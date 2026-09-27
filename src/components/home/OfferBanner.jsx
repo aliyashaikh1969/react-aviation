@@ -14,13 +14,13 @@ export const OfferBanner = () => {
 
           <div className="relative text-center md:text-left">
             <p className="inline-block text-xs font-semibold tracking-wider text-navy bg-yellow-300 px-3 py-1 rounded-full">
-              FLAT 20% OFF
+              UP TO 20% OFF
             </p>
 
-            <p className="flex items-center justify-center md:justify-start gap-3 py-3 text-2xl sm:text-3xl font-bold">
-              Summer Travel Bonanza
+            <h2 className="flex items-center justify-center md:justify-start gap-3 py-3 text-2xl sm:text-3xl font-bold">
+              Travel Bonanza
               <IoSunnySharp className="text-yellow-300" />
-            </p>
+            </h2>
 
             <p className="text-sm text-gray-300">
               Book your flights and get exciting discounts!

@@ -32,6 +32,8 @@ const CITY_TO_IATA = {
   "bangkok": "BKK",
   "kuala lumpur": "KUL",
   "maldives": "MLE",
+  "paris": "CDG",
+  "bali": "DPS", "denpasar": "DPS",
 }
 
 // one entry per airport, for the search autocomplete

@@ -9,7 +9,7 @@ export const Newsletter = () => {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-16 py-10 flex flex-col md:flex-row gap-6 items-center justify-between">
 
         <div className="text-center md:text-left">
-          <p className="font-bold text-xl">Get the best travel deals straight to your inbox!</p>
+          <h2 className="font-bold text-xl">Get the best travel deals straight to your inbox!</h2>
           <p className="text-sm text-gray-600 mt-1">Subscribe to our newsletter and never miss an offer.</p>
         </div>
 
@@ -32,7 +32,7 @@ export const Newsletter = () => {
 
           <button
             type="submit"
-            className="px-7 py-3 rounded-xl bg-navy hover:bg-[#052a54] transition-colors text-white font-medium cursor-pointer"
+            className="px-7 py-3 rounded-xl bg-navy hover:bg-navy-dark transition-colors text-white font-medium cursor-pointer"
           >
             Subscribe
           </button>

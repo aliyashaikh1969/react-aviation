@@ -15,7 +15,7 @@ export const WhyChooseUs = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {reasons.map(({ icon: Icon, title, text }) => (
           <div key={title} className="flex flex-col items-center text-center gap-3 p-4">
-            <div className="bg-[#5ac3fc4c] rounded-2xl w-14 h-14 flex items-center justify-center text-2xl text-[#06448a]">
+            <div className="bg-blue-50 rounded-2xl w-14 h-14 flex items-center justify-center text-2xl text-blue-700">
               <Icon />
             </div>
             <p className="font-semibold text-lg">{title}</p>

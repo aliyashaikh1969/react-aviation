@@ -1,10 +1,17 @@
 import { useEffect } from 'react'
+import { preload } from 'react-dom'
 import HeroImg from '../../assets/heroimg.webp'
 import { SearchFlights } from '../search/SearchFlights';
 import { useFlight } from '../../hooks/useFlight';
 
 export const Hero = () => {
 	const { resetBooking } = useFlight();
+
+	// This is the page's largest visual element (its LCP candidate), but it's set via an
+	// inline CSS background rather than an <img>, so the browser can't discover it until
+	// React actually renders this node. preload() hints it during render instead, so the
+	// fetch can start in parallel with the rest of the page mounting.
+	preload(HeroImg, { as: 'image', fetchPriority: 'high' })
 
 	useEffect(() => {
 		resetBooking();
